@@ -1,417 +1,228 @@
-import React from 'react';
-import moment from 'moment';
+import React, { Fragment } from 'react';
+import startCase from 'lodash.startcase';
 
-import { formatPatientId, patientname } from '../../../services/utilities';
+import { formatDate, parseNote, staffname } from '../../../services/utilities';
+import { allVitalItems } from '../../../services/constants';
 
 const ViewEncounter = ({ closeModal, encounter }) => {
-	console.log('encanter details: ', encounter);
 	return (
 		<div
-			className="onboarding-modal modal fade animated show row"
+			className="onboarding-modal modal fade animated show"
 			role="dialog"
 			style={{ display: 'block' }}
 		>
-			<div className="modal-dialog modal-lg modal-centered">
-				<div className="modal-content text-center">
+			<div className="modal-dialog modal-centered modal-lg">
+				<div className="modal-content modal-scroll">
 					<button
 						aria-label="Close"
 						className="close"
 						type="button"
-						onClick={closeModal}
+						onClick={() => closeModal()}
 					>
-						<span className="os-icon os-icon-close" />
+						<span className="os-icon os-icon-close"></span>
 					</button>
 					<div className="onboarding-content with-gradient">
-						<h4 className="onboarding-title">Encounter Details</h4>
-						<div className="row">
-							<div className="col-md-4 col-sm-12">
-								<table
-									className="table table-striped"
-									style={{
-										tableLayout: 'fixed',
-										borderCollapse: 'collapse',
-									}}
-								>
-									<tbody>
-										<tr>
-											<td>
-												<h6 className="font-weight-bold text-center">
-													Patient Name:{' '}
-												</h6>
-
-												<h6 className="text-center">
-													{patientname(encounter.patient)}
-												</h6>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-
-							<div className="col-md-4 col-sm-12">
-								<table
-									className="table table-striped text-center"
-									style={{
-										borderCollapse: 'collapse',
-									}}
-								>
-									<tbody>
-										<tr>
-											<td>
-												<h6 className="font-weight-bold text-center">
-													Patient ID:
-												</h6>
-												<h6 className="text-center">
-													{formatPatientId(encounter?.patient)}
-												</h6>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-
-							<div className="col-md-4 col-sm-12">
-								<table
-									className="table table-striped"
-									style={{
-										tableLayout: 'fixed',
-										borderCollapse: 'collapse',
-									}}
-								>
-									<tbody>
-										<tr>
-											<td>
-												<h6 className="font-weight-bold text-center">
-													Enrollment Date:
-												</h6>
-												<h6 className="text-center">
-													{moment(encounter?.reatedAt).format(
-														'DD-MM-YYYY H:mma'
+						<h4 className="onboarding-title text-center">
+							Patient Consultation Encounter
+						</h4>
+						<div className="onboarding-text alert-custom text-center mt-4">
+							{`Consultant: ${staffname(encounter.staff)} | Department: ${
+								encounter.appointment?.department?.name || '--'
+							} | Date: ${formatDate(
+								encounter.createdAt,
+								'DD MMM, YYYY HH:mm A'
+							)}`}
+						</div>
+						<div className="table-responsive">
+							<div className="dataTables_wrapper container-fluid dt-bootstrap4">
+								<div className="row">
+									<div className="col-sm-12">
+										<div className="onboarding-text alert-custom2 text-center m-0">
+											Vital Signs
+										</div>
+										<table
+											className="table table-striped table-lightfont dataTable"
+											style={{ width: '100%' }}
+										>
+											<thead style={{ borderCollapse: 'collapse' }}>
+												<tr>
+													{encounter.vitals.map((v, i) => (
+														<th key={i}>{v.readingType}</th>
+													))}
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													{encounter.vitals.map((item, i) => {
+														const values = Object.values(item.reading);
+														const v = allVitalItems.find(
+															v => v.name === item.readingType
+														);
+														return <td key={i}>{`${values[0]}${v?.unit}`}</td>;
+													})}
+													{encounter.vitals.length === 0 && (
+														<td className="text-center">No vital signs</td>
 													)}
-												</h6>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-
-						<div className="row">
-							<h6 className="font-weight-bold text-center">
-								Patient Physical Examination
-							</h6>
-							<div className="col-md-12">
-								<table className="table table-striped">
-									<thead>
-										<tr>
-											<th>Category</th>
-											<th>Description</th>
-											<th>Created By</th>
-										</tr>
-									</thead>
-									<tbody>
-										{encounter?.patient_physical_exams?.map((exam, i) => {
-											return (
-												<tr key={i}>
-													<td>{exam.category}</td>
-													<td>{exam.description}</td>
-													<td>{exam.createdBy}</td>
 												</tr>
-											);
-										})}
-									</tbody>
-								</table>
-							</div>
-						</div>
-
-						<div className="row">
-							<h6 className="font-weight-bold text-center">
-								Patient Review of System
-							</h6>
-							<div className="col-md-12">
-								<table className="table table-striped">
-									<thead>
-										<tr>
-											<th>Category</th>
-											<th>Description</th>
-											<th>Created By</th>
-										</tr>
-									</thead>
-									<tbody>
-										{encounter?.review_of_systems?.map(labTest => {
-											return (
-												<tr key={labTest?.id}>
-													<td>{labTest?.category}</td>
-
-													<td>{labTest?.description}</td>
-
-													<td>{labTest?.createdBy}</td>
-												</tr>
-											);
-										})}
-									</tbody>
-								</table>
-							</div>
-						</div>
-
-						<br />
-						<br />
-						<br />
-
-						<div className="row">
-							<h6 className="font-weight-bold text-center">
-								Patient Allergens
-							</h6>
-							<div className="col-md-12">
-								<table className="table table-striped">
-									<thead>
-										<tr>
-											<th>Category</th>
-											<th>allergy</th>
-											<th>Severity</th>
-											<th>Reaction</th>
-											<th>Created By</th>
-										</tr>
-									</thead>
-									<tbody>
-										{encounter?.patient_allergens?.map(labTest => {
-											return (
-												<tr key={labTest?.id}>
-													<td>{labTest?.category}</td>
-
-													<td>{labTest?.allergy}</td>
-													<td>{labTest?.severity}</td>
-													<td>{labTest?.reaction}</td>
-
-													<td>{labTest?.createdBy}</td>
-												</tr>
-											);
-										})}
-									</tbody>
-								</table>
-							</div>
-						</div>
-
-						<br />
-						<br />
-						<br />
-
-						<div className="row">
-							<h6 className="font-weight-bold text-center">
-								Patient Consumable
-							</h6>
-							<div className="col-md-12">
-								<table className="table table-striped">
-									<thead>
-										<tr>
-											<th>Quantity</th>
-											<th>RequestNote</th>
-											<th>Created By</th>
-										</tr>
-									</thead>
-									<tbody>
-										{encounter?.patient_consumables?.map(labTest => {
-											return (
-												<tr key={labTest?.id}>
-													<td>{labTest?.quantity}</td>
-
-													<td>{labTest?.requestNote}</td>
-
-													<td>{labTest?.createdBy}</td>
-												</tr>
-											);
-										})}
-									</tbody>
-								</table>
-							</div>
-						</div>
-
-						<br />
-						<br />
-						<br />
-
-						<div className="row">
-							<h6 className="font-weight-bold text-center">
-								Patient Diagnoses
-							</h6>
-							<div className="col-md-12">
-								<table className="table table-striped">
-									<thead>
-										<tr>
-											<th>Status</th>
-											<th>Type</th>
-											<th>Comment</th>
-											<th>Created By</th>
-										</tr>
-									</thead>
-									<tbody>
-										{encounter?.patient_diagnoses?.map(labTest => {
-											return (
-												<tr key={labTest?.id}>
-													<td>{labTest?.status}</td>
-
-													<td>{labTest?.type}</td>
-													<td
-														style={{
-															whiteSpace: 'pre-wrap',
-															overflowWrap: 'break-word',
-														}}
-													>
-														{labTest?.Comment}
-													</td>
-
-													<td>{labTest?.createdBy}</td>
-												</tr>
-											);
-										})}
-									</tbody>
-								</table>
-							</div>
-						</div>
-
-						<div className="row">
-							<h6 className="font-weight-bold text-center">Complaints</h6>
-							<div className="col-md-12">
-								<table className="table table-striped">
-									<thead>
-										<tr>
-											<th>Category</th>
-											<th>Specialty</th>
-											<th>Description</th>
-											<th>Created By</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>{encounter?.complaints?.category}</td>
-
-											<td>{encounter?.complaints?.specialty}</td>
-											<td
-												style={{
-													whiteSpace: 'pre-wrap',
-													overflowWrap: 'break-word',
+											</tbody>
+										</table>
+										{encounter.patient_notes
+											.filter(
+												n =>
+													n.type !== 'encounter-note' &&
+													n.type !== 'diagnosis' &&
+													n.type !== 'allergy'
+											)
+											.map((note, i) => {
+												return (
+													<Fragment key={i}>
+														<div className="onboarding-text alert-custom2 text-center mt-4 mb-2">
+															{startCase(note.type)}
+														</div>
+														<div
+															className="px-4"
+															dangerouslySetInnerHTML={{
+																__html: parseNote(note),
+															}}
+														/>
+													</Fragment>
+												);
+											})}
+										<div className="onboarding-text alert-custom2 text-center mt-4 mb-2">
+											Allergies
+										</div>
+										<table className="table table-striped">
+											{encounter.allergies.length > 0 && (
+												<thead>
+													<tr>
+														<th>Category</th>
+														<th>Drug</th>
+														<th>Allergy</th>
+														<th>Reaction</th>
+														<th>Severity</th>
+													</tr>
+												</thead>
+											)}
+											<tbody>
+												{encounter.allergies.map((item, i) => {
+													return (
+														<tr key={i}>
+															<td>{item.category}</td>
+															<td>
+																{item.drugGeneric
+																	? item.drugGeneric.name
+																	: '--'}
+															</td>
+															<td>{item.allergy}</td>
+															<td>{item.reaction}</td>
+															<td>{item.severity}</td>
+														</tr>
+													);
+												})}
+												{encounter.allergies.length === 0 && (
+													<tr>
+														<td colSpan="5" className="text-center">
+															No allergens found!
+														</td>
+													</tr>
+												)}
+											</tbody>
+										</table>
+										<div className="onboarding-text alert-custom2 text-center mt-4 mb-2">
+											Diagnosis
+										</div>
+										<table className="table table-striped">
+											<thead>
+												{encounter.diagnosis.length > 0 && (
+													<tr>
+														<th>Diagnosis</th>
+														<th>Type</th>
+														<th>Comment</th>
+														<th>Consultant</th>
+														<th>Status</th>
+													</tr>
+												)}
+											</thead>
+											<tbody>
+												{encounter.diagnosis.map((item, i) => {
+													return (
+														<tr key={i}>
+															<td>{`${item.diagnosis.type.toUpperCase()} (${
+																item.diagnosis.code
+															}): ${item.diagnosis.description}`}</td>
+															<td>{item.diagnosis_type}</td>
+															<td>{item.comment || '--'}</td>
+															<td>{item.createdBy}</td>
+															<td>{item.status}</td>
+														</tr>
+													);
+												})}
+												{encounter.diagnosis.length === 0 && (
+													<tr>
+														<td colSpan="5" className="text-center">
+															No diagnosis found!
+														</td>
+													</tr>
+												)}
+											</tbody>
+										</table>
+										{/* <div className="onboarding-text alert-custom2 text-center mt-4 mb-2">
+											Investigations
+										</div>
+										<table className="table table-striped">
+											<thead>
+												{encounter.investigations.length > 0 && (
+													<tr>
+														<th>ID</th>
+														<th>Lab</th>
+														<th>Note</th>
+													</tr>
+												)}
+											</thead>
+											<tbody>
+												{encounter.investigations.map((item, i) => {
+													console.log(item)
+													return (
+														<tr key={i}>
+															<td><p className="item-title text-color m-0">{item.code}</p></td>
+															<td><p className="item-title text-color m-0">{item.item?.labTest?.name || item.item?.service?.name || '--'}</p></td>
+															<td>{item.requestNote || '--'}</td>
+														</tr>
+													);
+												})}
+												{encounter.investigations.length === 0 && (
+													<tr>
+														<td colSpan="5" className="text-center">
+															No investigations found!
+														</td>
+													</tr>
+												)}
+											</tbody>
+										</table> */}
+										<div className="onboarding-text alert-custom2 text-center mt-4 mb-2">
+											Additional Note
+										</div>
+										{encounter.encounter_note ? (
+											<div
+												className="px-4"
+												dangerouslySetInnerHTML={{
+													__html: parseNote(encounter.encounter_note),
 												}}
+											/>
+										) : (
+											<table
+												className="table table-striped table-lightfont dataTable"
+												style={{ width: '100%' }}
 											>
-												<div
-													dangerouslySetInnerHTML={{
-														__html: encounter?.complaints?.description,
-													}}
-												/>
-											</td>
-
-											<td>{encounter?.complaints?.createdBy}</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-
-						<div className="row">
-							<h6 className="font-weight-bold text-center">Instruction</h6>
-							<div className="col-md-12">
-								<table className="table table-striped">
-									<thead>
-										<tr>
-											<th>Category</th>
-											<th>Specialty</th>
-											<th>Description</th>
-											<th>Created By</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>{encounter?.instruction?.category}</td>
-
-											<td>{encounter?.instruction?.specialty}</td>
-											<td
-												style={{
-													whiteSpace: 'pre-wrap',
-													overflowWrap: 'break-word',
-												}}
-											>
-												<div
-													dangerouslySetInnerHTML={{
-														__html: encounter?.instruction?.description,
-													}}
-												/>
-											</td>
-
-											<td>{encounter?.instruction?.createdBy}</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-
-						<div className="row">
-							<h6 className="font-weight-bold text-center">Treatment Plan</h6>
-							<div className="col-md-12">
-								<table className="table table-striped">
-									<thead>
-										<tr>
-											<th>Category</th>
-											<th>Specialty</th>
-											<th>Description</th>
-											<th>Created By</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>{encounter?.treatment_plan?.category}</td>
-
-											<td>{encounter?.treatment_plan?.specialty}</td>
-											<td
-												style={{
-													whiteSpace: 'pre-wrap',
-													overflowWrap: 'break-word',
-												}}
-											>
-												<div
-													dangerouslySetInnerHTML={{
-														__html: encounter?.treatment_plan?.description,
-													}}
-												/>
-											</td>
-
-											<td>{encounter?.treatment_plan?.createdBy}</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-
-						<div className="row">
-							<h6 className="font-weight-bold text-center">Patient History</h6>
-							<div className="col-md-12">
-								<table className="table table-striped">
-									<thead>
-										<tr>
-											<th>Category</th>
-											<th>Description</th>
-											<th>Created By</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>{encounter?.patient_history?.category}</td>
-
-											<td
-												style={{
-													whiteSpace: 'pre-wrap',
-													overflowWrap: 'break-word',
-												}}
-											>
-												<div
-													dangerouslySetInnerHTML={{
-														__html: encounter?.patient_history?.description,
-													}}
-												/>
-											</td>
-
-											<td>{encounter?.patient_history?.createdBy}</td>
-										</tr>
-									</tbody>
-								</table>
+												<tbody>
+													<tr>
+														<td className="text-center">No Note</td>
+													</tr>
+												</tbody>
+											</table>
+										)}
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>

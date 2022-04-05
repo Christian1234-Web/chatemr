@@ -69,10 +69,10 @@ const RecordProblem = ({ closeModal, update }) => {
 			style={{ display: 'block' }}
 		>
 			<div
-				className="modal-dialog modal-lg modal-centered modal-scroll"
+				className="modal-dialog modal-lg modal-centered"
 				style={{ maxWidth: '1024px' }}
 			>
-				<div className="modal-content text-center">
+				<div className="modal-content modal-scroll text-center">
 					<button
 						aria-label="Close"
 						className="close"

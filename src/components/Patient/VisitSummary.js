@@ -58,8 +58,6 @@ const VisitSummary = () => {
 		setMeta({ ...meta, currentPage: nextPage });
 	};
 
-	console.log(diagnoses);
-
 	return (
 		<div className="m-0 w-100">
 			{loading && !summary ? (
@@ -69,7 +67,19 @@ const VisitSummary = () => {
 					<div className="dataTables_wrapper container-fluid dt-bootstrap4">
 						<div className="row">
 							<div className="col-sm-12">
-								<h6 className="text-center">Last Vitals</h6>
+								{!vital && !diagnoses && (
+									<table
+										className="table table-striped table-lightfont dataTable mt-2"
+										style={{ width: '100%' }}
+									>
+										<tbody>
+											<tr>
+												<td className="text-center">No visits recorded</td>
+											</tr>
+										</tbody>
+									</table>
+								)}
+								{vital && <h6 className="text-center">Last Vitals</h6>}
 								{vital && (
 									<table
 										className="table table-striped table-lightfont dataTable mt-2"
@@ -99,7 +109,7 @@ const VisitSummary = () => {
 								)}
 							</div>
 							<div className="col-sm-12 mt-4">
-								<h6 className="text-center">Diagnoses</h6>
+								{diagnoses && <h6 className="text-center">Diagnoses</h6>}
 								{diagnoses && (
 									<table
 										className="table table-striped table-lightfont dataTable mt-2"

@@ -245,7 +245,7 @@ const Consumable = ({ previous, patient, closeModal, appointment_id }) => {
 				nextAppointment,
 				consumables,
 			};
-			const url = `${consultationAPI}${patient.id}/save?appointment_id=${appointment_id}`;
+			const url = `${consultationAPI}/${patient.id}/save?appointment_id=${appointment_id}`;
 			const rs = await request(url, 'POST', true, values);
 			if (rs && rs.success) {
 				dispatch(stopBlock());

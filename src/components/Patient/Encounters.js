@@ -1,69 +1,94 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import { withRouter } from 'react-router-dom';
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import Pagination from 'antd/lib/pagination';
 
-import { request, formatDate, staffname } from '../../services/utilities';
+import {
+	request,
+	formatDate,
+	staffname,
+	itemRender,
+	updateImmutable,
+} from '../../services/utilities';
 import { notifyError } from '../../services/notify';
 import ViewEncounter from './Modals/ViewEncounter';
+import EncounterNote from './Modals/EncounterNote';
 import TableLoading from '../TableLoading';
+import { startBlock, stopBlock } from '../../actions/redux-block';
 
-class Encounters extends Component {
-	state = {
-		encounters: [],
-		loading: true,
-		canView: false,
-		showModal: false,
-		encounter: null,
-		meta: null,
-	};
+const Encounters = () => {
+	const [loading, setLoading] = useState(true);
+	const [list, setList] = useState([]);
+	const [meta, setMeta] = useState(null);
+	const [encounter, setEnconter] = useState(null);
+	const [showModal, setShowModal] = useState(false);
+	const [showNoteModal, setShowNoteModal] = useState(false);
 
-	componentDidMount() {
-		this.fetchEncouters();
-	}
+	const dispatch = useDispatch();
 
-	fetchEncouters = async () => {
-		try {
-			this.setState({ loading: true });
-			const { patient } = this.props;
-			const url = `consultation/encounters?patient_id=${patient.id}`;
-			const rs = await request(url, 'GET', true);
-			const { result, ...meta } = rs;
-			this.setState({ loading: false, encounters: result, meta });
-		} catch (error) {
-			console.log(error);
-			this.setState({ loading: false });
-			notifyError('error fetching encounters');
+	const patient = useSelector(state => state.user.patient);
+
+	const fetchEncounters = useCallback(
+		async page => {
+			try {
+				dispatch(startBlock());
+				const p = page || 1;
+				const url = `consultation/encounters?patient_id=${patient.id}&page=${p}`;
+				const rs = await request(url, 'GET', true);
+				const { result, ...meta } = rs;
+				setList(result);
+				setMeta(meta);
+				setLoading(false);
+				dispatch(stopBlock());
+			} catch (error) {
+				console.log(error);
+				dispatch(stopBlock());
+				notifyError('error fetching encounters');
+			}
+		},
+		[dispatch, patient]
+	);
+
+	useEffect(() => {
+		if (loading) {
+			fetchEncounters();
 		}
+	}, [fetchEncounters, loading]);
+
+	const onNavigatePage = nextPage => {
+		fetchEncounters(nextPage);
 	};
 
-	viewEncounter = item => {
+	const viewEncounter = item => {
 		document.body.classList.add('modal-open');
-		this.setState({ encounter: item, showModal: true });
+		setEnconter(item);
+		setShowModal(true);
 	};
 
-	print = item => {
-		console.log(item);
+	const newNote = item => {
+		document.body.classList.add('modal-open');
+		setEnconter(item);
+		setShowNoteModal(true);
 	};
 
-	closeModal = () => {
-		this.setState({ appointment_id: null, patient: null, showModal: false });
+	const closeModal = () => {
+		setEnconter(null);
+		setShowModal(false);
+		setShowNoteModal(false);
 		document.body.classList.remove('modal-open');
 	};
 
-	render() {
-		const { encounters, loading, encounter, showModal } = this.state;
-		return (
-			<div className="col-sm-12">
-				<div className="element-wrapper">
-					<h6 className="element-header">Encounters</h6>
-					<div className="element-box p-3 m-0">
+	return (
+		<div className="col-sm-12">
+			<div className="element-wrapper">
+				<h6 className="element-header">Encounters</h6>
+				<div className="element-box p-3 m-0">
+					<div className="table-responsive">
 						{loading ? (
 							<TableLoading />
 						) : (
-							<div className="table-responsive">
-								<table className="table">
+							<>
+								<table className="table table-striped">
 									<thead>
 										<tr>
 											<th>Date</th>
@@ -74,78 +99,73 @@ class Encounters extends Component {
 										</tr>
 									</thead>
 									<tbody>
-										{encounters.map((item, i) => {
-											console.log(item);
+										{list.map((item, i) => {
 											return (
 												<tr key={i}>
-													<td className="nowrap">
+													<td>
 														{formatDate(item.createdAt, 'DD-MMM-YYYY h:mm A')}
 													</td>
 													<td>{item?.appointment?.department?.name || '--'}</td>
 													<td>
 														{item?.appointment?.service?.item?.name || '--'}
 													</td>
-													<td className="cell-with-media">
-														<span>
-															{item.staff ? staffname(item.staff) : '--'}
-														</span>
-													</td>
-
+													<td>{staffname(item.staff)}</td>
 													<td className="row-actions">
-														<DropdownButton
-															id="dropdown-basic"
-															title="Action"
-															size="sm"
-															key={item.id}
-														>
-															<Dropdown.Item
-																onClick={() => this.viewEncounter(item)}
+														{!item.encounter_note && (
+															<a
+																className="btn btn-secondary text-white"
+																onClick={() => newNote(item)}
 															>
-																View Details
-															</Dropdown.Item>
-															<Dropdown.Item
-																onClick={() => this.viewEncounter(item)}
-															>
-																Add Note
-															</Dropdown.Item>
-															<Dropdown.Item
-																onClick={() => this.viewEncounter(item)}
-															>
-																Add Diagnosis
-															</Dropdown.Item>
-															<Dropdown.Item onClick={() => this.print(item)}>
-																Print
-															</Dropdown.Item>
-														</DropdownButton>
+																add note
+															</a>
+														)}
+														<a onClick={() => viewEncounter(item)}>
+															<i className="os-icon os-icon-eye"></i>
+														</a>
+														{/* <a onClick={() => print(item)}>
+															<i className="os-icon os-icon-printer"></i>
+														</a> */}
 													</td>
 												</tr>
 											);
 										})}
-
-										{encounters?.length === 0 && (
+										{list.length === 0 && (
 											<tr className="text-center">
-												<td colSpan="7">No Encounters</td>
+												<td colSpan="5">No Encounters</td>
 											</tr>
 										)}
 									</tbody>
 								</table>
-							</div>
+								{meta && (
+									<div className="pagination pagination-center mt-4">
+										<Pagination
+											current={parseInt(meta.currentPage, 10)}
+											pageSize={parseInt(meta.itemsPerPage, 10)}
+											total={parseInt(meta.totalPages, 10)}
+											showTotal={total => `Total ${total} encounters`}
+											itemRender={itemRender}
+											onChange={current => onNavigatePage(current)}
+											showSizeChanger={false}
+										/>
+									</div>
+								)}
+							</>
 						)}
 					</div>
 				</div>
-				{showModal && (
-					<ViewEncounter encounter={encounter} closeModal={this.closeModal} />
-				)}
 			</div>
-		);
-	}
-}
-
-const mapStateToProps = (state, ownProps) => {
-	return {
-		patient: state.user.patient,
-		staff: state.user.profile.details,
-	};
+			{showModal && (
+				<ViewEncounter encounter={encounter} closeModal={closeModal} />
+			)}
+			{showNoteModal && (
+				<EncounterNote
+					encounter={encounter}
+					closeModal={closeModal}
+					updateItems={item => setList(updateImmutable(list, item))}
+				/>
+			)}
+		</div>
+	);
 };
 
-export default withRouter(connect(mapStateToProps)(Encounters));
+export default Encounters;

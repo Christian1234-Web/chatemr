@@ -543,6 +543,17 @@ button {
 	color: #293145;
 	padding: 8px 0;
 }
+
+.alert-custom2 {
+	background-color: rgba(69, 76, 96, 0.09);
+	font-size: 0.88rem !important;
+	font-weight: bold !important;
+	border-top: 1px rgba(69, 76, 96, 0.29) solid;
+	border-bottom: 1px rgba(69, 76, 96, 0.29) solid;
+	color: #293145;
+	padding: 8px 0;
+}
+
 .link-primary {
 	color: $primary !important;
 }
