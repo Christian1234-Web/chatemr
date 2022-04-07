@@ -120,6 +120,7 @@ class AntenatalHistory extends Component {
 									<table className="table table-striped">
 										<thead>
 											<tr>
+												<th>ID</th>
 												<th>Date of Enrollment</th>
 												<th>Enrolled By</th>
 												<th>Status</th>
@@ -130,6 +131,7 @@ class AntenatalHistory extends Component {
 											{enrollments.map((item, i) => {
 												return (
 													<tr key={i}>
+														<td>{item.serial_code}</td>
 														<td>
 															{moment(item.createdAt).format(
 																'DD-MMM-YYYY h:mm A'
