@@ -127,7 +127,7 @@ class AllAppointments extends Component {
 					? `&today=${today}`
 					: `&startDate=${sd}&endDate=${ed}`;
 			this.setState({ loading: true });
-			const url = `front-desk/appointments?page=${p}&limit=15&patient_id=${patient_id}&status=${status}${date}`;
+			const url = `front-desk/appointments?page=${p}&limit=12&patient_id=${patient_id}&status=${status}${date}`;
 			const rs = await request(url, 'GET', true);
 			const { result, ...meta } = rs;
 			this.setState({
@@ -209,7 +209,7 @@ class AllAppointments extends Component {
 									filter === 'all' ? ' col-md-3' : ' col-md-6'
 								}`}
 							>
-								<label className="mr-2 " htmlFor="id">
+								<label className="mr-2">
 									Search
 								</label>
 								<input
@@ -223,12 +223,12 @@ class AllAppointments extends Component {
 							</div>
 							{filter === 'all' && (
 								<div className="form-group col-md-4">
-									<label>From - To</label>
+									<label className="d-block">From - To</label>
 									<RangePicker onChange={e => this.dateChange(e)} />
 								</div>
 							)}
 							<div className="form-group col-md-3">
-								<label className="mr-2" htmlFor="id">
+								<label className="mr-2">
 									Status
 								</label>
 								<select

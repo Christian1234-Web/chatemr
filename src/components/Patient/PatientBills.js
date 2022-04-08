@@ -480,7 +480,7 @@ const PatientBills = () => {
 													<strong>Total</strong>
 												</td>
 												<td>{formatCurrency(totalAmount)}</td>
-												<td colSpan="3">
+												<td colSpan="4">
 													<strong>Outstanding Amount:</strong>{' '}
 													{formatCurrency(outstandingAmount)}
 												</td>

@@ -209,6 +209,7 @@ const PatientAppointment = ({ addAppointment, closeModal }) => {
 									className="single-daterange form-control"
 									ref={register({ name: 'appointment_date' })}
 									selected={appointmentDate}
+									minDate={new Date()}
 									onChange={date => {
 										setValue('appointment_date', date);
 										setAppointmentDate(date);
