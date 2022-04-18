@@ -9,7 +9,7 @@ import startCase from 'lodash.startcase';
 
 import waiting from '../../assets/images/waiting.gif';
 import { searchAPI } from '../../services/constants';
-import TransactionTable from '../../components/Tables/TransactionTable';
+import TransactionTable from '../../components/TransactionTable';
 import { request, itemRender, patientname } from '../../services/utilities';
 import { notifyError } from '../../services/notify';
 import { startBlock, stopBlock } from '../../actions/redux-block';

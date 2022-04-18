@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ModalHeader from '../ModalHeader';
 
 const ModalDischargePatient = ({
 	admissionId,
@@ -22,16 +23,8 @@ const ModalDischargePatient = ({
 				style={{ maxWidth: '720px' }}
 			>
 				<div className="modal-content text-center">
-					<button
-						aria-label="Close"
-						className="close"
-						type="button"
-						onClick={closeModal}
-					>
-						<span className="os-icon os-icon-close"></span>
-					</button>
+					<ModalHeader closeModal={closeModal} title="Doctors Discharge Note" />
 					<div className="onboarding-content with-gradient">
-						<h6 className="onboarding-title">Doctors Discharge Note</h6>
 						<div className="element-box p-2">
 							<div className="row">
 								<div className="col-sm-12">

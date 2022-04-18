@@ -1,14 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useCallback, useEffect } from 'react';
-import { Field, reduxForm, change } from 'redux-form';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 import { Table } from 'react-bootstrap';
 import { confirmAlert } from 'react-confirm-alert';
 import startCase from 'lodash.startcase';
 
 import {
-	renderTextArea,
 	formatCurrency,
 	request,
 	hasExpired,
@@ -19,24 +17,14 @@ import { notifyError } from '../../../services/notify';
 import { ReactComponent as PlusIcon } from '../../../assets/svg-icons/plus.svg';
 import { ReactComponent as EditIcon } from '../../../assets/svg-icons/edit.svg';
 import { ReactComponent as TrashIcon } from '../../../assets/svg-icons/trash.svg';
+import { updateAssessmentData } from '../../../actions/patient';
 
-const validate = values => {
-	const errors = {};
-	return errors;
-};
-
-const Prescription = ({
-	handleSubmit,
-	change,
-	previous,
-	next,
-	assessment,
-	patient,
-}) => {
+const Prescription = ({ previous, next, patient }) => {
 	const [loaded, setLoaded] = useState(false);
 	const [genericDrugs, setGenericDrugs] = useState([]);
 	const [generic, setGeneric] = useState(null);
 	const [selectedDrug, setSelectedDrug] = useState(null);
+
 	const [frequencyType, setFrequencyType] = useState('');
 	const [frequency, setFrequency] = useState('');
 	const [duration, setDuration] = useState('');
@@ -45,13 +33,13 @@ const Prescription = ({
 	const [refills, setRefills] = useState('');
 	const [refillable, setRefillable] = useState(false);
 	const [editing, setEditing] = useState(false);
+
 	const [drugsSelected, setDrugsSelected] = useState([]);
+	const [regimenNote, setRegimenNote] = useState('');
 
 	const dispatch = useDispatch();
 
-	const initData = useCallback(() => {
-		setDrugsSelected(assessment?.prescriptions || []);
-	}, [assessment]);
+	const assessment = useSelector(state => state.patient.assessmentData);
 
 	const loadGenericDrugs = useCallback(async () => {
 		try {
@@ -65,13 +53,20 @@ const Prescription = ({
 		}
 	}, [dispatch]);
 
+	const retrieveData = useCallback(() => {
+		const regimenData = assessment?.pharmacyRequest;
+
+		setDrugsSelected(regimenData?.items || []);
+		setRegimenNote(regimenData?.request_note || '');
+	}, [assessment]);
+
 	useEffect(() => {
 		if (!loaded) {
 			loadGenericDrugs();
-			initData();
+			retrieveData();
 			setLoaded(true);
 		}
-	}, [initData, loadGenericDrugs, loaded]);
+	}, [loadGenericDrugs, loaded, retrieveData]);
 
 	const onDrugExpired = (drug, bypass) => {
 		const expired =
@@ -181,9 +176,22 @@ const Prescription = ({
 		}
 	};
 
-	const selectRegimen = () => {
-		if (!selectedDrug) {
-			notifyError('Select drug');
+	const saveOutput = regimens => {
+		const pharmacyRequest = {
+			requestType: 'drugs',
+			patient_id: patient.id,
+			items: regimens,
+			request_note: regimenNote,
+		};
+
+		dispatch(
+			updateAssessmentData({ ...assessment, pharmacyRequest }, patient.id)
+		);
+	};
+
+	const saveRegimen = () => {
+		if (!generic) {
+			notifyError('Select generic');
 			return;
 		}
 
@@ -202,6 +210,8 @@ const Prescription = ({
 		const prescriptions = [...drugsSelected, regimen];
 		setDrugsSelected(prescriptions);
 
+		saveOutput(prescriptions);
+
 		setGeneric(null);
 		setSelectedDrug(null);
 		setQuantity('');
@@ -210,17 +220,17 @@ const Prescription = ({
 		setFrequencyType('');
 		setDuration('');
 		setNote('');
-
-		dispatch(change('prescriptions', prescriptions));
 	};
 
 	const onTrash = index => {
 		const regimens = drugsSelected.filter((pharm, i) => index !== i);
 		setDrugsSelected([...regimens]);
+		saveOutput(regimens);
 	};
 
 	const startEdit = (item, index) => {
 		onTrash(index);
+
 		setGeneric(item.generic);
 		setSelectedDrug(item.drug);
 		setQuantity(item.dose_quantity);
@@ -232,12 +242,19 @@ const Prescription = ({
 		});
 		setDuration(item.duration);
 		setNote(item.regimenInstruction);
+
 		setEditing(true);
+	};
+
+	const onSubmit = e => {
+		e.preventDefault();
+		saveOutput(drugsSelected);
+		next();
 	};
 
 	return (
 		<div className="form-block encounter">
-			<form onSubmit={handleSubmit(next)}>
+			<form onSubmit={onSubmit}>
 				<div className="row">
 					<div className="form-group col-sm-6">
 						<label>Drug Generic Name</label>
@@ -406,7 +423,7 @@ const Prescription = ({
 					{!editing ? (
 						<div className="form-group col-sm-3">
 							<a
-								onClick={selectRegimen}
+								onClick={saveRegimen}
 								style={{
 									backgroundColor: 'transparent',
 									border: 'none',
@@ -424,9 +441,9 @@ const Prescription = ({
 						</div>
 					) : (
 						<div className="col-sm-12 mt-4">
-							<button onClick={selectRegimen} className="btn btn-primary">
+							<a onClick={saveRegimen} className="btn btn-primary">
 								Done
-							</button>
+							</a>
 						</div>
 					)}
 				</div>
@@ -454,7 +471,10 @@ const Prescription = ({
 													<div className="badge badge-dark">{`${
 														item.dose_quantity
 													} - ${item.frequency}x ${
-														item.frequencyType
+														item.frequencyType === 'as-needed' ||
+														item.frequencyType === 'immediately'
+															? ''
+															: item.frequencyType
 													} ${parseFrequency(
 														item.frequencyType,
 														item.duration
@@ -500,14 +520,29 @@ const Prescription = ({
 				</div>
 				<div className="row">
 					<div className="form-group col-sm-12">
-						<Field
-							id="regimen_note"
+						<textarea
+							className="form-control"
 							name="regimen_note"
-							component={renderTextArea}
-							label="Regimen Note"
-							type="text"
-							placeholder="Enter note"
-						/>
+							rows="3"
+							placeholder="Regimen note"
+							onChange={e => {
+								setRegimenNote(e.target.value);
+								const pharmacyRequest = {
+									requestType: 'drugs',
+									patient_id: patient.id,
+									items: drugsSelected,
+									request_note: e.target.value,
+								};
+
+								dispatch(
+									updateAssessmentData(
+										{ ...assessment, pharmacyRequest },
+										patient.id
+									)
+								);
+							}}
+							value={regimenNote}
+						></textarea>
 					</div>
 				</div>
 				<div className="row mt-5">
@@ -525,17 +560,4 @@ const Prescription = ({
 	);
 };
 
-const mapStateToProps = (state, ownProps) => {
-	return {
-		initialValues: { ...ownProps.assessment },
-	};
-};
-
-export default connect(mapStateToProps, { change })(
-	reduxForm({
-		form: 'antenatalAssessment', //Form name is same
-		destroyOnUnmount: false,
-		forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
-		validate,
-	})(Prescription)
-);
+export default Prescription;

@@ -1012,3 +1012,21 @@ h4.onboarding-title {
 
 	i {color: #555;}
 }
+
+.react-datepicker-popper {
+	z-index: 10 !important;
+}
+
+.react-datepicker__input-time-container {
+	margin: 5px 20px 10px 15px !important;
+}
+
+.table-custom {
+	td {
+		padding: 0.3rem 1.3rem !important;
+	}
+}
+
+.fc-event {
+	&:hover {color: #ffffff !important;}
+}

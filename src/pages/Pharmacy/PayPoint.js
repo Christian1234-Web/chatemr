@@ -5,7 +5,7 @@ import Pagination from 'antd/lib/pagination';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import { request, itemRender } from '../../services/utilities';
 import { loadTransactions } from '../../actions/transaction';
-import TransactionTable from '../../components/Tables/TransactionTable';
+import TransactionTable from '../../components/TransactionTable';
 import TableLoading from '../../components/TableLoading';
 
 class PayPoint extends Component {

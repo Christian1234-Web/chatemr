@@ -1,40 +1,23 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Field, reduxForm, change } from 'redux-form';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async/dist/react-select.esm';
 
-import {
-	renderTextArea,
-	formatCurrency,
-	request,
-} from '../../../services/utilities';
+import { formatCurrency, request } from '../../../services/utilities';
 import { startBlock, stopBlock } from '../../../actions/redux-block';
 import { notifyError } from '../../../services/notify';
+import { updateAssessmentData } from '../../../actions/patient';
 
-const validate = values => {
-	const errors = {};
-	return errors;
-};
-
-const LabInvestigation = ({
-	handleSubmit,
-	change,
-	previous,
-	next,
-	assessment,
-}) => {
+const LabInvestigation = ({ previous, next, patient }) => {
 	const [loaded, setLoaded] = useState(false);
 	const [groups, setGroups] = useState([]);
 	const [selectedTests, setSelectedTests] = useState([]);
 	const [urgentLab, setUrgentLab] = useState(false);
+	const [labNote, setLabNote] = useState('');
 
 	const dispatch = useDispatch();
 
-	const initData = useCallback(() => {
-		setSelectedTests(assessment.lab_tests || []);
-		setUrgentLab(assessment?.lab_urgent || false);
-	}, [assessment]);
+	const assessment = useSelector(state => state.patient.assessmentData);
 
 	const fetchLabCombo = useCallback(async () => {
 		try {
@@ -56,13 +39,24 @@ const LabInvestigation = ({
 		}
 	}, [dispatch]);
 
+	const retrieveData = useCallback(async () => {
+		const labRequest = assessment.labRequest;
+
+		setUrgentLab(labRequest?.urgent || false);
+		setLabNote(labRequest?.request_note || '');
+
+		const labs = labRequest ? [...labRequest.tests] : [];
+
+		setSelectedTests(labs);
+	}, [assessment]);
+
 	useEffect(() => {
 		if (!loaded) {
 			fetchLabCombo();
-			initData();
+			retrieveData();
 			setLoaded(true);
 		}
-	}, [fetchLabCombo, initData, loaded]);
+	}, [fetchLabCombo, loaded, retrieveData]);
 
 	const getLabTests = async q => {
 		if (!q || q.length < 1) {
@@ -74,9 +68,36 @@ const LabInvestigation = ({
 		return res?.result || [];
 	};
 
+	const onDispatchLab = (items, obj) => {
+		const labRequest = {
+			requestType: 'labs',
+			patient_id: patient.id,
+			tests: [...items],
+			request_note: obj?.note || '',
+			urgent: obj?.urgent || false,
+			pay_later: 0,
+		};
+
+		dispatch(updateAssessmentData({ ...assessment, labRequest }, patient.id));
+	};
+
+	const onSubmit = e => {
+		e.preventDefault();
+		const labRequest = {
+			requestType: 'labs',
+			patient_id: patient.id,
+			tests: [...selectedTests],
+			request_note: labNote,
+			urgent: urgentLab,
+			pay_later: 0,
+		};
+		dispatch(updateAssessmentData({ ...assessment, labRequest }, patient.id));
+		next();
+	};
+
 	return (
 		<div className="form-block encounter">
-			<form onSubmit={handleSubmit(next)}>
+			<form onSubmit={onSubmit}>
 				<div className="row">
 					<div className="form-group col-sm-6">
 						<label>Lab Group</label>
@@ -92,7 +113,7 @@ const LabInvestigation = ({
 									...e.tests.map(t => ({ ...t.labTest })),
 								];
 								setSelectedTests(items);
-								dispatch(change('lab_tests', items));
+								onDispatchLab(items, { note: labNote, urgent: urgentLab });
 							}}
 						/>
 					</div>
@@ -112,11 +133,10 @@ const LabInvestigation = ({
 							onChange={e => {
 								if (e) {
 									setSelectedTests(e);
-									dispatch(change('lab_tests', e));
 								} else {
 									setSelectedTests([]);
-									dispatch(change('lab_tests', []));
 								}
+								onDispatchLab(e || [], { note: labNote, urgent: urgentLab });
 							}}
 							placeholder="Search Lab Test"
 						/>
@@ -138,14 +158,23 @@ const LabInvestigation = ({
 				</div>
 				<div className="row mt-4">
 					<div className="form-group col-sm-12">
-						<Field
-							id="note"
-							name="lab_note"
-							component={renderTextArea}
-							label="Lab Request Note"
-							type="text"
-							placeholder="Enter note"
-						/>
+						<div className="form-group">
+							<label>Lab Request Note</label>
+							<textarea
+								className="form-control"
+								name="lab_request_note"
+								rows="3"
+								placeholder="Enter request note"
+								onChange={e => {
+									setLabNote(e.target.value);
+									onDispatchLab(selectedTests, {
+										note: e.target.value,
+										urgent: urgentLab,
+									});
+								}}
+								value={labNote}
+							></textarea>
+						</div>
 					</div>
 				</div>
 				<div className="row">
@@ -159,7 +188,10 @@ const LabInvestigation = ({
 									checked={urgentLab}
 									onChange={e => {
 										setUrgentLab(!urgentLab);
-										dispatch(change('lab_urgent', !urgentLab));
+										onDispatchLab(selectedTests, {
+											note: labNote,
+											urgent: !urgentLab,
+										});
 									}}
 								/>
 								Please check if urgent
@@ -182,17 +214,4 @@ const LabInvestigation = ({
 	);
 };
 
-const mapStateToProps = (state, ownProps) => {
-	return {
-		initialValues: { ...ownProps.assessment },
-	};
-};
-
-export default connect(mapStateToProps, { change })(
-	reduxForm({
-		form: 'antenatalAssessment', //Form name is same
-		destroyOnUnmount: false,
-		forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
-		validate,
-	})(LabInvestigation)
-);
+export default LabInvestigation;

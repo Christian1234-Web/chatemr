@@ -12,7 +12,7 @@ import AsyncSelect from 'react-select/async/dist/react-select.esm';
 import { searchAPI } from '../../services/constants';
 import { notifyError } from '../../services/notify';
 import { loadTransactions } from '../../actions/transaction';
-import TransactionTable from '../../components/Tables/TransactionTable';
+import TransactionTable from '../../components/TransactionTable';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import TableLoading from '../../components/TableLoading';
 

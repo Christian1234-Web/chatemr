@@ -119,7 +119,7 @@ class HxForm extends Component {
 				menarche: data.menarche || '',
 				menstralCycle: data.menstralCycle || '',
 				lmp: this.state.lmpHx
-					? moment(this.state.lmpHx).format('DD-MM-YYYY')
+					? moment(this.state.lmpHx).format('DD-MMM-YYYY')
 					: '',
 				contraception: data.contraception || '',
 				contraceptionMethod: data.contraceptionMethod || '',
@@ -127,11 +127,12 @@ class HxForm extends Component {
 				abnormalBleeding: data.abnormalBleeding || '',
 			},
 			obstericHistory: {
-				gestHistory: data.gestHistory || '',
+				gestDelivery: data.gestDelivery || '',
+				deliveredWhere: data.deliveredWhere || '',
 				sex: data.sex || '',
 				weight: data.weight || '',
 				alive: data.obsteric_alive || '',
-				dob: this.state.dob ? moment(this.state.dob).format('DD-MM-YYYY') : '',
+				dob: this.state.dob ? moment(this.state.dob).format('DD-MMM-YYYY') : '',
 				abnormalities: data.abnormalities || '',
 				comment: data.additional_comment || '',
 			},
@@ -175,7 +176,7 @@ class HxForm extends Component {
 				menarche: data.initialMenarche || '',
 				menstralCycle: data.initialMenstralCycle || '',
 				dateOfMovement: this.state.dom
-					? moment(this.state.dom).format('DD-MM-YYYY')
+					? moment(this.state.dom).format('DD-MMM-YYYY')
 					: '',
 				w_r: data.w_r || '',
 				height: data.initHeight || '',
@@ -193,7 +194,7 @@ class HxForm extends Component {
 			},
 			routineAssessments: {
 				gestDate: this.state.gest_date
-					? moment(this.state.gest_date).format('DD-MM-YYYY')
+					? moment(this.state.gest_date).format('DD-MMM-YYYY')
 					: '',
 				heightOfFundus: data.routine_height_of_fundus || '',
 				position: data.position || '',

@@ -16,6 +16,9 @@ const validate = values => {
 	if (!values.unit_price) {
 		errors.unit_price = 'enter purchase price';
 	}
+	if (!values.selling_price) {
+		errors.selling_price = 'enter selling price';
+	}
 
 	return errors;
 };
@@ -150,6 +153,17 @@ const ModalUpdateQty = ({
 								</div>
 								<div className="row">
 									<div className="col-sm-12">
+										<Field
+											id="selling_price"
+											name="selling_price"
+											component={renderTextInput}
+											label="Selling Price Per Item"
+											type="text"
+										/>
+									</div>
+								</div>
+								<div className="row">
+									<div className="col-sm-12">
 										<label>Vendor</label>
 										<AsyncCreatableSelect
 											cacheOptions
@@ -198,6 +212,7 @@ const mapStateToProps = ownProps => {
 		initialValues: {
 			quantity: 0,
 			unit_price: ownProps?.item?.unitPrice || 0.0,
+			selling_price: ownProps?.item?.selling_price || 0.0,
 		},
 	};
 };

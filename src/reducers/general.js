@@ -20,7 +20,8 @@ import {
 	ADD_STAFF_FOR_APPRAISAL,
 	SET_IS_STAFF_APPRAISAL,
 	CREAE_NEW_DRUG,
-	CREAE_NEW_GENERIC,
+	CREATE_NEW_GENERIC,
+	TOGGLE_CHAT_INBOX,
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -53,6 +54,7 @@ const INITIAL_STATE = {
 	isStaffAppraisal: false,
 	create_new_drug: false,
 	create_new_generic: false,
+	inbox_visible: false,
 };
 
 const general = (state = INITIAL_STATE, action) => {
@@ -119,8 +121,10 @@ const general = (state = INITIAL_STATE, action) => {
 			};
 		case CREAE_NEW_DRUG:
 			return { ...state, create_new_drug: action.payload };
-		case CREAE_NEW_GENERIC:
+		case CREATE_NEW_GENERIC:
 			return { ...state, create_new_generic: action.payload };
+		case TOGGLE_CHAT_INBOX:
+			return { ...state, inbox_visible: action.payload };
 		default:
 			return state;
 	}

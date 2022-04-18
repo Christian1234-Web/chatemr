@@ -74,7 +74,6 @@ const AppointmentFormModal = ({ addAppointment, closeModal }) => {
 						currentView === 'consultation-form' ? '800px' : '550px'
 					}`,
 				}}
-				role="document"
 			>
 				<div className="modal-content text-center">
 					<div className="modal-header faded smaller">

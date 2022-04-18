@@ -7,6 +7,7 @@ import { startBlock, stopBlock } from '../../actions/redux-block';
 import { notifyError, notifySuccess } from '../../services/notify';
 import { criticalList } from '../../services/constants';
 import { messageService } from '../../services/message';
+import ModalHeader from '../ModalHeader';
 
 const ViewAlerts = ({ closeModal }) => {
 	const [loading, setLoading] = useState(true);
@@ -76,16 +77,8 @@ const ViewAlerts = ({ closeModal }) => {
 		>
 			<div className="modal-dialog modal-centered">
 				<div className="modal-content modal-scroll text-center">
-					<button
-						aria-label="Close"
-						className="close"
-						type="button"
-						onClick={() => closeModal()}
-					>
-						<span className="os-icon os-icon-close"></span>
-					</button>
+					<ModalHeader closeModal={() => closeModal()} title="Alerts" />
 					<div className="onboarding-content with-gradient">
-						<h4 className="onboarding-title">Alerts</h4>
 						<div className="mb-4">
 							<div className="row">
 								{criticalAlerts.map((item, i) => {

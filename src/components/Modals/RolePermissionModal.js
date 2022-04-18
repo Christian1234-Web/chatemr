@@ -127,7 +127,7 @@ const RolePermissionModal = ({ role, closeModal }) => {
 														}}
 														type="checkbox"
 													/>{' '}
-													{item.name}
+													{item.slug}
 												</label>
 											</div>
 										</div>

@@ -4,13 +4,18 @@ import { useSelector, useDispatch } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
 
 import TableLoading from '../TableLoading';
-import { request, itemRender, formatDate } from '../../services/utilities';
+import {
+	request,
+	itemRender,
+	formatDate,
+	parseNote,
+} from '../../services/utilities';
 import { notifyError } from '../../services/notify';
 import { startBlock, stopBlock } from '../../actions/redux-block';
-import CreateNote from '../Modals/CreateNote';
+import CreateGynaeNote from '../Modals/CreateGynaeNote';
 import { staffname } from '../../services/utilities';
 
-const Notes = ({ can_request = true }) => {
+const GynaeHistory = ({ can_request = true }) => {
 	const [loading, setLoading] = useState(true);
 	const [notes, setNotes] = useState([]);
 	const [meta, setMeta] = useState({
@@ -28,7 +33,7 @@ const Notes = ({ can_request = true }) => {
 			try {
 				dispatch(startBlock());
 				const p = page || 1;
-				const url = `patient-notes?page=${p}&limit=10&antenatal_id=${antenatal.id}&type=antenatal`;
+				const url = `patient-notes?page=${p}&limit=10&antenatal_id=${antenatal.id}&type=patient-history&category=gynaeHistory`;
 				const rs = await request(url, 'GET', true);
 				const { result, ...meta } = rs;
 				setNotes(result);
@@ -82,11 +87,11 @@ const Notes = ({ can_request = true }) => {
 							className="btn btn-sm btn-secondary text-white ml-3"
 							onClick={() => newEntry()}
 						>
-							New Note
+							Add Record
 						</a>
 					)}
 				</div>
-				<h6 className="element-header">Antenatal Notes</h6>
+				<h6 className="element-header">Gynaecological History</h6>
 				<div className="element-box p-3 m-0">
 					{loading ? (
 						<TableLoading />
@@ -96,8 +101,8 @@ const Notes = ({ can_request = true }) => {
 								<thead>
 									<tr>
 										<th>Date</th>
-										<th>Note</th>
-										<th nowrap="nowrap">Noted By</th>
+										<th>Data</th>
+										<th nowrap="nowrap">By</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -110,7 +115,7 @@ const Notes = ({ can_request = true }) => {
 												<td>
 													<div
 														dangerouslySetInnerHTML={{
-															__html: item.description,
+															__html: parseNote(item),
 														}}
 													/>
 												</td>
@@ -138,15 +143,15 @@ const Notes = ({ can_request = true }) => {
 				</div>
 			</div>
 			{showModal && (
-				<CreateNote
+				<CreateGynaeNote
 					closeModal={closeModal}
 					updateNote={updateNote}
 					antenatal_id={antenatal.id}
-					type="antenatal"
+					type="patient-history"
 				/>
 			)}
 		</div>
 	);
 };
 
-export default Notes;
+export default GynaeHistory;

@@ -45,7 +45,7 @@ const NurseMenu = () => {
 				</Link>
 			</li>
 			<li>
-				<Link to="/antenatal">
+				<Link to="/antenatal/enrolled">
 					<div className="icon-w">
 						<div className="os-icon os-icon-documents-13" />
 					</div>

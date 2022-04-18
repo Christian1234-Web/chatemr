@@ -48,7 +48,7 @@ const Complaints = ({ next, patient }) => {
 		}
 	}, [loaded, retrieveData]);
 
-	const onSubmit = async e => {
+	const onSubmit = e => {
 		e.preventDefault();
 		dispatch(
 			updateEncounterData({ ...encounter, complaints: complaint }, patient.id)

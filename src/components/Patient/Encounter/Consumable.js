@@ -14,6 +14,7 @@ import {
 	consultationAPI,
 	defaultEncounter,
 	CK_ENCOUNTER,
+	durationTypes,
 } from '../../../services/constants';
 import { request } from '../../../services/utilities';
 import { notifyError, notifySuccess } from '../../../services/notify';
@@ -31,11 +32,17 @@ const Consumable = ({ previous, patient, closeModal, appointment_id }) => {
 	const [quantity, setQuantity] = useState('');
 	const [items, setItems] = useState([]);
 	const [item, setItem] = useState(null);
-	const [appoinment, setAppoinment] = useState(null);
 
 	// appointment
+	const [appointmentItems, setAppointmentItems] = useState(null);
 	const [appointmentDate, setAppointmentDate] = useState('');
-	const [appointmentReason, setAppointmentReason] = useState('');
+
+	const [datetime, setDatetime] = useState('');
+	const [duration, setDuration] = useState('');
+	const [durationType, setDurationType] = useState('');
+
+	const [notAvailable, setNotAvailable] = useState('');
+	const [available, setAvailable] = useState('');
 
 	// selected
 	const [selectedConsumables, setSelectedConsumables] = useState([]);
@@ -80,25 +87,12 @@ const Consumable = ({ previous, patient, closeModal, appointment_id }) => {
 		[dispatch, encounter, patient]
 	);
 
-	const saveAppoinment = useCallback(
-		data => {
-			setAppoinment(data);
-			setAppointmentDate(
-				data && data.date && data.date !== '' ? new Date(moment(data.date)) : ''
-			);
-			setAppointmentReason(data?.reason || '');
-			dispatch(
-				updateEncounterData(
-					{
-						...encounter,
-						nextAppointment: data,
-					},
-					patient.id
-				)
-			);
-		},
-		[dispatch, encounter, patient]
-	);
+	const saveAppointment = data => {
+		setAppointmentItems(data);
+		dispatch(
+			updateEncounterData({ ...encounter, nextAppointment: data }, patient.id)
+		);
+	};
 
 	const fetchConsumables = useCallback(async () => {
 		try {
@@ -122,19 +116,25 @@ const Consumable = ({ previous, patient, closeModal, appointment_id }) => {
 				: null;
 		saveInstruction(encounterData || defaultEncounter.instruction);
 
-		const consumbalesData =
+		const consumablesData =
 			data && data.patient_id === patient.id
 				? data?.encounter?.consumables
 				: null;
 
-		saveConsumables(consumbalesData);
+		saveConsumables(consumablesData);
 
 		const appointmentData =
 			data && data.patient_id === patient.id
 				? data?.encounter?.nextAppointment
 				: null;
-		saveAppoinment(appointmentData);
-	}, [patient, saveAppoinment, saveConsumables, saveInstruction]);
+		setAppointmentItems(appointmentData);
+		setDatetime(appointmentData?.datetime || '');
+		if (appointmentData?.datetime && appointmentData.datetime !== '') {
+			setAppointmentDate(new Date(moment(appointmentData.datetime)));
+		}
+		setDuration(appointmentData?.duration || '');
+		setDurationType(appointmentData?.duration_type || '');
+	}, [patient, saveConsumables, saveInstruction]);
 
 	useEffect(() => {
 		if (!loaded) {
@@ -220,18 +220,15 @@ const Consumable = ({ previous, patient, closeModal, appointment_id }) => {
 			};
 
 			const nextAppointment = {
-				appointment_date:
-					appointmentDate !== ''
-						? moment(new Date(appointmentDate)).format('YYYY-MM-DD HH:mm:ss')
-						: '',
-				description: appointmentReason,
+				...appointmentItems,
+				doctor_id: staff.id,
 			};
 
 			const encounterData = {
 				...encounter,
 				instruction,
 				consumables: consumableData,
-				nextAppointment: appoinment,
+				nextAppointment,
 			};
 			dispatch(updateEncounterData(encounterData, patient.id));
 
@@ -278,22 +275,41 @@ const Consumable = ({ previous, patient, closeModal, appointment_id }) => {
 		}
 	};
 
-	const checkNextDate = async date => {
+	const checkAvailableDate = async () => {
 		try {
-			setAppointmentDate(date);
+			setAvailable('');
+			setNotAvailable('');
+
+			if (datetime === '') {
+				notifyError('Select date');
+				return;
+			}
+
+			if (duration === '') {
+				notifyError('Select duration');
+				return;
+			}
+
+			if (durationType === '') {
+				notifyError('Select duration type');
+				return;
+			}
+
 			dispatch(startBlock());
-			const _date = moment(new Date(date));
-			const _next = _date.format('YYYY-MM-DD HH:mm:ss');
-			const url = `front-desk/appointments/check-date/available?date=${_next}&staff_id=${staff.id}`;
-			const rs = await request(url, 'GET', true);
+			const data = {
+				datetime,
+				staff_id: staff.id,
+				duration,
+				duration_type: durationType,
+			};
+			const url = 'doctor_appointments/check-availability';
+			const rs = await request(url, 'POST', true, data);
+			const _time = moment(datetime).format('DD-MMM-YYYY h:mm A');
+			dispatch(stopBlock());
 			if (rs && rs.success && rs.available) {
-				const data = { ...appoinment, date };
-				saveAppoinment(data);
-				dispatch(stopBlock());
+				setAvailable(`The selected time (${_time}) is available`);
 			} else {
-				dispatch(stopBlock());
-				const _time = _date.format('DD-MMM-YYYY h:mm A');
-				notifyError(`The selected time (${_time}) is not available`);
+				setNotAvailable(`The selected time (${_time}) is not available`);
 			}
 		} catch (e) {
 			console.log(e);
@@ -400,37 +416,88 @@ const Consumable = ({ previous, patient, closeModal, appointment_id }) => {
 				</div>
 				<div className="mt-4"></div>
 				<h5>Schedule Next Appointment</h5>
+				{available !== '' && (
+					<div className="alert alert-success">{available}</div>
+				)}
+				{notAvailable !== '' && (
+					<div className="alert alert-danger">{notAvailable}</div>
+				)}
 				<div className="row">
-					<div className="col-sm-6">
+					<div className="col-sm-3">
 						<div className="form-group">
 							<label>Appointment Date</label>
 							<DatePicker
 								dateFormat="dd-MMM-yyyy h:mm aa"
 								className="single-daterange form-control"
 								selected={appointmentDate}
-								showTimeSelect
 								timeFormat="HH:mm"
-								timeIntervals={15}
-								onChange={date => checkNextDate(date)}
+								timeInputLabel="Time: "
+								showTimeInput
+								onChange={date => {
+									setAppointmentDate(date);
+									const datetime = moment(new Date(date)).format(
+										'YYYY-MM-DD HH:mm:ss'
+									);
+									setDatetime(datetime);
+									const data = { ...appointmentItems, datetime };
+									saveAppointment(data);
+								}}
 							/>
 						</div>
 					</div>
-				</div>
-				<div className="row">
-					<div className="col-sm-12">
+					<div className="col-sm-3">
 						<div className="form-group">
-							<label>Description/Reason</label>
-							<textarea
-								placeholder="Enter description"
-								name="appointment_desc"
+							<label>Duration of Appointment</label>
+							<input
+								type="number"
 								className="form-control"
-								cols="3"
+								placeholder="Enter duration"
+								name="duration"
 								onChange={e => {
-									const data = { ...appoinment, reason: e.target.value };
-									saveAppoinment(data);
+									setDuration(e.target.value);
+									const data = {
+										...appointmentItems,
+										duration: e.target.value,
+									};
+									saveAppointment(data);
 								}}
-								value={appointmentReason}
-							></textarea>
+								value={duration}
+							/>
+						</div>
+					</div>
+					<div className="col-sm-3">
+						<div className="form-group">
+							<label>(Minutes/Hour/Days/etc)</label>
+							<select
+								name="duration_type"
+								value={durationType}
+								onChange={e => {
+									setDurationType(e.target.value);
+									const data = {
+										...appointmentItems,
+										duration_type: e.target.value,
+									};
+									saveAppointment(data);
+								}}
+								className="form-control"
+							>
+								<option value="">-- Select --</option>
+								{durationTypes.map((d, i) => {
+									return (
+										<option key={i} value={d.value}>
+											{d.label}
+										</option>
+									);
+								})}
+							</select>
+						</div>
+					</div>
+					<div className="col-sm-3">
+						<div className="form-group">
+							<label className="d-block">&nbsp;</label>
+							<a className="btn btn-secondary" onClick={checkAvailableDate}>
+								Check Availability
+							</a>
 						</div>
 					</div>
 				</div>

@@ -624,7 +624,12 @@ const PrescriptionForm = ({ patient, history, module, location, itemId }) => {
 									<td>
 										<div className="badge badge-dark">{`${item.quantity} - ${
 											item.frequency
-										}x ${item.frequencyType} ${parseFrequency(
+										}x ${
+											item.frequencyType === 'as-needed' ||
+											item.frequencyType === 'immediately'
+												? ''
+												: item.frequencyType
+										} ${parseFrequency(
 											item.frequencyType,
 											item.duration
 										)}`}</div>

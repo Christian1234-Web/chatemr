@@ -9,6 +9,7 @@ import { notifySuccess, notifyError } from '../../services/notify';
 import { request } from '../../services/utilities';
 import { noteTypes, specialties } from '../../services/constants';
 import { messageService } from '../../services/message';
+import ModalHeader from '../ModalHeader';
 
 const CreateNote = ({
 	closeModal,
@@ -67,20 +68,15 @@ const CreateNote = ({
 		>
 			<div className="modal-dialog modal-lg modal-centered">
 				<div className="modal-content text-center">
-					<button
-						aria-label="Close"
-						className="close"
-						type="button"
-						onClick={() => closeModal()}
-					>
-						<span className="os-icon os-icon-close" />
-					</button>
-					<div className="onboarding-content with-gradient">
-						<h4 className="onboarding-title">
-							{type && type !== '' && type !== 'consultation'
+					<ModalHeader
+						closeModal={() => closeModal()}
+						title={
+							type && type !== '' && type !== 'consultation'
 								? startCase(type)
-								: 'New Note'}
-						</h4>
+								: 'New Note'
+						}
+					/>
+					<div className="onboarding-content with-gradient">
 						<div className="element-box">
 							<form onSubmit={onSubmit}>
 								{type && type === 'findings' && (

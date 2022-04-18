@@ -82,7 +82,7 @@ const ViewEncounter = ({ closeModal, encounter }) => {
 														<div
 															className="px-4"
 															dangerouslySetInnerHTML={{
-																__html: parseNote(note),
+																__html: parseNote(note, true),
 															}}
 														/>
 													</Fragment>
@@ -206,7 +206,7 @@ const ViewEncounter = ({ closeModal, encounter }) => {
 											<div
 												className="px-4"
 												dangerouslySetInnerHTML={{
-													__html: parseNote(encounter.encounter_note),
+													__html: parseNote(encounter.encounter_note, true),
 												}}
 											/>
 										) : (

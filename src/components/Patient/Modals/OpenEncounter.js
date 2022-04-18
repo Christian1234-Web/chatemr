@@ -71,31 +71,6 @@ class OpenEncounter extends Component {
 		setTimeout(() => {
 			this.focusDiv();
 		}, 200);
-
-		// ArrowKeysReact.config({
-		// 	left: () => {
-		// 		this.setState({
-		// 			content: 'left key detected.',
-		// 		});
-		// 		this.previous();
-		// 	},
-		// 	right: () => {
-		// 		this.setState({
-		// 			content: 'right key detected.',
-		// 		});
-		// 		this.next();
-		// 	},
-		// 	up: () => {
-		// 		this.setState({
-		// 			content: 'up key detected.',
-		// 		});
-		// 	},
-		// 	down: () => {
-		// 		this.setState({
-		// 			content: 'down key detected.',
-		// 		});
-		// 	},
-		// });
 	}
 
 	open = i => () => {

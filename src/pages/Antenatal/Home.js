@@ -1,19 +1,22 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useState, useEffect } from 'react';
 import { Switch, Route, Link } from 'react-router-dom';
 
 import NoMatch from '../NoMatch';
 import Splash from '../../components/Splash';
 
-const Antenatal = lazy(() => import('./AntenatalPatients'));
+const AntenatalPatients = lazy(() => import('./AntenatalPatients'));
 const EnrollPatient = lazy(() => import('./EnrollmentForm'));
 
 const Home = ({ match, location }) => {
+	const [activePage, setActivePage] = useState('enrolled');
+
 	const page = location.pathname.split('/').pop();
 
-	let pageTitle = 'Dashboard';
-	if (page === 'enroll-patient') {
-		pageTitle = 'Enroll Patient';
-	}
+	useEffect(() => {
+		if (page !== activePage) {
+			setActivePage(page);
+		}
+	}, [activePage, page]);
 
 	return (
 		<div className="content-i">
@@ -21,33 +24,54 @@ const Home = ({ match, location }) => {
 				<div className="row">
 					<div className="col-sm-12">
 						<div className="element-wrapper">
-							<div className="element-actions">
-								<Link
-									to={match.path}
-									className={`mx-2 btn btn-primary btn-sm  ${
-										page === 'antenatal' ? 'btn-outline-primary' : ''
-									}`}
-								>
-									Dashboard
-								</Link>
-								<Link
-									to={`${match.path}/enroll-patient`}
-									className={`mr-2 btn btn-primary btn-sm  ${
-										page === 'enroll-patient' ? 'btn-outline-primary' : ''
-									}`}
-								>
-									Enroll Patient
-								</Link>
+							<div className="os-tabs-w mx-1">
+								<div className="os-tabs-controls os-tabs-complex">
+									<ul className="nav nav-tabs upper">
+										<li className="nav-item">
+											<Link
+												className={`nav-link ${
+													activePage === 'enrolled' ? 'active' : ''
+												}`}
+												to="/antenatal/enrolled"
+											>
+												Enrolled Patients
+											</Link>
+										</li>
+										<li className="nav-item">
+											<Link
+												className={`nav-link ${
+													activePage === 'closed' ? 'active' : ''
+												}`}
+												to="/antenatal/closed"
+											>
+												Closed
+											</Link>
+										</li>
+										<li className="nav-item nav-actions d-sm-block">
+											<Link
+												to="/antenatal/enroll-patient"
+												className={`btn btn-primary btn-sm  ${
+													page === 'enroll-patient' ? 'btn-outline-primary' : ''
+												}`}
+											>
+												<i className="os-icon os-icon-plus-circle" /> Enroll
+												Patient
+											</Link>
+										</li>
+									</ul>
+								</div>
 							</div>
-							<h6 className="element-header">{pageTitle}</h6>
-							<div className="element-content row">
-								<div className="col-sm-12">
+							<div className="row">
+								<div className="col-md-12">
 									<Suspense fallback={<Splash />}>
 										<Switch>
 											<Route
-												exact
-												path={`${match.url}`}
-												component={Antenatal}
+												path={`${match.url}/enrolled`}
+												component={AntenatalPatients}
+											/>
+											<Route
+												path={`${match.url}/closed`}
+												component={AntenatalPatients}
 											/>
 											<Route
 												exact

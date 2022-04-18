@@ -24,6 +24,7 @@ export class ObstericsHistory extends Component {
 				break;
 		}
 	};
+
 	render() {
 		const { handleSubmit, previousPage, error, page, value } = this.props;
 		return (

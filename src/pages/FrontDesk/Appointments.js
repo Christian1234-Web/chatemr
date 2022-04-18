@@ -10,11 +10,13 @@ import {
 	hasCreateAppointmentPermission,
 	hasViewAppointmentPermission,
 } from '../../permission-utils/appointment';
+import DoctorsAppointment from '../../components/Modals/DoctorsAppointment';
 
 const Appointments = ({ location }) => {
 	const [activePage, setActivePage] = useState('');
 	const [count, setCount] = useState(0);
 	const [showModal, setShowModal] = useState(false);
+	const [showAppointment, setShowAppointment] = useState(false);
 
 	const staff = useSelector(state => state.user.profile);
 
@@ -34,9 +36,15 @@ const Appointments = ({ location }) => {
 		setShowModal(true);
 	};
 
+	const openAppointments = () => {
+		document.body.classList.add('modal-open');
+		setShowAppointment(true);
+	};
+
 	const closeModal = () => {
 		document.body.classList.remove('modal-open');
 		setShowModal(false);
+		setShowAppointment(false);
 	};
 
 	return (
@@ -70,32 +78,33 @@ const Appointments = ({ location }) => {
 							</li>
 						)}
 						<li className="nav-item nav-actions d-sm-block">
-							<div className="row no-gutters">
-								<div className="col-md-6">
-									<a
-										className="btn btn-primary btn-sm text-white"
-										onClick={() => newPatient()}
-									>
-										<i className="os-icon os-icon-plus-circle"></i>
-										<span>New Patient</span>
-									</a>
-								</div>
-								{hasCreateAppointmentPermission(staff.permissions) && (
-									<div className="col-md-6">
-										<Link
-											className="btn btn-primary btn-sm text-white"
-											to={{
-												pathname: '/front-desk/appointments/queue',
-												search: `?new=${count}`,
-												state: { from: location.pathname },
-											}}
-										>
-											<i className="os-icon os-icon-plus-circle"></i>
-											<span>New Appointment</span>
-										</Link>
-									</div>
-								)}
-							</div>
+							<a
+								className="btn btn-primary btn-sm"
+								onClick={() => openAppointments()}
+							>
+								<i className="os-icon os-icon-basic-2-259-calendar"></i>
+								<span>Doctors Appointments</span>
+							</a>
+							<a
+								className="btn btn-primary btn-sm"
+								onClick={() => newPatient()}
+							>
+								<i className="os-icon os-icon-plus-circle"></i>
+								<span>New Patient</span>
+							</a>
+							{hasCreateAppointmentPermission(staff.permissions) && (
+								<Link
+									className="btn btn-primary btn-sm"
+									to={{
+										pathname: '/front-desk/appointments/queue',
+										search: `?new=${count}`,
+										state: { from: location.pathname },
+									}}
+								>
+									<i className="os-icon os-icon-plus-circle"></i>
+									<span>New Appointment</span>
+								</Link>
+							)}
 						</li>
 					</ul>
 				</div>
@@ -103,6 +112,9 @@ const Appointments = ({ location }) => {
 			{activePage === 'queue' && <AllAppointments filter="today" />}
 			{activePage === 'history' && <AllAppointments filter="all" />}
 			{showModal && <PatientForm closeModal={() => closeModal()} />}
+			{showAppointment && (
+				<DoctorsAppointment closeModal={() => closeModal()} isDoctor={false} />
+			)}
 		</div>
 	);
 };

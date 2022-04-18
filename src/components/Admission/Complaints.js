@@ -43,7 +43,7 @@ const Complaints = ({ next }) => {
 		}
 	}, [loaded, retrieveData]);
 
-	const onSubmit = async e => {
+	const onSubmit = e => {
 		e.preventDefault();
 		dispatch(updateSoapData({ ...encounter, complaints: complaint }));
 		dispatch(next);

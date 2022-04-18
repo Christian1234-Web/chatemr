@@ -21,7 +21,7 @@ import {
 	CK_ENCOUNTER,
 } from './services/constants';
 import { toggleProfile, signOut } from './actions/user';
-import { setConnection } from './actions/general';
+import { setConnection, toggleChat } from './actions/general';
 import ability from './services/ability';
 import { AbilityContext } from './components/common/Can';
 import { request } from './services/utilities';
@@ -38,6 +38,7 @@ import AdmissionProfile from './pages/AdmissionProfile';
 import IVFProfile from './pages/IVFProfile';
 import NicuProfile from './pages/NicuProfile';
 import LabourProfile from './pages/LabourProfile';
+import InboxChat from './components/InboxChat';
 
 const FrontDesk = lazy(() => import('./pages/FrontDesk/Home'));
 const Nurse = lazy(() => import('./pages/Nurse/Home'));
@@ -256,6 +257,8 @@ class App extends Component {
 															<Route path="/my-account" component={MyAccount} />
 															<Route component={NoMatch} />
 														</Switch>
+														{/* <div onClick={() => this.props.toggleChat(true)} class="floated-chat-btn"><i class="os-icon os-icon-mail-07"></i><span>inbox</span></div> */}
+														<InboxChat />
 													</div>
 												</div>
 												<SlidingPane isOpen={isStaffOpen}>
@@ -338,5 +341,10 @@ const mapStateToProps = state => {
 };
 
 export default withRouter(
-	connect(mapStateToProps, { toggleProfile, signOut, setConnection })(App)
+	connect(mapStateToProps, {
+		toggleProfile,
+		signOut,
+		setConnection,
+		toggleChat,
+	})(App)
 );

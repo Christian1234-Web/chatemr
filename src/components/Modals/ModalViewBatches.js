@@ -125,6 +125,7 @@ const ModalViewBatches = ({ closeModal, drug }) => {
 											<tr>
 												<th>Name</th>
 												<th>Quantity</th>
+												<th>Cost Price</th>
 												<th>Unit Price</th>
 												<th>Expiration</th>
 												<th>Vendor</th>
@@ -144,6 +145,7 @@ const ModalViewBatches = ({ closeModal, drug }) => {
 													<tr key={i}>
 														<td>{item.name || '--'}</td>
 														<td>{item.quantity}</td>
+														<td>{formatCurrency(item.costPrice)}</td>
 														<td>{formatCurrency(item.unitPrice)}</td>
 														<td>
 															{formatDate(item.expirationDate, 'DD-MMM-YYYY')}

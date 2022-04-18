@@ -35,9 +35,11 @@ const Investigations = ({ patient, previous, next }) => {
 
 	// lab
 	const [urgentLab, setUrgentLab] = useState(false);
+	const [labNote, setLabNote] = useState('');
 
 	// radiology
 	const [urgentScan, setUrgentScan] = useState(false);
+	const [scanNote, setScanNote] = useState('');
 
 	const encounter = useSelector(state => state.patient.encounterData);
 
@@ -71,17 +73,19 @@ const Investigations = ({ patient, previous, next }) => {
 				? data.encounter?.investigations
 				: null;
 
-		setUrgentLab(investigationsData?.labRequest?.urgentLab || false);
+		setUrgentLab(investigationsData?.labRequest?.urgent || false);
 		setValue(
 			'lab_request_note',
-			investigationsData?.labRequest?.lab_request_note || ''
+			investigationsData?.labRequest?.request_note || ''
 		);
+		setLabNote(investigationsData?.labRequest?.request_note || '');
 
-		setUrgentScan(investigationsData?.radiologyRequest?.urgentScan || false);
+		setUrgentScan(investigationsData?.radiologyRequest?.urgent || false);
 		setValue(
 			'scan_request_note',
-			investigationsData?.radiologyRequest?.scan_request_note || ''
+			investigationsData?.radiologyRequest?.request_note || ''
 		);
+		setScanNote(investigationsData?.radiologyRequest?.request_note || '');
 
 		const labs = investigationsData.labRequest
 			? [...investigationsData.labRequest.tests]
@@ -98,8 +102,8 @@ const Investigations = ({ patient, previous, next }) => {
 			requestType: 'labs',
 			patient_id: patient.id,
 			tests: [...labs],
-			request_note: investigationsData?.labRequest?.lab_request_note || '',
-			urgent: investigationsData?.labRequest?.urgentLab || false,
+			request_note: investigationsData?.labRequest?.request_note || '',
+			urgent: investigationsData?.labRequest?.urgent || false,
 			pay_later: 0,
 		};
 
@@ -107,9 +111,8 @@ const Investigations = ({ patient, previous, next }) => {
 			requestType: 'scans',
 			patient_id: patient.id,
 			tests: [...scans],
-			request_note:
-				investigationsData?.radiologyRequest?.scan_request_note || '',
-			urgent: investigationsData?.radiologyRequest?.urgentScan || false,
+			request_note: investigationsData?.radiologyRequest?.request_note || '',
+			urgent: investigationsData?.radiologyRequest?.urgent || false,
 		};
 
 		dispatch(
@@ -194,7 +197,7 @@ const Investigations = ({ patient, previous, next }) => {
 			requestType: 'labs',
 			patient_id: patient.id,
 			tests: [...items],
-			request_note: obj?.lab_request_note || '',
+			request_note: obj?.note || '',
 			urgent: obj?.urgent || false,
 			pay_later: 0,
 		};
@@ -218,7 +221,7 @@ const Investigations = ({ patient, previous, next }) => {
 			requestType: 'scans',
 			patient_id: patient.id,
 			tests: [...items],
-			request_note: obj?.scan_request_note || '',
+			request_note: obj?.note || '',
 			urgent: obj?.urgent || false,
 		};
 
@@ -255,7 +258,7 @@ const Investigations = ({ patient, previous, next }) => {
 									...e.tests.map(t => ({ ...t.labTest })),
 								];
 								setSelectedTests(items);
-								onDispatchLab(items);
+								onDispatchLab(items, { note: labNote, urgent: urgentLab });
 							}}
 						/>
 					</div>
@@ -278,7 +281,7 @@ const Investigations = ({ patient, previous, next }) => {
 								} else {
 									setSelectedTests([]);
 								}
-								onDispatchLab(e || []);
+								onDispatchLab(e || [], { note: labNote, urgent: urgentLab });
 							}}
 							placeholder="Search Lab Test"
 						/>
@@ -307,7 +310,11 @@ const Investigations = ({ patient, previous, next }) => {
 							rows="3"
 							placeholder="Enter request note"
 							onChange={e => {
-								onDispatchLab(selectedTests, { note: e.target.value });
+								setLabNote(e.target.value);
+								onDispatchLab(selectedTests, {
+									note: e.target.value,
+									urgent: urgentLab,
+								});
 							}}
 							ref={register}
 						></textarea>
@@ -324,7 +331,10 @@ const Investigations = ({ patient, previous, next }) => {
 									checked={urgentLab}
 									onChange={e => {
 										setUrgentLab(!urgentLab);
-										onDispatchLab(selectedTests, { urgent: !urgentLab });
+										onDispatchLab(selectedTests, {
+											note: labNote,
+											urgent: !urgentLab,
+										});
 									}}
 									ref={register}
 								/>
@@ -349,7 +359,7 @@ const Investigations = ({ patient, previous, next }) => {
 							loadOptions={getServices}
 							onChange={e => {
 								setSelectedScans(e || []);
-								onDispatchScan(e);
+								onDispatchScan(e, { note: scanNote, urgent: urgentScan });
 							}}
 							placeholder="Search Scans"
 						/>
@@ -378,7 +388,11 @@ const Investigations = ({ patient, previous, next }) => {
 							rows="3"
 							placeholder="Enter request note"
 							onChange={e => {
-								onDispatchScan(selectedScans, { note: e.target.value });
+								setScanNote(e.target.value);
+								onDispatchScan(selectedScans, {
+									note: e.target.value,
+									urgent: urgentScan,
+								});
 							}}
 							ref={register}
 						></textarea>
@@ -395,7 +409,10 @@ const Investigations = ({ patient, previous, next }) => {
 									checked={urgentScan}
 									onChange={e => {
 										setUrgentScan(!urgentScan);
-										onDispatchScan(selectedScans, { urgent: !urgentScan });
+										onDispatchScan(selectedScans, {
+											note: scanNote,
+											urgent: !urgentScan,
+										});
 									}}
 									ref={register}
 								/>

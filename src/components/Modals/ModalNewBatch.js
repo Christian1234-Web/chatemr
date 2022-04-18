@@ -9,6 +9,7 @@ import { renderTextInput, request } from '../../services/utilities';
 import waiting from '../../assets/images/waiting.gif';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import { notifyError, notifySuccess } from '../../services/notify';
+import ModalHeader from '../ModalHeader';
 
 const validate = values => {
 	const errors = {};
@@ -16,7 +17,10 @@ const validate = values => {
 		errors.quantity = 'enter quantity';
 	}
 	if (!values.unitPrice) {
-		errors.unitPrice = 'enter unit price';
+		errors.unitPrice = 'enter purchase price';
+	}
+	if (!values.selling_price) {
+		errors.selling_price = 'enter selling price';
 	}
 
 	return errors;
@@ -94,17 +98,8 @@ const ModalNewBatch = ({ closeModal, error, handleSubmit, drug, addBatch }) => {
 				style={{ maxWidth: '320px' }}
 			>
 				<div className="modal-content text-center">
-					<button
-						aria-label="Close"
-						className="close"
-						type="button"
-						onClick={closeModal}
-					>
-						<span className="os-icon os-icon-close" />
-					</button>
+					<ModalHeader closeModal={closeModal} title="Create Batch" />
 					<div className="onboarding-content with-gradient">
-						<h4 className="onboarding-title">Create Batch</h4>
-
 						<div className="form-block">
 							<form onSubmit={handleSubmit(create)}>
 								{error && (
@@ -166,7 +161,18 @@ const ModalNewBatch = ({ closeModal, error, handleSubmit, drug, addBatch }) => {
 											id="unitPrice"
 											name="unitPrice"
 											component={renderTextInput}
-											label="Unit Price"
+											label="Purchase Price Per Item"
+											type="text"
+										/>
+									</div>
+								</div>
+								<div className="row">
+									<div className="col-sm-12">
+										<Field
+											id="selling_price"
+											name="selling_price"
+											component={renderTextInput}
+											label="Selling Price Per Item"
 											type="text"
 										/>
 									</div>

@@ -92,7 +92,7 @@ class VisitNotesTable extends Component {
 																dangerouslySetInnerHTML={{
 																	__html: `<strong class="float-left mr-2"><em>${startCase(
 																		note.type
-																	)}:</em></strong> ${parseNote(note)}`,
+																	)}:</em></strong> ${parseNote(note, true)}`,
 																}}
 															/>
 														</td>

@@ -10,6 +10,7 @@ import { USER_RECORD } from '../services/constants';
 import Splash from '../components/Splash';
 import ProfileBlock from '../components/ProfileBlock';
 import HashRoute from '../components/HashRoute';
+import AncBlock from '../components/AncBlock';
 
 const Notes = lazy(() => import('../components/Labour/Notes'));
 
@@ -66,7 +67,17 @@ class LabourProfile extends Component {
 								<div className="content-box">
 									<div className="row">
 										<div className="col-sm-12">
-											<ProfileBlock profile={true} patient={patient} />
+											<ProfileBlock
+												profile={true}
+												patient={patient}
+												hasButtons={false}
+											/>
+											{patient.antenatal_id && (
+												<AncBlock
+													patient={patient}
+													enrollmentId={patient.antenatal_id}
+												/>
+											)}
 										</div>
 										<Suspense fallback={<Splash />}>
 											<Switch>

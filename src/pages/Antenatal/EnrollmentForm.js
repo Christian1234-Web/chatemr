@@ -39,14 +39,20 @@ class EnrollmentForm extends Component {
 			const { history, location, reset } = this.props;
 			this.setState({ submitting: true });
 			const url = 'patient/antenatal';
-			await request(url, 'POST', true, data);
-			this.setState({ submitting: false });
-			notifySuccess('antenatal enrollment done!');
-			reset('antenatal');
+			const rs = await request(url, 'POST', true, data);
 			this.props.stopBlock();
-			history.push(
-				location.hash ? `${location.pathname}#dashboard` : '/antenatal'
-			);
+			this.setState({ submitting: false });
+			if (rs.success) {
+				notifySuccess('antenatal enrollment done!');
+				reset('antenatal');
+				history.push(
+					location.hash
+						? `${location.pathname}#dashboard`
+						: '/antenatal/enrolled'
+				);
+			} else {
+				notifyError(rs.message || 'antenatal enrollment failed');
+			}
 		} catch (e) {
 			this.props.stopBlock();
 			this.setState({ submitting: false });
@@ -59,8 +65,6 @@ class EnrollmentForm extends Component {
 	};
 
 	nextPage = async data => {
-		console.log(data);
-
 		if (this.state.page === 5) {
 			const { patient, doctors, lmp, dob } = this.state;
 
@@ -69,28 +73,39 @@ class EnrollmentForm extends Component {
 				return;
 			}
 
+			const obstericHistory = {
+				gestDelivery: data.gestDelivery || '',
+				deliveredWhere: data.deliveredWhere || '',
+				sex: data.sex || '',
+				weight: data.weight || '',
+				alive: data.obsteric_alive || '',
+				dob: dob ? moment(dob).format('DD-MMM-YYYY') : '',
+				abnormalities: data.abnormalities || '',
+				comment: data.additional_comment || '',
+			};
+
+			let history = null;
+			if (Object.values(obstericHistory).filter(x => x).length > 0) {
+				history = Object.fromEntries(
+					Object.entries(obstericHistory).filter(([_, v]) => v !== '')
+				);
+			}
+
 			const newAntenatal = {
-				patient_id: patient.id,
-				bookingPeriod: data.bookingPeriod,
+				patient_id: patient?.id,
+				bookingPeriod: data.bookingPeriod || '',
 				doctors: doctors,
 				lmp: lmp !== '' ? moment(lmp).format('YYYY-MM-DD') : '',
 				lmpSource: data.lmpSource,
 				edd: lmp !== '' ? moment(lmp).add(9, 'M').format('YYYY-MM-DD') : '',
 				father: {
-					name: data.name,
-					phone: data.phone,
-					blood_group: data.blood_group,
+					name: data.name || '',
+					phone: data.phone || '',
+					blood_group: data.blood_group || '',
 				},
 				history: {
-					obstericHistory: {
-						gestHistory: data.gestHistory || '',
-						sex: data.sex || '',
-						weight: data.weight || '',
-						alive: data.obsteric_alive || '',
-						dob: dob ? moment(dob).format('DD-MM-YYYY') : '',
-						abnormalities: data.abnormalities || '',
-						comment: data.additional_comment || '',
-					},
+					category: 'obstericHistory',
+					description: history,
 				},
 				previousPregnancy: {
 					gravida: data.gravida || '',
@@ -101,8 +116,6 @@ class EnrollmentForm extends Component {
 				},
 				enrollment_package_id: data.package_id,
 			};
-
-			console.log(newAntenatal);
 
 			this.submitAntenatal(newAntenatal);
 			return;

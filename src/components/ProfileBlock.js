@@ -13,7 +13,12 @@ import {
 	patientname,
 	confirmAction,
 } from '../services/utilities';
-import { patientAPI, admissionAPI, USER_RECORD } from '../services/constants';
+import {
+	patientAPI,
+	admissionAPI,
+	USER_RECORD,
+	antenatalAPI,
+} from '../services/constants';
 import { notifySuccess, notifyError } from './../services/notify';
 import { startBlock, stopBlock } from '../actions/redux-block';
 import { formatCurrency } from '../services/utilities';
@@ -27,6 +32,7 @@ import { setPatientRecord, toggleProfile } from '../actions/user';
 import SSRStorage from '../services/storage';
 import OpenEncounter from './Patient/Modals/OpenEncounter';
 import NewAssessment from './Antenatal/NewAssessment';
+import { hasCloseAncPermission } from '../permission-utils/antenatal';
 
 const storage = new SSRStorage();
 
@@ -414,6 +420,62 @@ const ProfileBlock = ({
 		}
 	};
 
+	const doCloseANC = async id => {
+		try {
+			dispatch(startBlock());
+			const url = `${antenatalAPI}/${id}/close`;
+			const rs = await request(url, 'PUT', true, {});
+			dispatch(stopBlock());
+			if (rs.success) {
+				const result = rs.enrollment;
+
+				const newPatient = {
+					...patient,
+					antenatal_id: null,
+				};
+				dispatch(setPatientRecord(newPatient));
+
+				messageService.sendMessage({
+					type: 'update-patient',
+					data: newPatient,
+				});
+
+				const enrollment = {
+					id: result.id,
+					date_closed: result.date_closed,
+					closedBy: result.closedBy,
+					status: 1,
+					lastChangedBy: result.lastChangedBy,
+					patient: newPatient,
+				};
+
+				messageService.sendMessage({
+					type: 'anc',
+					data: enrollment,
+				});
+
+				notifySuccess('Antental closed');
+
+				storage.removeItem(USER_RECORD);
+				dispatch(toggleProfile(false));
+			} else {
+				notifyError(rs.message);
+			}
+		} catch (error) {
+			dispatch(stopBlock());
+			notifyError(error.message || 'Could not discharge patient');
+		}
+	};
+
+	const closeAnc = id => {
+		confirmAction(
+			doCloseANC,
+			id,
+			`You want to close antenatal?`,
+			'Are you sure?'
+		);
+	};
+
 	return (
 		<>
 			<div className="row profile-block">
@@ -559,6 +621,13 @@ const ProfileBlock = ({
 											<tr>
 												<UserItem
 													icon="user"
+													label="Enrolee ID"
+													value={patient.enrollee_id || '--'}
+												/>
+											</tr>
+											<tr>
+												<UserItem
+													icon="user"
 													label="Sex"
 													value={patient?.gender}
 												/>
@@ -672,6 +741,30 @@ const ProfileBlock = ({
 										)}
 									</>
 								)}
+								{patient.antenatal_id &&
+									hasCloseAncPermission(user.permissions) && (
+										<button
+											type="button"
+											onClick={() => closeAnc(patient.antenatal_id)}
+											className="btn btn-block btn-outline-danger"
+										>
+											Close Antenatal
+										</button>
+									)}
+							</div>
+						)}
+						{!hasButtons && (
+							<div className="card-body mt-2">
+								{patient.antenatal_id &&
+									hasCloseAncPermission(user.permissions) && (
+										<button
+											type="button"
+											onClick={() => closeAnc(patient.antenatal_id)}
+											className="btn btn-block btn-outline-danger"
+										>
+											Close Antenatal
+										</button>
+									)}
 							</div>
 						)}
 					</div>

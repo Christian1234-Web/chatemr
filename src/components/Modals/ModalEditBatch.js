@@ -21,6 +21,9 @@ const validate = values => {
 	) {
 		errors.unitPrice = 'enter unit price';
 	}
+	if (!values.selling_price) {
+		errors.selling_price = 'enter selling price';
+	}
 
 	return errors;
 };
@@ -179,6 +182,17 @@ const ModalEditBatch = ({
 											name="unitPrice"
 											component={renderTextInput}
 											label="Unit Price"
+											type="text"
+										/>
+									</div>
+								</div>
+								<div className="row">
+									<div className="col-sm-12">
+										<Field
+											id="selling_price"
+											name="selling_price"
+											component={renderTextInput}
+											label="Selling Price Per Item"
 											type="text"
 										/>
 									</div>

@@ -11,6 +11,7 @@ import HashRoute from '../components/HashRoute';
 import Splash from '../components/Splash';
 import ProfileBlock from '../components/ProfileBlock';
 import { confirmAction } from '../services/utilities';
+import AncBlock from '../components/AncBlock';
 
 const ClinicalTasks = lazy(() => import('../components/Patient/ClinicalTasks'));
 const Dashboard = lazy(() => import('../components/Patient/Dashboard'));
@@ -158,6 +159,12 @@ class PatientProfile extends Component {
 												canAdmit={true}
 												canDischarge={true}
 											/>
+											{patient.antenatal_id && (
+												<AncBlock
+													patient={patient}
+													enrollmentId={patient.antenatal_id}
+												/>
+											)}
 										</div>
 										<Suspense fallback={<Splash />}>
 											<Switch>

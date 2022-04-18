@@ -7,7 +7,6 @@ import startCase from 'lodash.startcase';
 import padLeft from 'pad-left';
 import { confirmAlert } from 'react-confirm-alert';
 import JwtDecode from 'jwt-decode';
-// import Multiselect from 'react-widgets/lib/Multiselect';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import truncate from 'lodash.truncate';
@@ -278,35 +277,6 @@ export const formatPatientId = data => {
 	return `${formattedId}${legacyId}`;
 };
 
-// export const renderMultiselect = ({
-// 	input,
-// 	data,
-// 	valueField,
-// 	textField,
-// 	placeholder,
-// 	label,
-// 	meta: { touched, error },
-// }) => (
-// 	<div>
-// 		<Multiselect
-// 			{...input}
-// 			onBlur={() => input.onBlur()}
-// 			value={input.value || []} // requires value to be an array
-// 			data={data}
-// 			valueField={valueField}
-// 			textField={textField}
-// 			label={label}
-// 		/>
-// 		{touched && error && (
-// 			<div className="help-block form-text with-errors form-control-feedback">
-// 				<ul className="list-unstyled">
-// 					<li>{error}</li>
-// 				</ul>
-// 			</div>
-// 		)}
-// 	</div>
-// );
-
 export const renderDateTimePicker = ({
 	input,
 	placeholder,
@@ -448,7 +418,7 @@ const firstLetter = item =>
 
 const parseDuty = item => (item && item !== '' ? ` [${uppercase(item)}]` : '');
 
-const parseClass = item => {
+export const parseClass = item => {
 	if (item === 'off') {
 		return 'bg-secondary';
 	} else if (item === 'morning') {
@@ -708,7 +678,7 @@ export const parseAvatar = avatar => {
 		: placeholder;
 };
 
-export const parseNote = note => {
+export const parseNote = (note, hasHeading = false) => {
 	if (note.type === 'diagnosis') {
 		return `${note.diagnosis.description} - ${note.diagnosis.type}`;
 	}
@@ -724,13 +694,17 @@ export const parseNote = note => {
 		const title = startCase(note.category);
 		const keys = Object.keys(note.history);
 		const values = Object.values(note.history).map(
-			(name, i) => `${startCase(keys[i])}: ${name}`
+			(name, i) => `<tr><td>${startCase(keys[i])}</td><td>${name}</td></tr>`
 		);
-
-		return `</br><span class="text-underline">${title.replaceAll(
-			'history',
+		const heading = hasHeading
+			? `</br><span class="text-underline">${title.replaceAll(
+					'history',
+					''
+			  )}</span></br>`
+			: '';
+		return `${heading}<table class="table-sm table-bordered table-custom">${values.join(
 			''
-		)}</span></br>${values.join('</br>')}`;
+		)}</table>`;
 	}
 
 	return note.description;
@@ -744,6 +718,16 @@ export const getGestationAge = date => {
 	const days = moment().diff(moment(date).add(weeks, 'w'), 'days');
 	const display = `${days}day${days > 1 ? 's' : ''}`;
 	return `${weeks}week${weeks > 1 ? 's' : ''} ${days > 0 ? display : ''}`;
+};
+
+export const parseFather = data => {
+	const phone = data?.phone || '';
+	const blood_group = data?.blood_group || '';
+
+	const phone_number = phone !== '' ? `, Phone: ${phone}` : '';
+	const bgroup = blood_group !== '' ? `, Blood Group: ${blood_group}` : '';
+
+	return `Name: ${data?.name || '--'}${phone_number}${bgroup}`;
 };
 
 export const getCustomGestationAge = (date, lmp) => {

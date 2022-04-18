@@ -1,73 +1,65 @@
 import React, { Component } from 'react';
 import kebabCase from 'lodash.kebabcase';
 import ReactDOM from 'react-dom';
+import { connect } from 'react-redux';
 
 import EncounterMenu from '../Navigation/EncounterMenu';
-import { assessmentMenu } from '../../services/constants';
-import GeneralAssessment from './Assessment/GeneralAssessment';
+import {
+	assessmentMenu,
+	CK_ASSESSMENT,
+	defaultAssessment,
+} from '../../services/constants';
 import GeneralComments from './Assessment/GeneralComments';
+import GeneralAssessment from './Assessment/GeneralAssessment';
 import LabInvestigation from './Assessment/LabInvestigation';
 import RadiologyRequest from './Assessment/RadiologyRequest';
 import Prescription from './Assessment/Prescription';
 import NextAppointment from './Assessment/NextAppointment';
+import SSRStorage from '../../services/storage';
+import { updateAssessmentData } from '../../actions/patient';
+import TableLoading from '../TableLoading';
+
+const storage = new SSRStorage();
 
 const AssessmentTabs = ({
 	index,
 	previous,
 	next,
 	closeModal,
-	assessment,
 	appointment_id,
 	patient,
 	antenatal,
+	refreshAssessments,
 }) => {
 	switch (index) {
 		case 5:
 			return (
 				<NextAppointment
-					assessment={assessment}
+					appointment_id={appointment_id || ''}
 					previous={previous}
 					closeModal={closeModal}
-					appointment_id={appointment_id || ''}
 					antenatal={antenatal}
+					patient={patient}
+					refresh={refreshAssessments}
 				/>
 			);
 		case 4:
-			return (
-				<Prescription
-					assessment={assessment}
-					next={next}
-					previous={previous}
-					patient={patient}
-				/>
-			);
+			return <Prescription next={next} previous={previous} patient={patient} />;
 		case 3:
 			return (
-				<RadiologyRequest
-					assessment={assessment}
-					next={next}
-					previous={previous}
-				/>
+				<RadiologyRequest next={next} previous={previous} patient={patient} />
 			);
 		case 2:
 			return (
-				<LabInvestigation
-					assessment={assessment}
-					next={next}
-					previous={previous}
-				/>
+				<LabInvestigation next={next} previous={previous} patient={patient} />
 			);
 		case 1:
 			return (
-				<GeneralAssessment
-					assessment={assessment}
-					next={next}
-					previous={previous}
-				/>
+				<GeneralAssessment next={next} previous={previous} patient={patient} />
 			);
 		case 0:
 		default:
-			return <GeneralComments assessment={assessment} next={next} />;
+			return <GeneralComments next={next} patient={patient} />;
 	}
 };
 
@@ -75,11 +67,19 @@ class NewAssessment extends Component {
 	state = {
 		eIndex: 0,
 		dropdown: false,
-		assessment: null,
+		loaded: false,
 	};
 
-	componentDidMount() {
+	async componentDidMount() {
+		const { patient } = this.props;
+		const data = await storage.getItem(CK_ASSESSMENT);
+		const assessment =
+			data && data.patient_id === patient.id
+				? data.assessment
+				: defaultAssessment;
+		this.props.updateAssessmentData(assessment, patient.id);
 		setTimeout(() => {
+			this.setState({ loaded: true });
 			this.focusDiv();
 		}, 200);
 	}
@@ -88,11 +88,11 @@ class NewAssessment extends Component {
 		this.setState({ eIndex: i });
 	};
 
-	next = data => {
-		const { eIndex, assessment } = this.state;
+	next = () => {
+		const { eIndex } = this.state;
 		const i = eIndex + 1;
 		if (i <= assessmentMenu.length - 1) {
-			this.setState({ eIndex: i, assessment: { ...assessment, ...data } });
+			this.setState({ eIndex: i });
 		}
 
 		setTimeout(() => {
@@ -126,8 +126,14 @@ class NewAssessment extends Component {
 	}
 
 	render() {
-		const { closeModal, appointment_id, patient, antenatal } = this.props;
-		const { eIndex, assessment } = this.state;
+		const {
+			closeModal,
+			appointment_id,
+			patient,
+			antenatal,
+			refreshAssessments,
+		} = this.props;
+		const { eIndex, loaded } = this.state;
 		const current = assessmentMenu[eIndex];
 		return (
 			<div
@@ -152,24 +158,24 @@ class NewAssessment extends Component {
 								encounters={assessmentMenu}
 								active={kebabCase(current)}
 								open={this.open}
-								noClick={true}
 							/>
 							<div className="content-w">
 								<div className="content-i">
-									<div
-										className="content-box encounter-box"
-										style={eIndex === 3 ? { overflowY: 'visible' } : {}}
-									>
-										<AssessmentTabs
-											index={eIndex}
-											next={this.next}
-											previous={this.previous}
-											closeModal={closeModal}
-											assessment={assessment}
-											appointment_id={appointment_id}
-											patient={patient}
-											antenatal={antenatal}
-										/>
+									<div className="content-box encounter-box">
+										{!loaded ? (
+											<TableLoading />
+										) : (
+											<AssessmentTabs
+												index={eIndex}
+												next={this.next}
+												previous={this.previous}
+												patient={patient}
+												appointment_id={appointment_id}
+												antenatal={antenatal}
+												closeModal={closeModal}
+												refreshAssessments={refreshAssessments}
+											/>
+										)}
 									</div>
 								</div>
 							</div>
@@ -181,4 +187,4 @@ class NewAssessment extends Component {
 	}
 }
 
-export default NewAssessment;
+export default connect(null, { updateAssessmentData })(NewAssessment);

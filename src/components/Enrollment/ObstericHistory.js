@@ -25,12 +25,22 @@ export const ObstericHistory = props => {
 		<>
 			<div className="col-sm-6">
 				<Field
-					id="gestHistory"
-					name="gestHistory"
+					id="gestDelivery"
+					name="gestDelivery"
 					component={renderTextInput}
-					label="Gest  history"
+					label="Gest. Delivery"
 					type="text"
-					placeholder="Enter gest history"
+					placeholder="Enter gest. delivery"
+				/>
+			</div>
+			<div className="col-sm-6">
+				<Field
+					id="deliveredWhere"
+					name="deliveredWhere"
+					component={renderTextInput}
+					label="Where"
+					type="text"
+					placeholder="Delivered where?"
 				/>
 			</div>
 			<div className="col-sm-6">

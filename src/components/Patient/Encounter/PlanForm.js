@@ -654,7 +654,10 @@ const PlanForm = ({ previous, next, patient }) => {
 													<div className="badge badge-dark">{`${
 														item.quantity
 													} - ${item.frequency}x ${
-														item.frequencyType
+														item.frequencyType === 'as-needed' ||
+														item.frequencyType === 'immediately'
+															? ''
+															: item.frequencyType
 													} ${parseFrequency(
 														item.frequencyType,
 														item.duration

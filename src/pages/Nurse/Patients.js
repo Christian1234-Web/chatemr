@@ -56,6 +56,7 @@ const Patients = ({ location, filter }) => {
 	const fetchPatients = useCallback(
 		async (page, patientId, sDate, eDate) => {
 			try {
+				dispatch(startBlock());
 				const p = page || 1;
 				const pid = patientId || '';
 				const sd = sDate || '';
@@ -83,7 +84,6 @@ const Patients = ({ location, filter }) => {
 
 	useEffect(() => {
 		if (loading) {
-			dispatch(startBlock());
 			fetchPatients();
 		}
 
@@ -129,7 +129,6 @@ const Patients = ({ location, filter }) => {
 	};
 
 	const onNavigatePage = nextPage => {
-		dispatch(startBlock());
 		fetchPatients(nextPage, patient, startDate, endDate);
 	};
 

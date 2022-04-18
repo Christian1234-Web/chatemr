@@ -13,6 +13,7 @@ import {
 	itemRender,
 	patientname,
 	updateImmutable,
+	formatDate,
 } from '../../services/utilities';
 import waiting from '../../assets/images/waiting.gif';
 import { startBlock, stopBlock } from '../../actions/redux-block';
@@ -27,7 +28,7 @@ const { RangePicker } = DatePicker;
 
 const limit = 12;
 
-const AntenatalPatients = () => {
+const AntenatalPatients = ({ location }) => {
 	const [patients, setPatients] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [filtering, setFiltering] = useState(false);
@@ -39,6 +40,7 @@ const AntenatalPatients = () => {
 		totalPages: 0,
 	});
 	const [patient, setPatient] = useState('');
+	const [activePage, setActivePage] = useState('enrolled');
 
 	const dispatch = useDispatch();
 
@@ -47,9 +49,11 @@ const AntenatalPatients = () => {
 			try {
 				dispatch(startBlock());
 				const p = page || 1;
-				const url = `${antenatalAPI}?page=${p}&limit=${limit}&patient_id=${
-					patientId || ''
-				}&startDate=${sDate || ''}&endDate=${eDate || ''}`;
+				const pid = patientId || '';
+				const sd = sDate || '';
+				const ed = eDate || '';
+				const status = activePage === 'enrolled' ? 0 : 1;
+				const url = `${antenatalAPI}?page=${p}&limit=${limit}&patient_id=${pid}&startDate=${sd}&endDate=${ed}&status=${status}`;
 				const rs = await request(url, 'GET', true);
 				const { result, ...meta } = rs;
 				setMeta(meta);
@@ -57,32 +61,37 @@ const AntenatalPatients = () => {
 				setPatients([...result]);
 				setFiltering(false);
 				dispatch(stopBlock());
+				setLoading(false);
 			} catch (error) {
 				console.log(error);
 				notifyError('error fetching patients');
 				dispatch(stopBlock());
+				setLoading(false);
 				setFiltering(false);
 			}
 		},
-		[dispatch]
+		[activePage, dispatch]
 	);
+
+	const page = location.pathname.split('/').pop();
 
 	useEffect(() => {
 		if (loading) {
 			fetchAntenatals();
-			setLoading(false);
 		}
-	}, [loading, fetchAntenatals]);
+
+		if (page !== activePage && !loading) {
+			setLoading(true);
+			setActivePage(page);
+		}
+	}, [activePage, fetchAntenatals, loading, page]);
 
 	useEffect(() => {
 		const subscription = messageService.getMessage().subscribe(message => {
-			if (message !== '') {
-				const { type, data } = message.text;
-
-				if (type === 'anc') {
-					const enrollments = updateImmutable(patients, data);
-					setPatients(enrollments);
-				}
+			const { type, data } = message.text;
+			if (type === 'anc') {
+				const enrollments = updateImmutable(patients, data);
+				setPatients(enrollments);
 			}
 		});
 
@@ -158,7 +167,7 @@ const AntenatalPatients = () => {
 							/>
 						</div>
 						<div className="form-group col-md-3">
-							<label>Admitted Between - To</label>
+							<label>Enrolled Between - To</label>
 							<RangePicker onChange={e => dateChange(e)} />
 						</div>
 						<div className="form-group col-md-3 mt-4">
@@ -190,9 +199,11 @@ const AntenatalPatients = () => {
 									<tr>
 										<th>ID</th>
 										<th>Patient Name</th>
-										<th>Date of Enrollment</th>
-										<th>Enrolled By</th>
+										<th>Date Enrolled</th>
+										<th>By</th>
 										<th>Status</th>
+										{activePage === 'closed' && <th>Date Closed</th>}
+										{activePage === 'closed' && <th>By</th>}
 										<th></th>
 									</tr>
 								</thead>
@@ -216,7 +227,7 @@ const AntenatalPatients = () => {
 													</p>
 												</td>
 												<td>
-													{moment(item.createdAt).format('DD-MMM-YYYY h:mm A')}
+													{formatDate(item.createdAt, 'DD-MMM-YYYY h:mm A')}
 												</td>
 												<td>{staffname(item.staff)}</td>
 												<td>
@@ -226,6 +237,14 @@ const AntenatalPatients = () => {
 														<span className="badge badge-success">Closed</span>
 													)}
 												</td>
+												{activePage === 'closed' && (
+													<td>
+														{formatDate(item.date_closed, 'DD-MMM-YYYY h:mm A')}
+													</td>
+												)}
+												{activePage === 'closed' && (
+													<td>{staffname(item.closedBy)}</td>
+												)}
 												<td className="row-actions">
 													<Tooltip title="Open Antenatal">
 														<a
@@ -240,7 +259,10 @@ const AntenatalPatients = () => {
 									})}
 									{patients.length === 0 && (
 										<tr>
-											<td colSpan="7" className="text-center">
+											<td
+												colSpan={activePage === 'closed' ? '8' : '6'}
+												className="text-center"
+											>
 												No patients found
 											</td>
 										</tr>

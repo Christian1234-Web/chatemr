@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from 'react';
 import moment from 'moment';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Tooltip from 'antd/lib/tooltip';
 
 import {
@@ -12,15 +12,16 @@ import {
 	patientname,
 	parseSource,
 	updateImmutable,
-} from '../../services/utilities';
-import { deleteTransaction, loadTransactions } from '../../actions/transaction';
-import { notifyError, notifySuccess } from '../../services/notify';
-import ModalShowTransactions from '../Modals/ModalShowTransactions';
-import ModalApproveTransaction from '../Modals/ModalApproveTransaction';
-import ModalPrintTransaction from '../Modals/ModalPrintTransaction';
-import Admitted from '../Admitted';
-import NicuAdmitted from '../NicuAdmitted';
-import { startBlock, stopBlock } from '../../actions/redux-block';
+} from '../services/utilities';
+import { deleteTransaction, loadTransactions } from '../actions/transaction';
+import { notifyError, notifySuccess } from '../services/notify';
+import ModalShowTransactions from './Modals/ModalShowTransactions';
+import ModalApproveTransaction from './Modals/ModalApproveTransaction';
+import ModalPrintTransaction from './Modals/ModalPrintTransaction';
+import Admitted from './Admitted';
+import NicuAdmitted from './NicuAdmitted';
+import { startBlock, stopBlock } from '../actions/redux-block';
+import { hasDeleteTransactionPermission } from '../permission-utils/paypoint';
 
 const TransactionTable = ({
 	transactions,
@@ -36,6 +37,8 @@ const TransactionTable = ({
 
 	const dispatch = useDispatch();
 
+	const staff = useSelector(state => state.user.profile);
+
 	const doApproveTransaction = item => {
 		document.body.classList.add('modal-open');
 		setTransaction(item);
@@ -44,12 +47,15 @@ const TransactionTable = ({
 
 	const deleteTask = async data => {
 		try {
+			dispatch(startBlock());
 			const url = `transactions/${data.id}`;
 			await request(url, 'DELETE', true);
 			dispatch(deleteTransaction(data));
 			notifySuccess(`Transaction deleted!`);
+			dispatch(stopBlock());
 		} catch (err) {
 			console.log(err);
+			dispatch(stopBlock());
 			notifyError(`${err.message}`);
 		}
 	};
@@ -281,16 +287,17 @@ const TransactionTable = ({
 													</Tooltip>
 												)}
 											{(transaction.status === 0 ||
-												transaction.status === -1) && (
-												<Tooltip title="Delete Transactions">
-													<a
-														className="text-danger"
-														onClick={() => confirmDelete(transaction)}
-													>
-														<i className="os-icon os-icon-ui-15" />
-													</a>
-												</Tooltip>
-											)}
+												transaction.status === -1) &&
+												hasDeleteTransactionPermission(staff.permissions) && (
+													<Tooltip title="Delete Transactions">
+														<a
+															className="text-danger"
+															onClick={() => confirmDelete(transaction)}
+														>
+															<i className="os-icon os-icon-ui-15" />
+														</a>
+													</Tooltip>
+												)}
 										</>
 									)}
 									{showPrint &&

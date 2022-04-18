@@ -1,5 +1,5 @@
 import SSRStorage from '../services/storage';
-import { CK_ENCOUNTER } from '../services/constants';
+import { CK_ASSESSMENT, CK_ENCOUNTER } from '../services/constants';
 import {
 	LOAD_VITALS,
 	UPDATE_VITALS,
@@ -21,6 +21,7 @@ import {
 	UPDATE_ENCOUNTER_DATA,
 	RESET_ENCOUNTER_DATA,
 	UPDATE_SOAP_DATA,
+	UPDATE_ASSESSMENT_DATA,
 } from '../actions/types';
 
 const storage = new SSRStorage();
@@ -72,6 +73,14 @@ const INITIAL_STATE = {
 		pastDiagnosis: [],
 		treatmentPlan: '',
 	},
+	assessmentData: {
+		comment: '',
+		general: null,
+		labRequest: null,
+		radiologyRequest: null,
+		pharmacyRequest: null,
+		nextAppointment: null,
+	},
 	enrolments: [],
 	labourDetail: null,
 	partographies: [],
@@ -106,6 +115,15 @@ const patient = (state = INITIAL_STATE, action) => {
 			return {
 				...state,
 				soapData: { ...action.payload },
+			};
+		case UPDATE_ASSESSMENT_DATA:
+			storage.setLocalStorage(CK_ASSESSMENT, {
+				patient_id: action.patient_id,
+				assessment: action.payload,
+			});
+			return {
+				...state,
+				assessmentData: action.payload,
 			};
 		case RESET_ENCOUNTER_DATA:
 			return {

@@ -68,7 +68,7 @@ const PatientAppointment = ({ addAppointment, closeModal }) => {
 			const res = rs.map(item => ({
 				...item,
 				value: item.id,
-				label: staffname(item) + ' (Room ' + item.room.name + ')',
+				label: `${staffname(item)} (${item.room.name})`,
 			}));
 			setDoctors(res);
 		} catch (e) {}
@@ -129,7 +129,17 @@ const PatientAppointment = ({ addAppointment, closeModal }) => {
 
 			dispatch(startBlock());
 			setSubmitting(true);
-			const values = { ...data, service_id: service.id, doctor, consultation };
+			const time = moment().format('HH:mm:ss');
+			const datetime = `${moment(new Date(data.appointment_date)).format(
+				'YYYY-MM-DD'
+			)} ${time}`;
+			const values = {
+				...data,
+				appointment_date: datetime,
+				service_id: service.id,
+				doctor,
+				consultation,
+			};
 			const url = 'front-desk/appointments/new';
 			const rs = await request(url, 'POST', true, values);
 			setSubmitting(false);
@@ -202,7 +212,7 @@ const PatientAppointment = ({ addAppointment, closeModal }) => {
 					</div>
 					<div className="col-sm-6">
 						<div className="form-group">
-							<label> Appointment Date</label>
+							<label>Appointment Date</label>
 							<div className="date-input">
 								<DatePicker
 									dateFormat="dd-MMM-yyyy"
@@ -264,33 +274,34 @@ const PatientAppointment = ({ addAppointment, closeModal }) => {
 						</div>
 					</div>
 				</div>
-				<div className="form-group">
-					<label>Who do you want to see?</label>
-					<Select
-						id="specialty"
-						name="specialty"
-						getOptionValue={option => option.id}
-						getOptionLabel={option => option.name}
-						placeholder="Select a Specialty"
-						options={services}
-						ref={register({ name: 'specialty' })}
-						onChange={e => {
-							if (e == null) {
-								setValue('specialty', null);
-								setService(null);
-							} else {
-								setService(e);
-								setValue('specialty', e.id);
-							}
-						}}
-					/>
-					<small className="text-danger">
-						{errors.specialty && errors.specialty.message}
-					</small>
-				</div>
-
 				<div className="row">
-					<div className="col-sm-12">
+					<div className="col-sm-6">
+						<div className="form-group">
+							<label>Who do you want to see?</label>
+							<Select
+								id="specialty"
+								name="specialty"
+								getOptionValue={option => option.id}
+								getOptionLabel={option => option.name}
+								placeholder="Select a Specialty"
+								options={services}
+								ref={register({ name: 'specialty' })}
+								onChange={e => {
+									if (e == null) {
+										setValue('specialty', null);
+										setService(null);
+									} else {
+										setService(e);
+										setValue('specialty', e.id);
+									}
+								}}
+							/>
+							<small className="text-danger">
+								{errors.specialty && errors.specialty.message}
+							</small>
+						</div>
+					</div>
+					<div className="col-sm-6">
 						<div className="form-group">
 							<label>Whom To See?</label>
 							<Select
@@ -312,7 +323,7 @@ const PatientAppointment = ({ addAppointment, closeModal }) => {
 							/>
 							{doctor && (
 								<small className="text-danger">
-									{`Consultation Room ${doctor.room.name}`}
+									{`Consultation ${doctor.room.name}`}
 								</small>
 							)}
 						</div>
@@ -332,7 +343,7 @@ const PatientAppointment = ({ addAppointment, closeModal }) => {
 				<div className="row">
 					<div className="col-sm-6">
 						<div className="form-group">
-							<label> Referred By</label>
+							<label>Referred By</label>
 							<input
 								className="form-control"
 								placeholder=""
@@ -344,7 +355,7 @@ const PatientAppointment = ({ addAppointment, closeModal }) => {
 					</div>
 					<div className="col-sm-6">
 						<div className="form-group">
-							<label> Referral Company</label>
+							<label>Referral Company</label>
 							<input
 								className="form-control"
 								placeholder=""

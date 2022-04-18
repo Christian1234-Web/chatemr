@@ -162,6 +162,7 @@ const Inventory = () => {
 												<th>Quantity</th>
 												<th>Unit Of Measure</th>
 												<th>Unit Cost</th>
+												<th>Selling Price</th>
 												<th></th>
 											</tr>
 										</thead>
@@ -179,6 +180,7 @@ const Inventory = () => {
 														<td>{item.quantity}</td>
 														<td>{item.unitOfMeasure}</td>
 														<td>{formatCurrency(item.unitPrice)}</td>
+														<td>{formatCurrency(item.selling_price)}</td>
 														<td>
 															<span
 																className={`badge ${

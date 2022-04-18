@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import NoMatch from '../NoMatch';
 import Splash from '../../components/Splash';
 import SelectRoomModal from '../../components/Modals/SelectRoomModal';
+import DoctorsAppointment from '../../components/Modals/DoctorsAppointment';
 import { request } from '../../services/utilities';
 import { notifyError } from '../../services/notify';
 import { loginUser } from '../../actions/user';
@@ -20,6 +21,7 @@ const Doctor = ({ match }) => {
 	const [activeRoom, setActiveRoom] = useState(null);
 	const [selected, setSelected] = useState(false);
 	const [rooms, setRooms] = useState([]);
+	const [showAppointment, setShowAppointment] = useState(false);
 
 	const profile = useSelector(state => state.user.profile);
 
@@ -50,6 +52,16 @@ const Doctor = ({ match }) => {
 		initModal();
 	}, [initModal, fetchConsultations]);
 
+	const openAppointment = () => {
+		document.body.classList.add('modal-open');
+		setShowAppointment(true);
+	};
+
+	const closeAppointment = () => {
+		setShowAppointment(false);
+		document.body.classList.remove('modal-open');
+	};
+
 	const closeModal = room => {
 		setShowModal(false);
 		if (room) {
@@ -76,32 +88,45 @@ const Doctor = ({ match }) => {
 		<div className="content-i">
 			<div className="content-box">
 				<div className="row">
-					<div className="col-sm-12">
-						<div className="text-right">
-							{activeRoom && selected && (
-								<div
-									className="d-flex mb-1"
-									style={{ justifyContent: 'flex-end', alignItems: 'center' }}
+					<div className="col-sm-6">
+						<button
+							className="btn btn-sm btn-primary"
+							onClick={() => openAppointment()}
+						>
+							Appointment Calendar
+						</button>
+					</div>
+					<div className="col-sm-6 text-right">
+						{activeRoom && selected ? (
+							<div
+								className="d-flex mb-1"
+								style={{ justifyContent: 'flex-end', alignItems: 'center' }}
+							>
+								<h6 className="m-0">
+									Active Room:{' '}
+									<span className="text-success">{activeRoom.name}</span>
+								</h6>
+								<button
+									className="btn btn-sm btn-info text-white ml-4"
+									onClick={() => exitRoom()}
 								>
-									<h6 className="m-0">
-										Active Room:{' '}
-										<span className="text-success">{activeRoom.name}</span>
-									</h6>
-									<button
-										className="btn btn-sm btn-info text-white ml-4"
-										onClick={() => exitRoom()}
-									>
-										Exit Room
-									</button>
-								</div>
-							)}
+									Exit Room
+								</button>
+								<button
+									className="btn btn-sm btn-primary ml-2"
+									onClick={() => setShowModal(true)}
+								>
+									Change Consulting Room
+								</button>
+							</div>
+						) : (
 							<button
 								className="btn btn-sm btn-primary"
 								onClick={() => setShowModal(true)}
 							>
 								Select Consulting Room
 							</button>
-						</div>
+						)}
 					</div>
 				</div>
 				<div className="row mt-4">
@@ -121,6 +146,9 @@ const Doctor = ({ match }) => {
 				</div>
 			</div>
 			{showModal && <SelectRoomModal rooms={rooms} closeModal={closeModal} />}
+			{showAppointment && (
+				<DoctorsAppointment closeModal={closeAppointment} isDoctor={true} />
+			)}
 		</div>
 	);
 };

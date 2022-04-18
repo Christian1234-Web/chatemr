@@ -1,43 +1,37 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Field, reduxForm, change } from 'redux-form';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import AsyncSelect from 'react-select/async/dist/react-select.esm';
+import { updateAssessmentData } from '../../../actions/patient';
 
-import {
-	renderTextArea,
-	formatCurrency,
-	request,
-} from '../../../services/utilities';
+import { formatCurrency, request } from '../../../services/utilities';
 
-const validate = values => {
-	const errors = {};
-	return errors;
-};
-
-const RadiologyRequest = ({
-	handleSubmit,
-	change,
-	previous,
-	next,
-	assessment,
-}) => {
+const RadiologyRequest = ({ previous, next, patient }) => {
 	const [loaded, setLoaded] = useState(false);
 	const [selectedScans, setSelectedScans] = useState([]);
 	const [urgentScan, setUrgentScan] = useState(false);
+	const [scanNote, setScanNote] = useState('');
 
 	const dispatch = useDispatch();
 
-	const initData = useCallback(() => {
-		setSelectedScans(assessment.scans || []);
-		setUrgentScan(assessment?.scan_urgent || false);
+	const assessment = useSelector(state => state.patient.assessmentData);
+
+	const retrieveData = useCallback(async () => {
+		const radiologyRequest = assessment.radiologyRequest;
+
+		setUrgentScan(radiologyRequest?.urgent || false);
+		setScanNote(radiologyRequest?.request_note || '');
+
+		const scans = radiologyRequest ? [...radiologyRequest.tests] : [];
+
+		setSelectedScans(scans);
 	}, [assessment]);
 
 	useEffect(() => {
 		if (!loaded) {
-			initData();
+			retrieveData();
 			setLoaded(true);
 		}
-	}, [initData, loaded]);
+	}, [loaded, retrieveData]);
 
 	const getServices = async q => {
 		if (!q || q.length < 1) {
@@ -49,9 +43,38 @@ const RadiologyRequest = ({
 		return res;
 	};
 
+	const onDispatchScan = (items, obj) => {
+		const radiologyRequest = {
+			requestType: 'scans',
+			patient_id: patient.id,
+			tests: [...items],
+			request_note: obj?.note || '',
+			urgent: obj?.urgent || false,
+		};
+
+		dispatch(
+			updateAssessmentData({ ...assessment, radiologyRequest }, patient.id)
+		);
+	};
+
+	const onSubmit = e => {
+		e.preventDefault();
+		const radiologyRequest = {
+			requestType: 'scans',
+			patient_id: patient.id,
+			tests: [...selectedScans],
+			request_note: scanNote,
+			urgent: urgentScan,
+		};
+		dispatch(
+			updateAssessmentData({ ...assessment, radiologyRequest }, patient.id)
+		);
+		next();
+	};
+
 	return (
 		<div className="form-block encounter">
-			<form onSubmit={handleSubmit(next)}>
+			<form onSubmit={onSubmit}>
 				<div className="row">
 					<div className="form-group col-sm-12">
 						<label>Radiology Test</label>
@@ -66,7 +89,7 @@ const RadiologyRequest = ({
 							loadOptions={getServices}
 							onChange={e => {
 								setSelectedScans(e || []);
-								dispatch(change('scans', e || []));
+								onDispatchScan(e, { note: scanNote, urgent: urgentScan });
 							}}
 							placeholder="Search Scans"
 						/>
@@ -88,14 +111,23 @@ const RadiologyRequest = ({
 				</div>
 				<div className="row mt-4">
 					<div className="form-group col-sm-12">
-						<Field
-							id="note"
-							name="scan_note"
-							component={renderTextArea}
-							label="Scan Request Note"
-							type="text"
-							placeholder="Enter note"
-						/>
+						<div className="form-group">
+							<label>Lab Request Note</label>
+							<textarea
+								className="form-control"
+								name="scan_request_note"
+								rows="3"
+								placeholder="Enter request note"
+								onChange={e => {
+									setScanNote(e.target.value);
+									onDispatchScan(selectedScans, {
+										note: e.target.value,
+										urgent: urgentScan,
+									});
+								}}
+								value={scanNote}
+							></textarea>
+						</div>
 					</div>
 				</div>
 				<div className="row">
@@ -109,7 +141,10 @@ const RadiologyRequest = ({
 									checked={urgentScan}
 									onChange={e => {
 										setUrgentScan(!urgentScan);
-										dispatch(change('scan_urgent', !urgentScan));
+										onDispatchScan(selectedScans, {
+											note: scanNote,
+											urgent: !urgentScan,
+										});
 									}}
 								/>
 								Please check if urgent
@@ -133,17 +168,4 @@ const RadiologyRequest = ({
 	);
 };
 
-const mapStateToProps = (state, ownProps) => {
-	return {
-		initialValues: { ...ownProps.assessment },
-	};
-};
-
-export default connect(mapStateToProps, { change })(
-	reduxForm({
-		form: 'antenatalAssessment', //Form name is same
-		destroyOnUnmount: false,
-		forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
-		validate,
-	})(RadiologyRequest)
-);
+export default RadiologyRequest;

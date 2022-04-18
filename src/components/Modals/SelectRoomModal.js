@@ -8,6 +8,7 @@ import { loginUser } from '../../actions/user';
 import TableLoading from '../TableLoading';
 
 import 'react-datepicker/dist/react-datepicker.css';
+import ModalHeader from '../ModalHeader';
 
 const SelectRoomModal = ({ rooms, closeModal }) => {
 	const profile = useSelector(state => state.user.profile);
@@ -47,17 +48,10 @@ const SelectRoomModal = ({ rooms, closeModal }) => {
 			) : (
 				<div className="modal-dialog modal-centered" role="document">
 					<div className="modal-content text-center no-scroll">
-						<div className="modal-header faded smaller">
-							<div className="modal-title">Select Room</div>
-							<button
-								aria-label="Close"
-								className="close"
-								type="button"
-								onClick={() => closeModal(null)}
-							>
-								<span aria-hidden="true">×</span>
-							</button>
-						</div>
+						<ModalHeader
+							closeModal={() => closeModal(null)}
+							title="Select Room"
+						/>
 						<div className="onboarding-content with-gradient scroll-within">
 							<div className="row">
 								{rooms.map(room => (

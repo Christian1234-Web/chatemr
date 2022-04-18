@@ -243,7 +243,6 @@ class AppointmentHistory extends Component {
 
 const mapStateToProps = state => {
 	return {
-		roles: state.role.roles,
 		patient: state.user.patient,
 	};
 };

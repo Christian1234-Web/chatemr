@@ -13,7 +13,6 @@ import {
 	request,
 	confirmAction,
 	itemRender,
-	hasPassed,
 	patientname,
 	updateImmutable,
 	staffname,
@@ -23,6 +22,7 @@ import { startBlock, stopBlock } from '../../actions/redux-block';
 import { notifySuccess, notifyError } from '../../services/notify';
 import AppointmentFormModal from '../../components/Modals/AppointmentFormModal';
 import ModalViewAppointment from '../../components/Modals/ModalViewAppointment';
+import ModalQueueAppointment from '../../components/Modals/ModalQueueAppointment';
 import { toggleProfile } from '../../actions/user';
 import ProfilePopup from '../../components/Patient/ProfilePopup';
 import TableLoading from '../../components/TableLoading';
@@ -46,6 +46,7 @@ class AllAppointments extends Component {
 		showAppointment: false,
 		patient_id: '',
 		status: '',
+		showQueueModal: false,
 	};
 
 	componentDidMount() {
@@ -177,7 +178,11 @@ class AllAppointments extends Component {
 	};
 
 	closeModal = () => {
-		this.setState({ showModal: false, showAppointment: false });
+		this.setState({
+			showModal: false,
+			showAppointment: false,
+			showQueueModal: false,
+		});
 		document.body.classList.remove('modal-open');
 	};
 
@@ -185,6 +190,16 @@ class AllAppointments extends Component {
 		const { appointments, meta } = this.state;
 		const newMeta = { ...meta, totalPages: meta.totalPages + 1 };
 		this.setState({ appointments: [item, ...appointments], meta: newMeta });
+	};
+
+	queueAppointment = item => {
+		document.body.classList.add('modal-open');
+		this.setState({ showQueueModal: true, appointment: item });
+	};
+
+	updateAppointment = item => {
+		const newAppointments = updateImmutable(this.state.appointments, item);
+		this.setState({ appointments: newAppointments });
 	};
 
 	render() {
@@ -196,6 +211,7 @@ class AllAppointments extends Component {
 			showModal,
 			showAppointment,
 			appointment,
+			showQueueModal,
 		} = this.state;
 		const { filter } = this.props;
 
@@ -209,9 +225,7 @@ class AllAppointments extends Component {
 									filter === 'all' ? ' col-md-3' : ' col-md-6'
 								}`}
 							>
-								<label className="mr-2">
-									Search
-								</label>
+								<label className="mr-2">Search</label>
 								<input
 									style={{ height: '32px' }}
 									id="search"
@@ -228,9 +242,7 @@ class AllAppointments extends Component {
 								</div>
 							)}
 							<div className="form-group col-md-3">
-								<label className="mr-2">
-									Status
-								</label>
+								<label className="mr-2">Status</label>
 								<select
 									style={{ height: '32px' }}
 									id="status"
@@ -384,8 +396,22 @@ class AllAppointments extends Component {
 																<i className="os-icon os-icon-eye"></i>
 															</a>
 														</Tooltip>
+														{filter === 'today' &&
+															!item.is_queued &&
+															item.is_scheduled && (
+																<Tooltip title="Push to Queue">
+																	<a
+																		onClick={() => this.queueAppointment(item)}
+																		className="cursor"
+																	>
+																		<i className="os-icon os-icon-chevrons-right"></i>
+																	</a>
+																</Tooltip>
+															)}
 														{!item.encounter &&
-															!hasPassed(item.appointment_date) &&
+															(item.status === 'Pending' ||
+																item.status === 'Pending Paypoint Approval' ||
+																item.status === 'Pending HMO Approval') &&
 															item.status !== 'Cancelled' && (
 																<Tooltip title="Cancel Appointment">
 																	<a
@@ -435,6 +461,13 @@ class AllAppointments extends Component {
 					<ModalViewAppointment
 						appointment={appointment}
 						closeModal={this.closeModal}
+					/>
+				)}
+				{showQueueModal && appointment && (
+					<ModalQueueAppointment
+						appointment={appointment}
+						closeModal={() => this.closeModal()}
+						update={item => this.updateAppointment(item)}
 					/>
 				)}
 			</div>

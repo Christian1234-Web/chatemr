@@ -9,6 +9,7 @@ export const MENU_COOKE = 'EMR:MENU_COOKIE';
 export const USER_RECORD = 'EMR:USER_RECORD';
 
 export const CK_ENCOUNTER = 'E:ENCOUNTER';
+export const CK_ASSESSMENT = 'E:ASSESSMENT';
 
 export const CK_COMPLAINTS = 'E:COMPLAINTS';
 export const CK_REVIEW_OF_SYSTEMS = 'E:REVIEW_OF_SYSTEMS';
@@ -310,7 +311,7 @@ export const soap = [
 ];
 
 export const assessmentMenu = [
-	'Note',
+	'Assessment Note',
 	'General Assessment',
 	'Lab',
 	'Radiology',
@@ -1207,6 +1208,15 @@ export const defaultEncounter = {
 	consumables: null,
 };
 
+export const defaultAssessment = {
+	comment: '',
+	general: null,
+	labRequest: null,
+	radiologyRequest: null,
+	pharmacyRequest: null,
+	nextAppointment: null,
+};
+
 export const allUnitOfMeasures = [
 	'Ampoule',
 	'Bag',
@@ -1288,4 +1298,9 @@ export const criticalList = [
 	{ value: 'ulcer', label: 'Peptic Ulcer' },
 	{ value: 'rh-negative', label: 'Rh Negative' },
 	{ value: 'sickle-cell', label: 'Sickle Cell' },
+];
+
+export const durationTypes = [
+	{ value: 'm', label: 'Minutes' },
+	{ value: 'h', label: 'Hour(s)' },
 ];

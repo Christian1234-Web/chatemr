@@ -16,6 +16,7 @@ import {
 	UPDATE_ENCOUNTER_DATA,
 	RESET_ENCOUNTER_DATA,
 	UPDATE_SOAP_DATA,
+	UPDATE_ASSESSMENT_DATA,
 } from './types';
 
 export const setIVF = data => {
@@ -80,6 +81,14 @@ export const resetEncounterData = data => {
 	return {
 		type: RESET_ENCOUNTER_DATA,
 		payload: data,
+	};
+};
+
+export const updateAssessmentData = (data, pid) => {
+	return {
+		type: UPDATE_ASSESSMENT_DATA,
+		payload: data,
+		patient_id: pid,
 	};
 };
 

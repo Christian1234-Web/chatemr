@@ -1,27 +1,60 @@
-import React, { useState } from 'react';
-import { reduxForm } from 'redux-form';
-import { connect } from 'react-redux';
+import React, { useCallback, useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import SunEditor from 'suneditor-react';
 
-const validate = values => {
-	const errors = {};
-	return errors;
-};
+import { updateAssessmentData } from '../../../actions/patient';
+import SSRStorage from '../../../services/storage';
+import { CK_ASSESSMENT, defaultAssessment } from '../../../services/constants';
 
-const GeneralComments = ({ handleSubmit, previous, next }) => {
+const storage = new SSRStorage();
+
+const GeneralComments = ({ next, patient }) => {
+	const [loaded, setLoaded] = useState(false);
 	const [comment, setComment] = useState('');
 
-	const submit = () => {
-		next({ comment });
+	const assessment = useSelector(state => state.patient.assessmentData);
+
+	const dispatch = useDispatch();
+
+	const saveComment = useCallback(
+		data => {
+			setComment(data);
+			dispatch(
+				updateAssessmentData({ ...assessment, comment: data }, patient.id)
+			);
+		},
+		[assessment, dispatch, patient]
+	);
+
+	const retrieveData = useCallback(async () => {
+		const data = await storage.getItem(CK_ASSESSMENT);
+		const assessmentData =
+			data && data.patient_id === patient.id
+				? data?.assessment?.comment
+				: defaultAssessment.comment;
+		setComment(assessmentData);
+	}, [patient]);
+
+	useEffect(() => {
+		if (!loaded) {
+			retrieveData();
+			setLoaded(true);
+		}
+	}, [loaded, retrieveData]);
+
+	const onSubmit = e => {
+		e.preventDefault();
+		console.log('submit');
+		dispatch(updateAssessmentData({ ...assessment, comment }, patient.id));
+		next();
 	};
 
 	return (
 		<div className="form-block encounter">
-			<form onSubmit={handleSubmit(submit)}>
+			<form onSubmit={onSubmit}>
 				<div className="row">
 					<div className="col-sm-12">
 						<div className="form-group">
-							<label>Note</label>
 							<SunEditor
 								width="100%"
 								placeholder="Please type here..."
@@ -49,7 +82,7 @@ const GeneralComments = ({ handleSubmit, previous, next }) => {
 									],
 								}}
 								onChange={e => {
-									setComment(String(e));
+									saveComment(String(e));
 								}}
 							/>
 						</div>
@@ -57,7 +90,7 @@ const GeneralComments = ({ handleSubmit, previous, next }) => {
 				</div>
 				<div className="row mt-5">
 					<div className="col-sm-12 d-flex space-between">
-						<button className="btn btn-primary" onClick={previous}>
+						<button className="btn btn-primary" disabled>
 							Previous
 						</button>
 						<button className="btn btn-primary" type="submit">
@@ -70,17 +103,4 @@ const GeneralComments = ({ handleSubmit, previous, next }) => {
 	);
 };
 
-const mapStateToProps = (state, ownProps) => {
-	return {
-		initialValues: { ...ownProps.assessment },
-	};
-};
-
-export default connect(mapStateToProps)(
-	reduxForm({
-		form: 'antenatalAssessment', //Form name is same
-		destroyOnUnmount: false,
-		forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
-		validate,
-	})(GeneralComments)
-);
+export default GeneralComments;

@@ -4,6 +4,7 @@ import Pagination from 'antd/lib/pagination';
 
 import searchingGIF from '../assets/images/searching.gif';
 import { itemRender, getPageList } from '../services/utilities';
+import CreatePermission from './CreatePermission';
 
 class Permission extends Component {
 	state = {
@@ -43,7 +44,7 @@ class Permission extends Component {
 		const { meta, permissions, loading } = this.state;
 		return (
 			<div className="row">
-				<div className="col-lg-12">
+				<div className="col-lg-8">
 					<div className="element-wrapper">
 						<div className="element-box p-3 m-0">
 							<div className="table-responsive">
@@ -57,6 +58,7 @@ class Permission extends Component {
 											<tr>
 												<th>S/N</th>
 												<th>Name</th>
+												<th>Department</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -64,9 +66,8 @@ class Permission extends Component {
 												return (
 													<tr key={i}>
 														<td>{item.id}</td>
-														<td>
-															<div className="value">{item.name}</div>
-														</td>
+														<td>{item.slug}</td>
+														<td>{item.category?.name || '--'}</td>
 													</tr>
 												);
 											})}
@@ -89,6 +90,9 @@ class Permission extends Component {
 							)}
 						</div>
 					</div>
+				</div>
+				<div className="col-lg-4">
+					<CreatePermission />
 				</div>
 			</div>
 		);

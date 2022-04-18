@@ -142,7 +142,7 @@ const Allergies = ({ previous, next, patient }) => {
 		overflowY: 'scroll',
 	};
 
-	const onSubmit = async e => {
+	const onSubmit = e => {
 		setSeverity(e);
 		if (category !== '' && reaction !== '') {
 			const items = [

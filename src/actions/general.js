@@ -22,12 +22,20 @@ import {
 	ADD_STAFF_FOR_APPRAISAL,
 	SET_IS_STAFF_APPRAISAL,
 	CREAE_NEW_DRUG,
-	CREAE_NEW_GENERIC,
+	CREATE_NEW_GENERIC,
+	TOGGLE_CHAT_INBOX,
 } from './types';
+
+export const toggleChat = status => {
+	return {
+		type: TOGGLE_CHAT_INBOX,
+		payload: status,
+	};
+};
 
 export const createNewGeneric = status => {
 	return {
-		type: CREAE_NEW_GENERIC,
+		type: CREATE_NEW_GENERIC,
 		payload: status,
 	};
 };

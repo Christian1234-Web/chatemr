@@ -64,7 +64,7 @@ function GynaeHistory(props) {
 					id="contraceptionMethod"
 					name="contraceptionMethod"
 					component={renderTextInput}
-					label="Contraception Method"
+					label="Method/Type of Contraception"
 					type="text"
 					placeholder="Enter contraception method"
 				/>
@@ -85,9 +85,9 @@ function GynaeHistory(props) {
 					id="abnormalBleeding"
 					name="abnormalBleeding"
 					component={renderTextInput}
-					label="Abnormal Bleeding"
+					label="Abnormal Menstrual Bleeding"
 					type="text"
-					placeholder="Enter abnormal bleeding"
+					placeholder="Enter abnormal menstrual bleeding"
 				/>
 			</div>
 		</>
