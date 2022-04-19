@@ -40,7 +40,14 @@ const ReactSelectAdapter = ({ input, ...rest }) => (
 	<Select {...input} {...rest} searchable />
 );
 
-const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
+const ModalCreateStaff = ({
+	updateStaffs,
+	closeModal,
+	staff,
+	staffs,
+	hidden,
+	disable,
+}) => {
 	const [loading, setLoading] = useState(true);
 	const [loaded, setLoaded] = useState(false);
 	const [dateOfBirth, setDateOfBirth] = useState(null);
@@ -238,6 +245,8 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 		}
 	};
 
+	console.log('disable detail from create staff account======', disable);
+
 	return (
 		<div
 			className="onboarding-modal modal fade animated show"
@@ -248,7 +257,7 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 				<div className="modal-content text-center">
 					<div className="modal-header faded smaller">
 						<h5 className="form-header">
-							{staff ? 'Edit Staf Record' : 'New Staff Account'}
+							{staff ? 'Edit Staff Record' : 'New Staff Account'}
 						</h5>
 						<button
 							aria-label="Close"
@@ -419,6 +428,7 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															component="input"
 															type="text"
 															placeholder="First Name"
+															disabled={!disable}
 														/>
 														<Error name="first_name" />
 													</div>
@@ -829,36 +839,41 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 													</div>
 												</div>
 											</div>
-											<div className="row">
-												<div className="col-sm">
-													<div className="form-group">
-														<label>
-															Gross Salary (Monthly) <Compulsory />
-														</label>
-														<Field
-															name="monthly_salary"
-															className="form-control"
-															component="input"
-															type="text"
-															placeholder="Gross Salary (Monthly)"
-														/>
+											{hidden ? (
+												<div className="row">
+													<div className="col-sm">
+														<div className="form-group">
+															<label>
+																Gross Salary (Monthly) <Compulsory />
+															</label>
+															<Field
+																name="monthly_salary"
+																className="form-control"
+																component="input"
+																type="text"
+																placeholder="Gross Salary (Monthly)"
+															/>
+														</div>
+													</div>
+													<div className="col-sm">
+														<div className="form-group">
+															<label>
+																Gross Salary (Annually) <Compulsory />
+															</label>
+															<Field
+																name="annual_salary"
+																className="form-control"
+																component="input"
+																type="text"
+																placeholder="Gross Salary (Annually)"
+															/>
+														</div>
 													</div>
 												</div>
-												<div className="col-sm">
-													<div className="form-group">
-														<label>
-															Gross Salary (Annually) <Compulsory />
-														</label>
-														<Field
-															name="annual_salary"
-															className="form-control"
-															component="input"
-															type="text"
-															placeholder="Gross Salary (Annually)"
-														/>
-													</div>
-												</div>
-											</div>
+											) : (
+												''
+											)}
+
 											<div className="row">
 												<div className="col-sm">
 													<div className="form-group">

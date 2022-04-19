@@ -15,7 +15,7 @@ import { notifySuccess, notifyError } from '../services/notify';
 import { staffname, parseAvatar } from '../services/utilities';
 import { startBlock, stopBlock } from '../actions/redux-block';
 
-class StaffItem extends Component {
+class StaffItemAcc extends Component {
 	state = {
 		collapsed: null,
 		form_visible: false,
@@ -94,9 +94,8 @@ class StaffItem extends Component {
 	};
 
 	render() {
-		const { staffs, editStaff, profile, hidden } = this.props;
+		const { staffs, editStaff, profile } = this.props;
 		const { collapsed } = this.state;
-		console.log('Input hidden', hidden);
 		return (
 			<>
 				{staffs.map((item, i) => {
@@ -116,11 +115,11 @@ class StaffItem extends Component {
 									staffname(item)
 								)} (${item.user.username})`}</td>
 								<td onClick={this.toggle(item.id)}>{item?.user?.role?.name}</td>
-								<td onClick={this.toggle(item.id)}>{item?.phone_number}</td>
 								<td onClick={this.toggle(item.id)}>
 									{item.department ? item.department.name : '--'}
 								</td>
-								<td>{formatDate(item.createdAt, 'D-MMM-YYYY h:mma')}</td>
+								<td onClick={this.toggle(item.id)}>{item?.monthly_salary}</td>
+								<td onClick={this.toggle(item.id)}>{item?.annual_salary}</td>
 								<td className="text-center">
 									{item.isActive ? (
 										<Tooltip title="Enabled">
@@ -138,42 +137,17 @@ class StaffItem extends Component {
 											<i className="os-icon os-icon-edit-1" />
 										</a>
 									</Tooltip>
-									{profile.role.slug === 'it-admin' && (
-										<Tooltip title="Edit Account">
-											<a onClick={() => editStaff(item, true)}>
-												<i className="os-icon os-icon-user-male-circle" />
-											</a>
-										</Tooltip>
-									)}
+
 									{profile.role.slug === 'it-admin' && (
 										<>
-											<Tooltip title="Reset Password">
+											{/* <Tooltip title="Reset Password">
 												<a
 													onClick={e => this.doReset(e, item)}
 													className="info"
 												>
 													<i className="os-icon os-icon-grid-18" />
 												</a>
-											</Tooltip>
-											{item.isActive ? (
-												<Tooltip title="Disable Staff">
-													<a
-														onClick={e => this.doDisable(e, item)}
-														className="danger"
-													>
-														<i className="os-icon os-icon-x-circle" />
-													</a>
-												</Tooltip>
-											) : (
-												<Tooltip title="Enable Staff">
-													<a
-														onClick={e => this.doEnable(e, item)}
-														className="success"
-													>
-														<i className="os-icon os-icon-check-circle" />
-													</a>
-												</Tooltip>
-											)}
+											</Tooltip> */}
 										</>
 									)}
 								</td>
@@ -217,4 +191,6 @@ const mapStateToProps = (state, ownProps) => {
 	};
 };
 
-export default connect(mapStateToProps, { startBlock, stopBlock })(StaffItem);
+export default connect(mapStateToProps, { startBlock, stopBlock })(
+	StaffItemAcc
+);

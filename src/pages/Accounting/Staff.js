@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
 
 import StaffItem from '../../components/StaffItem';
+import StaffItemAcc from '../../components/StaffItemAcc';
 import { request, getPageList, itemRender } from '../../services/utilities';
 import { staffAPI } from '../../services/constants';
 import { startBlock, stopBlock } from '../../actions/redux-block';
@@ -15,7 +16,7 @@ import waiting from '../../assets/images/waiting.gif';
 
 const pageLimit = 24;
 
-const StaffList = () => {
+const Staff = () => {
 	const [loaded, setLoaded] = useState(false);
 	const [meta, setMeta] = useState({
 		currentPage: 1,
@@ -30,6 +31,7 @@ const StaffList = () => {
 	const [status, setStatus] = useState('');
 	const [filtering, setFiltering] = useState(false);
 	const [hidden, setHidden] = useState(true);
+	const [disable, setDisable] = useState(true);
 
 	const dispatch = useDispatch();
 
@@ -70,15 +72,14 @@ const StaffList = () => {
 	const doCreateStaff = () => {
 		document.body.classList.add('modal-open');
 		setShowModal(true);
-		setHidden(false);
 	};
 
 	const closeModal = () => {
 		setShowModal(false);
 		setShowAccountModal(false);
 		setStaff(null);
+		setDisable(true);
 		document.body.classList.remove('modal-open');
-		setHidden(true);
 	};
 
 	const updateStaffs = staffs => {
@@ -90,7 +91,7 @@ const StaffList = () => {
 		await fetchStaffs(1);
 	};
 
-	console.log('hidden', hidden);
+	console.log('disable testing', disable);
 
 	return (
 		<div className="content-i">
@@ -98,64 +99,6 @@ const StaffList = () => {
 				<div className="row">
 					<div className="col-sm-12">
 						<div className="element-wrapper">
-							<div className="element-actions">
-								<a
-									className="btn btn-primary btn-sm text-white"
-									onClick={() => doCreateStaff()}
-								>
-									<i className="os-icon os-icon-ui-22" />
-									<span>Create New Staff</span>
-								</a>
-							</div>
-							<h6 className="element-header">Staff List</h6>
-							<div className="element-box m-0 mb-4 p-3">
-								<div className="row">
-									<div className="form-group col-md-6">
-										<label className="mr-2 " htmlFor="search">
-											Search
-										</label>
-										<input
-											style={{ height: '32px' }}
-											id="search"
-											className="form-control"
-											name="search"
-											onChange={e => setSearchValue(e.target.value)}
-											placeholder="search for staff"
-										/>
-									</div>
-									<div className="form-group col-md-3">
-										<label className="mr-2" htmlFor="id">
-											Status
-										</label>
-										<select
-											style={{ height: '32px' }}
-											id="status"
-											className="form-control"
-											name="status"
-											onChange={e => setStatus(e.target.value)}
-										>
-											<option value="">All</option>
-											<option value="enabled">Enabled</option>
-											<option value="disabled">Disabled</option>
-										</select>
-									</div>
-									<div className="form-group col-md-3 mt-4">
-										<div
-											className="btn btn-sm btn-primary btn-upper text-white filter-btn"
-											onClick={doFilter}
-										>
-											<i className="os-icon os-icon-ui-37" />
-											<span>
-												{filtering ? (
-													<img src={waiting} alt="submitting" />
-												) : (
-													'Filter'
-												)}
-											</span>
-										</div>
-									</div>
-								</div>
-							</div>
 							<div className="element-box p-3 m-0">
 								<div className="table-responsive">
 									{!loaded ? (
@@ -168,20 +111,22 @@ const StaffList = () => {
 														<th></th>
 														<th>Name</th>
 														<th>Role</th>
-														<th>Phone</th>
 														<th>Department</th>
-														<th>Date Created</th>
+														<th>Gross Monthly</th>
+														<th>Gross</th>
 														<th className="text-center">Status</th>
 														<th className="text-right">Actions</th>
 													</tr>
 												</thead>
 												<tbody>
-													<StaffItem
+													<StaffItemAcc
 														staffs={staffs}
-														hidden={hidden}
 														updateStaffs={updateStaffs}
 														editStaff={(staff, isAccount) => {
 															setStaff(staff);
+															setHidden(true);
+															console.log('Love from above');
+															setDisable(false);
 															document.body.classList.add('modal-open');
 															if (isAccount) {
 																setShowAccountModal(true);
@@ -218,6 +163,7 @@ const StaffList = () => {
 					staff={staff}
 					staffs={staffs}
 					hidden={hidden}
+					disable={disable}
 					updateStaffs={updateStaffs}
 					closeModal={() => closeModal()}
 				/>
@@ -226,7 +172,6 @@ const StaffList = () => {
 				<ModalEditUserAccount
 					staff={staff}
 					staffs={staffs}
-					hidden={hidden}
 					updateStaffs={updateStaffs}
 					closeModal={() => closeModal()}
 				/>
@@ -235,4 +180,4 @@ const StaffList = () => {
 	);
 };
 
-export default StaffList;
+export default Staff;

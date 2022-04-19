@@ -52,7 +52,7 @@ const AdminMenu = ({ role }) => {
 			</li>
 			<DoctorMenu />
 			<li className="sub-header">
-				<span>HR & PAYROLL</span>
+				<span>HUMAN RESOURCES</span>
 			</li>
 			<HrMenu />
 			<li className="sub-header">
