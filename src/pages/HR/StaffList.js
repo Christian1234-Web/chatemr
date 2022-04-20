@@ -15,7 +15,7 @@ import waiting from '../../assets/images/waiting.gif';
 
 const pageLimit = 24;
 
-const StaffList = () => {
+const StaffList = ({ location }) => {
 	const [loaded, setLoaded] = useState(false);
 	const [meta, setMeta] = useState({
 		currentPage: 1,
@@ -31,6 +31,12 @@ const StaffList = () => {
 	const [filtering, setFiltering] = useState(false);
 
 	const dispatch = useDispatch();
+
+	const path = location.pathname
+		.split('/')
+		.filter(l => l !== 'staffs')
+		.pop();
+	const isHr = path === 'hr';
 
 	const fetchStaffs = useCallback(
 		async page => {
@@ -213,6 +219,7 @@ const StaffList = () => {
 					staffs={staffs}
 					updateStaffs={updateStaffs}
 					closeModal={() => closeModal()}
+					hidden={!isHr}
 				/>
 			)}
 			{showAccountModal && (

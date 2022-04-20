@@ -17,30 +17,24 @@ import {
 	contracts,
 	staffAPI,
 } from '../../services/constants';
-import { request, updateImmutable } from '../../services/utilities';
+import {
+	Compulsory,
+	ErrorBlock,
+	ReactSelectAdapter,
+	request,
+	updateImmutable,
+} from '../../services/utilities';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import { notifyError, notifySuccess } from '../../services/notify';
 import { loadDepartments } from '../../actions/department';
 
-const Compulsory = () => {
-	return <span className="compulsory-field">*</span>;
-};
-
-const Error = ({ name }) => (
-	<Field
-		name={name}
-		subscription={{ touched: true, error: true }}
-		render={({ meta: { touched, error } }) =>
-			touched && error ? <small className="text-danger">{error}</small> : null
-		}
-	/>
-);
-
-const ReactSelectAdapter = ({ input, ...rest }) => (
-	<Select {...input} {...rest} searchable />
-);
-
-const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
+const ModalCreateStaff = ({
+	updateStaffs,
+	closeModal,
+	staff,
+	staffs,
+	hidden,
+}) => {
 	const [loading, setLoading] = useState(true);
 	const [loaded, setLoaded] = useState(false);
 	const [dateOfBirth, setDateOfBirth] = useState(null);
@@ -248,7 +242,7 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 				<div className="modal-content text-center">
 					<div className="modal-header faded smaller">
 						<h5 className="form-header">
-							{staff ? 'Edit Staf Record' : 'New Staff Account'}
+							{staff ? 'Edit Staff Record' : 'New Staff Account'}
 						</h5>
 						<button
 							aria-label="Close"
@@ -372,7 +366,7 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															placeholder="Username"
 															disabled={staff !== null}
 														/>
-														<Error name="username" />
+														<ErrorBlock name="username" />
 													</div>
 												</div>
 												<div className="col-sm">
@@ -388,7 +382,7 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															getOptionLabel={option => option.name}
 															isDisabled={staff !== null && staff.user.role}
 														/>
-														<Error name="role" />
+														<ErrorBlock name="role" />
 													</div>
 												</div>
 												<div className="col-sm">
@@ -402,8 +396,9 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															options={departments}
 															getOptionValue={option => option.id}
 															getOptionLabel={option => option.name}
+															isDisabled={hidden}
 														/>
-														<Error name="department" />
+														<ErrorBlock name="department" />
 													</div>
 												</div>
 											</div>
@@ -419,8 +414,9 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															component="input"
 															type="text"
 															placeholder="First Name"
+															disabled={hidden}
 														/>
-														<Error name="first_name" />
+														<ErrorBlock name="first_name" />
 													</div>
 												</div>
 												<div className="col-sm">
@@ -434,8 +430,9 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															component="input"
 															type="text"
 															placeholder="Last Name"
+															disabled={hidden}
 														/>
-														<Error name="last_name" />
+														<ErrorBlock name="last_name" />
 													</div>
 												</div>
 												<div className="col-sm">
@@ -447,6 +444,7 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															component="input"
 															type="text"
 															placeholder="Other Names"
+															disabled={hidden}
 														/>
 													</div>
 												</div>
@@ -484,8 +482,9 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 																	/>
 																</div>
 															)}
+															disabled={hidden}
 														/>
-														<Error name="date_of_birth" />
+														<ErrorBlock name="date_of_birth" />
 													</div>
 												</div>
 												<div className="col-sm">
@@ -497,8 +496,9 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															name="gender"
 															component={ReactSelectAdapter}
 															options={genders}
+															isDisabled={hidden}
 														/>
-														<Error name="gender" />
+														<ErrorBlock name="gender" />
 													</div>
 												</div>
 												<div className="col-sm">
@@ -510,8 +510,9 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															name="religion"
 															component={ReactSelectAdapter}
 															options={religions}
+															isDisabled={hidden}
 														/>
-														<Error name="religion" />
+														<ErrorBlock name="religion" />
 													</div>
 												</div>
 											</div>
@@ -538,8 +539,9 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 																	}}
 																/>
 															)}
+															disabled={hidden}
 														/>
-														<Error name="country" />
+														<ErrorBlock name="country" />
 													</div>
 												</div>
 												<div className="col-sm">
@@ -553,8 +555,9 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															options={states}
 															getOptionValue={option => option.id}
 															getOptionLabel={option => option.name}
+															isDisabled={hidden}
 														/>
-														<Error name="state_of_origin" />
+														<ErrorBlock name="state_of_origin" />
 													</div>
 												</div>
 												<div className="col-sm">
@@ -568,8 +571,9 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															component="input"
 															type="text"
 															placeholder="LGA"
+															disabled={hidden}
 														/>
-														<Error name="lga" />
+														<ErrorBlock name="lga" />
 													</div>
 												</div>
 											</div>
@@ -585,8 +589,9 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															component="input"
 															type="email"
 															placeholder="Email Address"
+															disabled={hidden}
 														/>
-														<Error name="email" />
+														<ErrorBlock name="email" />
 													</div>
 												</div>
 												<div className="col-sm">
@@ -600,8 +605,9 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															component="input"
 															type="text"
 															placeholder="Phone Number"
+															disabled={hidden}
 														/>
-														<Error name="phone_number" />
+														<ErrorBlock name="phone_number" />
 													</div>
 												</div>
 												<div className="col-sm">
@@ -615,8 +621,9 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															component="input"
 															type="text"
 															placeholder="Address"
+															disabled={hidden}
 														/>
-														<Error name="address" />
+														<ErrorBlock name="address" />
 													</div>
 												</div>
 											</div>
@@ -674,6 +681,7 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															name="is_consultant"
 															component="input"
 															type="checkbox"
+															disabled={hidden}
 														/>
 													</div>
 												</div>
@@ -690,8 +698,9 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															component="input"
 															type="text"
 															placeholder="Profession"
+															disabled={hidden}
 														/>
-														<Error name="profession" />
+														<ErrorBlock name="profession" />
 													</div>
 												</div>
 												<div className="col-sm">
@@ -703,6 +712,7 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															component="input"
 															type="text"
 															placeholder="Job Title"
+															disabled={hidden}
 														/>
 													</div>
 												</div>
@@ -717,8 +727,9 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															options={specializations}
 															getOptionValue={option => option.id}
 															getOptionLabel={option => option.name}
+															isDisabled={hidden}
 														/>
-														<Error name="specialization" />
+														<ErrorBlock name="specialization" />
 													</div>
 												</div>
 											</div>
@@ -755,8 +766,9 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 																	/>
 																</div>
 															)}
+															disabled={hidden}
 														/>
-														<Error name="date_of_employment" />
+														<ErrorBlock name="date_of_employment" />
 													</div>
 												</div>
 												<div className="col-sm">
@@ -768,8 +780,9 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															name="contract_type"
 															component={ReactSelectAdapter}
 															options={contracts}
+															isDisabled={hidden}
 														/>
-														<Error name="contract_type" />
+														<ErrorBlock name="contract_type" />
 													</div>
 												</div>
 												<div className="col-sm">
@@ -781,6 +794,7 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															component="input"
 															type="text"
 															placeholder="Employee Number"
+															disabled={hidden}
 														/>
 													</div>
 												</div>
@@ -797,8 +811,9 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															options={banks}
 															getOptionValue={option => option.id}
 															getOptionLabel={option => option.name}
+															isDisabled={hidden}
 														/>
-														<Error name="bank" />
+														<ErrorBlock name="bank" />
 													</div>
 												</div>
 												<div className="col-sm">
@@ -812,8 +827,9 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															component="input"
 															type="text"
 															placeholder="Account Number"
+															disabled={hidden}
 														/>
-														<Error name="account_number" />
+														<ErrorBlock name="account_number" />
 													</div>
 												</div>
 												<div className="col-sm">
@@ -825,40 +841,43 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															component="input"
 															type="text"
 															placeholder="Pension Manager"
+															disabled={hidden}
 														/>
 													</div>
 												</div>
 											</div>
-											<div className="row">
-												<div className="col-sm">
-													<div className="form-group">
-														<label>
-															Gross Salary (Monthly) <Compulsory />
-														</label>
-														<Field
-															name="monthly_salary"
-															className="form-control"
-															component="input"
-															type="text"
-															placeholder="Gross Salary (Monthly)"
-														/>
+											{hidden && (
+												<div className="row">
+													<div className="col-sm">
+														<div className="form-group">
+															<label>
+																Gross Salary (Monthly) <Compulsory />
+															</label>
+															<Field
+																name="monthly_salary"
+																className="form-control"
+																component="input"
+																type="text"
+																placeholder="Gross Salary (Monthly)"
+															/>
+														</div>
+													</div>
+													<div className="col-sm">
+														<div className="form-group">
+															<label>
+																Gross Salary (Annually) <Compulsory />
+															</label>
+															<Field
+																name="annual_salary"
+																className="form-control"
+																component="input"
+																type="text"
+																placeholder="Gross Salary (Annually)"
+															/>
+														</div>
 													</div>
 												</div>
-												<div className="col-sm">
-													<div className="form-group">
-														<label>
-															Gross Salary (Annually) <Compulsory />
-														</label>
-														<Field
-															name="annual_salary"
-															className="form-control"
-															component="input"
-															type="text"
-															placeholder="Gross Salary (Annually)"
-														/>
-													</div>
-												</div>
-											</div>
+											)}
 											<div className="row">
 												<div className="col-sm">
 													<div className="form-group">
@@ -869,8 +888,9 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															name="marital_status"
 															component={ReactSelectAdapter}
 															options={maritalStatuses}
+															isDisabled={hidden}
 														/>
-														<Error name="marital_status" />
+														<ErrorBlock name="marital_status" />
 													</div>
 												</div>
 												<div className="col-sm">
@@ -882,6 +902,7 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															component="input"
 															type="text"
 															placeholder="Number of Children"
+															disabled={hidden}
 														/>
 													</div>
 												</div>
@@ -898,8 +919,9 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															component="input"
 															type="text"
 															placeholder="NOK Name"
+															disabled={hidden}
 														/>
-														<Error name="nok_name" />
+														<ErrorBlock name="nok_name" />
 													</div>
 												</div>
 												<div className="col-sm">
@@ -909,8 +931,9 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															name="nok_relationship"
 															component={ReactSelectAdapter}
 															options={relationships}
+															isDisabled={hidden}
 														/>
-														<Error name="nok_relationship" />
+														<ErrorBlock name="nok_relationship" />
 													</div>
 												</div>
 												<div className="col-sm">
@@ -924,8 +947,9 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															component="input"
 															type="text"
 															placeholder="NOK Phone Number"
+															disabled={hidden}
 														/>
-														<Error name="nok_phoneNumber" />
+														<ErrorBlock name="nok_phoneNumber" />
 													</div>
 												</div>
 											</div>
@@ -939,6 +963,7 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															component="input"
 															type="text"
 															placeholder="NOK Address"
+															disabled={hidden}
 														/>
 													</div>
 												</div>
@@ -972,6 +997,7 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 																	/>
 																</div>
 															)}
+															disabled={hidden}
 														/>
 													</div>
 												</div>

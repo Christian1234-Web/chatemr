@@ -4,6 +4,14 @@ const AccountingMenu = () => {
 	return (
 		<>
 			<li>
+				<Link to="/accounting/staffs">
+					<div className="icon-w">
+						<div className="os-icon os-icon-layers" />
+					</div>
+					<span>Staff List</span>
+				</Link>
+			</li>
+			<li>
 				<Link to="/accounting/payroll">
 					<div className="icon-w">
 						<div className="os-icon os-icon-layers" />

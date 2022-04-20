@@ -120,6 +120,7 @@ const Requisitions = ({ category }) => {
 										<th>Date</th>
 										<th>Staff</th>
 										<th>Name</th>
+										<th>Department</th>
 										<th>Quantity</th>
 										<th>Status</th>
 										<th></th>
@@ -139,6 +140,7 @@ const Requisitions = ({ category }) => {
 												{item.category === 'cafeteria' && (
 													<td>{item.cafeteria.name}</td>
 												)}
+												<td>{item.department?.name || '--'}</td>
 												<td>{item.quantity}</td>
 												<td>
 													{item.deleted_at ? (

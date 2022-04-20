@@ -14,6 +14,13 @@ import {
 import { notifySuccess, notifyError } from '../services/notify';
 import { staffname, parseAvatar } from '../services/utilities';
 import { startBlock, stopBlock } from '../actions/redux-block';
+import {
+	hasDisableStaffPermission,
+	hasEditAccountPermission,
+	hasEditStaffPermission,
+	hasEnableStaffPermission,
+	hasResetPasswordPermission,
+} from '../permission-utils/staff';
 
 class StaffItem extends Component {
 	state = {
@@ -132,29 +139,30 @@ class StaffItem extends Component {
 									)}
 								</td>
 								<td className="row-actions">
-									<Tooltip title="Edit Staff">
-										<a onClick={() => editStaff(item, false)}>
-											<i className="os-icon os-icon-edit-1" />
-										</a>
-									</Tooltip>
-									{profile.role.slug === 'it-admin' && (
+									{hasEditStaffPermission(profile.permissions) && (
+										<Tooltip title="Edit Staff">
+											<a onClick={() => editStaff(item, false)}>
+												<i className="os-icon os-icon-edit-1" />
+											</a>
+										</Tooltip>
+									)}
+									{hasEditAccountPermission(profile.permissions) && (
 										<Tooltip title="Edit Account">
 											<a onClick={() => editStaff(item, true)}>
 												<i className="os-icon os-icon-user-male-circle" />
 											</a>
 										</Tooltip>
 									)}
-									{profile.role.slug === 'it-admin' && (
+									{hasResetPasswordPermission(profile.permissions) && (
+										<Tooltip title="Reset Password">
+											<a onClick={e => this.doReset(e, item)} className="info">
+												<i className="os-icon os-icon-grid-18" />
+											</a>
+										</Tooltip>
+									)}
+									{item.isActive ? (
 										<>
-											<Tooltip title="Reset Password">
-												<a
-													onClick={e => this.doReset(e, item)}
-													className="info"
-												>
-													<i className="os-icon os-icon-grid-18" />
-												</a>
-											</Tooltip>
-											{item.isActive ? (
+											{hasDisableStaffPermission(profile.permissions) && (
 												<Tooltip title="Disable Staff">
 													<a
 														onClick={e => this.doDisable(e, item)}
@@ -163,7 +171,11 @@ class StaffItem extends Component {
 														<i className="os-icon os-icon-x-circle" />
 													</a>
 												</Tooltip>
-											) : (
+											)}
+										</>
+									) : (
+										<>
+											{hasEnableStaffPermission(profile.permissions) && (
 												<Tooltip title="Enable Staff">
 													<a
 														onClick={e => this.doEnable(e, item)}
