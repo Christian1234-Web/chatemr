@@ -15,7 +15,7 @@ import waiting from '../../assets/images/waiting.gif';
 
 const pageLimit = 24;
 
-const StaffList = () => {
+const StaffList = ({ location }) => {
 	const [loaded, setLoaded] = useState(false);
 	const [meta, setMeta] = useState({
 		currentPage: 1,
@@ -29,9 +29,14 @@ const StaffList = () => {
 	const [searchValue, setSearchValue] = useState('');
 	const [status, setStatus] = useState('');
 	const [filtering, setFiltering] = useState(false);
-	const [hidden, setHidden] = useState(true);
 
 	const dispatch = useDispatch();
+
+	const path = location.pathname
+		.split('/')
+		.filter(l => l !== 'staffs')
+		.pop();
+	const isHr = path === 'hr';
 
 	const fetchStaffs = useCallback(
 		async page => {
@@ -70,7 +75,6 @@ const StaffList = () => {
 	const doCreateStaff = () => {
 		document.body.classList.add('modal-open');
 		setShowModal(true);
-		setHidden(false);
 	};
 
 	const closeModal = () => {
@@ -78,7 +82,6 @@ const StaffList = () => {
 		setShowAccountModal(false);
 		setStaff(null);
 		document.body.classList.remove('modal-open');
-		setHidden(true);
 	};
 
 	const updateStaffs = staffs => {
@@ -89,8 +92,6 @@ const StaffList = () => {
 		setFiltering(true);
 		await fetchStaffs(1);
 	};
-
-	console.log('hidden', hidden);
 
 	return (
 		<div className="content-i">
@@ -178,7 +179,6 @@ const StaffList = () => {
 												<tbody>
 													<StaffItem
 														staffs={staffs}
-														hidden={hidden}
 														updateStaffs={updateStaffs}
 														editStaff={(staff, isAccount) => {
 															setStaff(staff);
@@ -217,16 +217,15 @@ const StaffList = () => {
 				<ModalCreateStaff
 					staff={staff}
 					staffs={staffs}
-					hidden={hidden}
 					updateStaffs={updateStaffs}
 					closeModal={() => closeModal()}
+					hidden={!isHr}
 				/>
 			)}
 			{showAccountModal && (
 				<ModalEditUserAccount
 					staff={staff}
 					staffs={staffs}
-					hidden={hidden}
 					updateStaffs={updateStaffs}
 					closeModal={() => closeModal()}
 				/>

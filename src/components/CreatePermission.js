@@ -34,7 +34,7 @@ class CreatePermission extends Component {
 			const datum = { ...data, department_id: data.department.id };
 			const rs = await request('settings/permissions', 'POST', true, datum);
 			this.props.addPermission(rs);
-			this.setState({ submitting: false });
+			this.setState({ submitting: false, department: null });
 			this.props.reset('create_permission');
 			notifySuccess('permission created!');
 		} catch (e) {

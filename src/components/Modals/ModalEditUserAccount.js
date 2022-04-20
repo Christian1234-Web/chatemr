@@ -75,8 +75,6 @@ const ModalEditUserAccount = ({
 		}
 	};
 
-	console.log('staff detail from edituser account======', staff);
-
 	return (
 		<div
 			className="onboarding-modal modal fade animated show"

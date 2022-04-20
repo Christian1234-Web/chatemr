@@ -4,11 +4,11 @@ const AccountingMenu = () => {
 	return (
 		<>
 			<li>
-				<Link to="/accounting/staff">
+				<Link to="/accounting/staffs">
 					<div className="icon-w">
 						<div className="os-icon os-icon-layers" />
 					</div>
-					<span>Staff</span>
+					<span>Staff List</span>
 				</Link>
 			</li>
 			<li>
