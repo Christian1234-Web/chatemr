@@ -134,6 +134,7 @@ const Requisitions = () => {
 												<th>Date</th>
 												<th>Name</th>
 												<th>Quantity</th>
+												<th>Department</th>
 												<th>Status</th>
 												<th></th>
 											</tr>
