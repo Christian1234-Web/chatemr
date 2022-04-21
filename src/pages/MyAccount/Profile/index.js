@@ -73,6 +73,7 @@ const AccountProfile = () => {
 										</li>
 									</ul>
 								</div>
+
 								<div className="tab-content">
 									{tab === 'profile' && <AccountUserProfile staff={staff} />}
 								</div>

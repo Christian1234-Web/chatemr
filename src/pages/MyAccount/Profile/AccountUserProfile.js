@@ -3,9 +3,9 @@ import React from 'react';
 const AccountUserProfile = ({ staff }) => {
 	return (
 		<>
-			<div className="col-lg-9">
+			<div className="col-lg-12">
 				<div className="os-tabs-w mx-4"></div>
-				<div className="element-box">
+				<div className="element-box w-100">
 					<h6 className="element-header">Profile</h6>
 
 					<div className="row gx-3 align-items-center">
@@ -71,7 +71,7 @@ const AccountUserProfile = ({ staff }) => {
 						<p className="col-sm-9 text-3">{staff?.details?.nationality}</p>
 					</div>
 				</div>
-				<div className="element-box">
+				<div className="element-box w-100">
 					<h6 className="element-header">Next of Kin Details</h6>
 
 					<div className="row gx-3 align-items-center">
@@ -111,7 +111,7 @@ const AccountUserProfile = ({ staff }) => {
 						</p>
 					</div>
 				</div>
-				<div className="element-box">
+				<div className="element-box w-100">
 					<h6 className="element-header">Official Details</h6>
 
 					<div className="row gx-3 align-items-center">
