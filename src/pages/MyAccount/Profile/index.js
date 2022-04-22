@@ -37,7 +37,7 @@ const AccountProfile = () => {
 			) : (
 				<div className="col-lg-9">
 					<div className="os-tabs-w mx-4">
-						<div className="os-tabs-controls">
+						<div className="">
 							<div className="os-tabs-w mx-4">
 								<div className="os-tabs-controls">
 									<ul className="nav nav-tabs upper">

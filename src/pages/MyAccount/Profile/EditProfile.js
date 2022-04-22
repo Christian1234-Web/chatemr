@@ -72,7 +72,27 @@ const EditProfile = ({ staff }) => {
 	const onFormSubmit = vals => {
 		setSubmitting(true);
 		vals.avatar = avatar;
+		console.log('hello ma', vals);
 		// dispatch(updateStaff(vals, staff?.details?.id, () => setSubmitting(false)));
+	};
+
+	const handleFileRead = async event => {
+		const file = event.target.files[0];
+		const base64 = await convertBase64(file);
+		console.log('malik', base64);
+	};
+
+	const convertBase64 = file => {
+		return new Promise((resolve, reject) => {
+			const fileReader = new FileReader();
+			fileReader.readAsDataURL(file);
+			fileReader.onload = () => {
+				resolve(fileReader.result);
+			};
+			fileReader.onerror = error => {
+				reject(error);
+			};
+		});
 	};
 
 	return (
@@ -132,6 +152,7 @@ const EditProfile = ({ staff }) => {
 											id="profile_pic"
 											className="d-none"
 											onChange={e => {
+												handleFileRead(e);
 												setImage(e.currentTarget.files[0]);
 												setAvatar(e.currentTarget.files[0]);
 												setValue('avatar', e.currentTarget.files[0]);

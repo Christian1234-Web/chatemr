@@ -4,7 +4,7 @@ const AccountUserProfile = ({ staff }) => {
 	return (
 		<>
 			<div className="col-lg-12">
-				<div className="os-tabs-w mx-4"></div>
+				<div className=" mx-4"></div>
 				<div className="element-box w-100">
 					<h6 className="element-header">Profile</h6>
 

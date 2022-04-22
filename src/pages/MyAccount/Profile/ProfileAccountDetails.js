@@ -10,8 +10,27 @@ const AccountDetails = ({ staff, onEdit, buttonText, onView }) => {
 		<>
 			<aside className="col-lg-3">
 				<div className="element-box">
-					<div className="outter">
-						<img src={Image} className="image-circle" />
+					<div
+						className="outter"
+						style={{
+							border: '1px solid rgba(255, 25, 255, 0.29)',
+							padding: '0px',
+							borderRadius: '50%',
+							width: '200px',
+							height: '200px',
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+						}}
+					>
+						{/* <label>
+						<input type='file' hidden/>
+						</label> */}
+						<img
+							src={Image}
+							className="image-circle"
+							style={{ borderRadius: '50%', width: '180px', height: '180px' }}
+						/>
 					</div>
 					<div className="d-flex flex-column" style={{ alignItems: 'center' }}>
 						<div
@@ -78,6 +97,39 @@ const AccountDetails = ({ staff, onEdit, buttonText, onView }) => {
 							<i className="fas fa-edit"></i>
 						</a>
 					</p>
+				</div>
+				<div class="element-box shadow-sm rounded text-center p-3 mb-4">
+					<div class="text-17 text-light my-3">
+						<i class="fas fa-wallet"></i>
+					</div>
+					<h3 class="text-9 fw-400">$2956.00</h3>
+					<p class="mb-2 text-muted opacity-8">Available Balance</p>
+					<hr class="mx-n3" />
+					<div class="d-flex">
+						<a href="withdraw-money.html" class="btn-link me-auto">
+							Withdraw
+						</a>{' '}
+						<a href="deposit-money.html" class="btn-link ms-auto">
+							Deposit
+						</a>
+					</div>
+				</div>
+
+				<div class="element-box shadow-sm rounded text-center p-3 mb-4">
+					<div class="text-17 text-light my-3">
+						<i class="fas fa-comments"></i>
+					</div>
+					<h3 class="text-5 fw-400 my-4">Need Help?</h3>
+					<p class="text-muted opacity-8 mb-4">
+						Have questions or concerns regrading your account?
+						<br />
+						Our experts are here to help!.
+					</p>
+					<div class="d-grid">
+						<a href="#" class="btn btn-primary">
+							Chate with Us
+						</a>
+					</div>
 				</div>
 			</aside>
 			{/* <div className="col-sm-5">
