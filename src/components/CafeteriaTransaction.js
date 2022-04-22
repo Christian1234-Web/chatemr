@@ -39,7 +39,7 @@ const CafeteriaTransaction = ({
 			const cartVat = parseFloat(((7.5 * cartTotal) / 100).toFixed(2));
 			setVat(cartVat);
 
-			setTotal(cartTotal + cartVat);
+			setTotal(cartTotal);
 			setBalance(0);
 		}
 	}, [cart]);
@@ -136,7 +136,7 @@ const CafeteriaTransaction = ({
 							<td className="sub-item">{subTotal}</td>
 						</tr>
 						<tr>
-							<td className="sub-total">V.A.T</td>
+							<td className="sub-total">V.A.T inclusive</td>
 							<td className="sub-item">{vat}</td>
 						</tr>
 						<tr>
