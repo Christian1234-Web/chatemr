@@ -15,6 +15,7 @@ import FrontDeskMenu from './FrontDeskMenu';
 import ProcedureMenu from './ProcedureMenu';
 import RecordsMenu from './RecordsMenu';
 import AccountingMenu from './AccountingMenu';
+import ReportAndAnalyticsMenu from './ReportAndAnalyticsMenu';
 
 const AdminMenu = ({ role }) => {
 	return (
@@ -75,6 +76,10 @@ const AdminMenu = ({ role }) => {
 				<span>ACCOUNTING</span>
 			</li>
 			<AccountingMenu />
+			<li className="sub-header">
+				<span>REPORTS & ANALYTICS</span>
+			</li>
+			<ReportAndAnalyticsMenu />
 			<SettingsMenu role={role} />
 		</>
 	);
