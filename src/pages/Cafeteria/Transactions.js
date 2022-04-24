@@ -95,8 +95,6 @@ class Transactions extends Component {
 	};
 
 	patientSet = (pat, type) => {
-		console.log(pat);
-
 		if (type === 'patient') {
 			let name = patientname(pat);
 			document.getElementById('patient').value = name;
@@ -314,7 +312,11 @@ class Transactions extends Component {
 												{moment(request.createdAt).format('DD-MM-YYYY h:mm a')}
 											</td>
 											<td>
-												{request.staff ? staffname(request.staff) : patient}
+												{/* {request.staff ? staffname(request.staff) : patient} */}
+												{request.patient
+													? `${request.patient.surname} ${request.patient.other_names} `
+													: staffname(request.staff)}
+												{/* {request.patient.surname} */}
 											</td>
 											<td>
 												{request?.transaction_details
