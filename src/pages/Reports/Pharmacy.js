@@ -1,6 +1,55 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { request } from '../../services/utilities';
+import moment from 'moment';
+import TableLoading from '../../components/TableLoading';
+import { Alert } from 'antd';
 
 const Pharmacy = () => {
+	const [p, setP] = useState(1);
+	const [drugTransactions, setDrugTransactions] = useState([]);
+	const [meta, setMeta] = useState(null);
+	const [loading, setLoading] = useState(false);
+
+	useEffect(() => {
+		fetchDrugTransactions();
+	}, [drugTransactions.length]);
+
+	const fetchDrugTransactions = async () => {
+		try {
+			let pid = '';
+			let startDate = '';
+			let endDate = '';
+			let service_id = '2';
+			let status = '';
+			console.table(p, pid, startDate, endDate, service_id, status);
+			setLoading(true);
+			const url = `transactions?page=${p}&limit=15&patient_id=${pid}&startDate=${startDate}&endDate=${endDate}&service_id=${service_id}&status=${status}`;
+			const rs = await request(url, 'GET', true);
+			const { result, ...meta } = rs;
+			setDrugTransactions(result);
+			setLoading(false);
+			console.log('malik man', result);
+		} catch (err) {
+			console.log('fetch drug err', err);
+			setLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		handleNextPage();
+	}, []);
+
+	const handleNextPage = () => {
+		setP(p + 1);
+		console.log('next', p);
+		fetchDrugTransactions();
+	};
+
+	const handlePreviousPage = () => {
+		setP(p - 1);
+		console.log('Previous', p);
+		fetchDrugTransactions();
+	};
 	return (
 		<div className="content-i">
 			<div className="content-box">
@@ -218,24 +267,12 @@ const Pharmacy = () => {
 						<div className="element-box">
 							<div className="element-wrapper">
 								<div className="element-box-tp">
-									<div className="form-desc">
-										You can put a table tag inside an{' '}
-										<code>.element-box-tp</code> className wrapper and add{' '}
-										<code>.table</code> className to it to get something like
-										this:
-									</div>
 									<div className="element-box-tp">
 										<div className="controls-above-table">
 											<div className="row">
 												<div className="col-sm-6">
 													<a className="btn btn-sm btn-secondary" href="#">
 														Download CSV
-													</a>
-													<a className="btn btn-sm btn-secondary" href="#">
-														Archive
-													</a>
-													<a className="btn btn-sm btn-danger" href="#">
-														Delete
 													</a>
 												</div>
 												<div className="col-sm-6">
@@ -248,155 +285,82 @@ const Pharmacy = () => {
 												</div>
 											</div>
 										</div>
-										<table className="table table-striped table-bordered">
-											<thead>
-												<tr>
-													<th>Patient Name</th>
-													<th>Patient ID</th>
-													<th>Request Date</th>
-													<th className="text-center">Fill Date</th>
-													<th className="text-right">Drug Item</th>
-													<th className="text-right">Quantity</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td>John Mayers</td>
-													<td>12</td>
-													<td>
-														<img
-															alt=""
-															src="img/flags-icons/us.png"
-															width="25px"
-														/>
-													</td>
-													<td className="text-center">
-														<div
-															className="status-pill green"
-															data-title="Complete"
-															data-toggle="tooltip"
-															data-original-title=""
-															title=""
-														></div>
-													</td>
-													<td className="text-right">$354</td>
-													<td className="text-right">$354</td>
-												</tr>
-												<tr>
-													<td>Kelly Brans</td>
-													<td>45</td>
-													<td>
-														<img
-															alt=""
-															src="img/flags-icons/ca.png"
-															width="25px"
-														/>
-													</td>
-													<td className="text-center">
-														<div
-															className="status-pill red"
-															data-title="Cancelled"
-															data-toggle="tooltip"
-															data-original-title=""
-															title=""
-														></div>
-													</td>
-													<td className="text-right">$94</td>
-													<td className="text-right">$94</td>
-												</tr>
-												<tr>
-													<td>Tim Howard</td>
-													<td>112</td>
-													<td>
-														<img
-															alt=""
-															src="img/flags-icons/uk.png"
-															width="25px"
-														/>
-													</td>
-													<td className="text-center">
-														<div
-															className="status-pill green"
-															data-title="Complete"
-															data-toggle="tooltip"
-															data-original-title=""
-															title=""
-														></div>
-													</td>
-													<td className="text-right">$156</td>
-													<td className="text-right">$156</td>
-												</tr>
-												<tr>
-													<td>Joe Trulli</td>
-													<td>1,256</td>
-													<td>
-														<img
-															alt=""
-															src="img/flags-icons/es.png"
-															width="25px"
-														/>
-													</td>
-													<td className="text-center">
-														<div
-															className="status-pill yellow"
-															data-title="Pending"
-															data-toggle="tooltip"
-															data-original-title=""
-															title=""
-														></div>
-													</td>
-													<td className="text-right">$1,120</td>
-													<td className="text-right">$1,120</td>
-												</tr>
-												<tr>
-													<td>Fred Kolton</td>
-													<td>74</td>
-													<td>
-														<img
-															alt=""
-															src="img/flags-icons/fr.png"
-															width="25px"
-														/>
-													</td>
-													<td className="text-center">
-														<div
-															className="status-pill green"
-															data-title="Complete"
-															data-toggle="tooltip"
-															data-original-title=""
-															title=""
-														></div>
-													</td>
-													<td className="text-right">$74</td>
-													<td className="text-right">$74</td>
-												</tr>
-											</tbody>
-										</table>
+										{loading ? (
+											<TableLoading />
+										) : (
+											<table className="table table-striped table-bordered">
+												<thead>
+													<tr>
+														<th>Patient Name</th>
+														<th>Patient ID</th>
+														<th>Request Date</th>
+														<th className="text-center">Fill Date</th>
+														<th className="text-right">Drug Item</th>
+														<th className="text-right">Amount</th>
+														<th className="text-right">Quantity</th>
+													</tr>
+												</thead>
+												<tbody>
+													{drugTransactions.map((transaction, index) => (
+														<tr key={index}>
+															<td>
+																{transaction.patient.surname}{' '}
+																{transaction.patient.other_names}
+															</td>
+															<td>{transaction.patient_id}</td>
+															<td>
+																{moment(transaction.createdAt).format(
+																	'DD-MM-YYYY h:mm a'
+																)}
+															</td>
+															<td className="text-center">
+																{moment(
+																	transaction.patientRequestItem.filled_at
+																).format('DD-MM-YYYY h:mm a')}
+															</td>
+															<td className="text-right">
+																&#x20A6;{' '}
+																{
+																	transaction.patientRequestItem.drugBatch
+																		.unitPrice
+																}
+															</td>
+															<td className="text-right">
+																&#x20A6;{' '}
+																{
+																	transaction.patientRequestItem.drugBatch
+																		.unitPrice
+																}
+															</td>
+															<td className="text-right">
+																{transaction.patientRequestItem.fill_quantity}
+															</td>
+														</tr>
+													))}
+												</tbody>
+											</table>
+										)}
 										<div className="controls-below-table">
 											<div className="table-records-info">
-												Showing records 1 - 5
+												Showing {drugTransactions.length} records
 											</div>
 											<div className="table-records-pages">
 												<ul>
 													<li>
-														<a href="#">Previous</a>
+														<button
+															disabled={p === 1 ? true : false}
+															onClick={handlePreviousPage}
+															style={{
+																backgroundColor: 'transparent',
+																border: 'none',
+															}}
+														>
+															<a>Previous</a>
+														</button>
 													</li>
+
 													<li>
-														<a className="current" href="#">
-															1
-														</a>
-													</li>
-													<li>
-														<a href="#">2</a>
-													</li>
-													<li>
-														<a href="#">3</a>
-													</li>
-													<li>
-														<a href="#">4</a>
-													</li>
-													<li>
-														<a href="#">Next</a>
+														<a onClick={handleNextPage}>Next</a>
 													</li>
 												</ul>
 											</div>
