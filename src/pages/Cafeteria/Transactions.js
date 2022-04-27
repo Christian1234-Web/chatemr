@@ -49,15 +49,23 @@ class Transactions extends Component {
 		const { startDate, endDate } = this.state;
 		try {
 			this.setState({ loading: true });
-			const url = `transactions?patient_id=&startDate=${startDate}&endDate=${endDate}&status=&service_id=cafeteria&payment_method&page=1&limit=10`;
+			const url = `transactions?patient_id=&startDate=${startDate}&endDate=${endDate}&status=&service_id=cafeteria&payment_method&page=1&limit=100`;
 			const rs = await request(url, 'GET', true);
+
+			const filtered = rs.result.filter(
+				(value, index, self) =>
+					index ===
+					self.findIndex(
+						t => t.createdAt.split('.')[0] === value.createdAt.split('.')[0]
+					)
+			);
 
 			this.setState({
 				loading: false,
 				filtering: false,
 				startDate: '',
 				endDate: '',
-				transactions: rs.result,
+				transactions: filtered,
 			});
 		} catch (error) {
 			console.log(error);
