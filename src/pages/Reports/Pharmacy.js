@@ -3,12 +3,16 @@ import { request } from '../../services/utilities';
 import moment from 'moment';
 import TableLoading from '../../components/TableLoading';
 import { Alert } from 'antd';
+import { Link } from 'react-router-dom';
 
 const Pharmacy = () => {
 	const [p, setP] = useState(1);
 	const [drugTransactions, setDrugTransactions] = useState([]);
 	const [meta, setMeta] = useState(null);
 	const [loading, setLoading] = useState(false);
+
+	const [linkPharm, setLinkPharm] = useState(true);
+	const [linkDen, setLinkDen] = useState(false);
 
 	useEffect(() => {
 		fetchDrugTransactions();
@@ -21,14 +25,12 @@ const Pharmacy = () => {
 			let endDate = '';
 			let service_id = '2';
 			let status = '';
-			console.table(p, pid, startDate, endDate, service_id, status);
 			setLoading(true);
 			const url = `transactions?page=${p}&limit=15&patient_id=${pid}&startDate=${startDate}&endDate=${endDate}&service_id=${service_id}&status=${status}`;
 			const rs = await request(url, 'GET', true);
 			const { result, ...meta } = rs;
 			setDrugTransactions(result);
 			setLoading(false);
-			console.log('malik man', result);
 		} catch (err) {
 			console.log('fetch drug err', err);
 			setLoading(false);
@@ -41,14 +43,22 @@ const Pharmacy = () => {
 
 	const handleNextPage = () => {
 		setP(p + 1);
-		console.log('next', p);
 		fetchDrugTransactions();
 	};
 
 	const handlePreviousPage = () => {
 		setP(p - 1);
-		console.log('Previous', p);
 		fetchDrugTransactions();
+	};
+
+	const handleLinkPharm = () => {
+		setLinkPharm(true);
+		setLinkDen(false);
+	};
+
+	const handleLinkDen = () => {
+		setLinkPharm(false);
+		setLinkDen(true);
 	};
 	return (
 		<div className="content-i">
@@ -270,12 +280,43 @@ const Pharmacy = () => {
 									<div className="element-box-tp">
 										<div className="controls-above-table">
 											<div className="row">
-												<div className="col-sm-6">
+												<div className="col-sm-4">
 													<a className="btn btn-sm btn-secondary" href="#">
 														Download CSV
 													</a>
 												</div>
-												<div className="col-sm-6">
+												<div className="col-sm-4">
+													<div className="element-wrapper">
+														<div className="os-tabs-w mx-1">
+															<div className="os-tabs-controls os-tabs-complex">
+																<ul className="nav nav-tabs upper">
+																	<li className="nav-item">
+																		<div
+																			className={`nav-link ${
+																				linkPharm ? 'active' : ''
+																			}`}
+																			onClick={handleLinkPharm}
+																		>
+																			<a>Pharmacy</a>
+																		</div>
+																	</li>
+																	<li className="nav-item">
+																		<div
+																			aria-expanded="false"
+																			className={`nav-link ${
+																				linkDen ? 'active' : ''
+																			}`}
+																			onClick={handleLinkDen}
+																		>
+																			<a>Dispensed</a>
+																		</div>
+																	</li>
+																</ul>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div className="col-sm-4">
 													<form className="form-inline justify-content-sm-end">
 														<input
 															className="form-control form-control-sm rounded bright"
@@ -288,220 +329,228 @@ const Pharmacy = () => {
 										{loading ? (
 											<TableLoading />
 										) : (
-											<table className="table table-striped table-bordered">
-												<thead>
-													<tr>
-														<th>Patient Name</th>
-														<th>Patient ID</th>
-														<th>Request Date</th>
-														<th className="text-center">Fill Date</th>
-														<th className="text-right">Drug Item</th>
-														<th className="text-right">Amount</th>
-														<th className="text-right">Quantity</th>
-													</tr>
-												</thead>
-												<tbody>
-													{drugTransactions.map((transaction, index) => (
-														<tr key={index}>
-															<td>
-																{transaction.patient.surname}{' '}
-																{transaction.patient.other_names}
-															</td>
-															<td>{transaction.patient_id}</td>
-															<td>
-																{moment(transaction.createdAt).format(
-																	'DD-MM-YYYY h:mm a'
-																)}
-															</td>
-															<td className="text-center">
-																{moment(
-																	transaction.patientRequestItem.filled_at
-																).format('DD-MM-YYYY h:mm a')}
-															</td>
-															<td className="text-right">
-																&#x20A6;{' '}
-																{
-																	transaction.patientRequestItem.drugBatch
-																		.unitPrice
-																}
-															</td>
-															<td className="text-right">
-																&#x20A6;{' '}
-																{
-																	transaction.patientRequestItem.drugBatch
-																		.unitPrice
-																}
-															</td>
-															<td className="text-right">
-																{transaction.patientRequestItem.fill_quantity}
-															</td>
-														</tr>
-													))}
-												</tbody>
-											</table>
-										)}
-										<div className="controls-below-table">
-											<div className="table-records-info">
-												Showing {drugTransactions.length} records
-											</div>
-											<div className="table-records-pages">
-												<ul>
-													<li>
-														<button
-															disabled={p === 1 ? true : false}
-															onClick={handlePreviousPage}
-															style={{
-																backgroundColor: 'transparent',
-																border: 'none',
-															}}
-														>
-															<a>Previous</a>
-														</button>
-													</li>
+											<>
+												<>
+													{linkPharm && (
+														<>
+															<table className="table table-striped table-bordered">
+																<thead>
+																	<tr>
+																		<th>Patient Name</th>
+																		<th>Patient ID</th>
+																		<th>Request Date</th>
+																		<th className="text-center">Fill Date</th>
+																		<th className="text-right">Drug Item</th>
+																		<th className="text-right">Amount</th>
+																		<th className="text-right">Quantity</th>
+																	</tr>
+																</thead>
+																<tbody>
+																	{drugTransactions.map(
+																		(transaction, index) => (
+																			<tr key={index}>
+																				<td>
+																					{transaction.patient.surname}{' '}
+																					{transaction.patient.other_names}
+																				</td>
+																				<td>{transaction.patient_id}</td>
+																				<td>
+																					{moment(transaction.createdAt).format(
+																						'DD-MM-YYYY h:mm a'
+																					)}
+																				</td>
+																				<td className="text-center">
+																					{moment(
+																						transaction.patientRequestItem
+																							.filled_at
+																					).format('DD-MM-YYYY h:mm a')}
+																				</td>
+																				<td className="text-right">
+																					{
+																						transaction.patientRequestItem.drug
+																							.name
+																					}
+																				</td>
+																				<td className="text-right">
+																					&#x20A6;{' '}
+																					{
+																						transaction.patientRequestItem
+																							.drugBatch.unitPrice
+																					}
+																				</td>
+																				<td className="text-right">
+																					{
+																						transaction.patientRequestItem
+																							.fill_quantity
+																					}
+																				</td>
+																			</tr>
+																		)
+																	)}
+																</tbody>
+															</table>
+															<div className="controls-below-table">
+																<div className="table-records-info">
+																	Showing {drugTransactions.length} records
+																</div>
+																<div className="table-records-pages">
+																	<ul>
+																		<li>
+																			<button
+																				disabled={p === 1 ? true : false}
+																				onClick={handlePreviousPage}
+																				style={{
+																					backgroundColor: 'transparent',
+																					border: 'none',
+																				}}
+																			>
+																				<a>Previous</a>
+																			</button>
+																		</li>
 
-													<li>
-														<a onClick={handleNextPage}>Next</a>
-													</li>
-												</ul>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div className="col-sm-8 col-lg-9 col-xl-6 col-xxl-9">
-						<div className="element-box">
-							<div className="element-wrapper">
-								<div className="element-box-tp">
-									<div className="form-desc">
-										You can put a table tag inside an{' '}
-										<code>.element-box-tp</code> className wrapper and add{' '}
-										<code>.table</code> className to it to get something like
-										this:
-									</div>
-									<div className="element-box-tp">
-										<div className="controls-above-table">
-											<div className="row">
-												<div className="col-sm-6">
-													<a className="btn btn-sm btn-secondary" href="#">
-														Download CSV
-													</a>
-													<a className="btn btn-sm btn-secondary" href="#">
-														Archive
-													</a>
-													<a className="btn btn-sm btn-danger" href="#">
-														Delete
-													</a>
-												</div>
-												<div className="col-sm-6">
-													<div className="element-actions">
-														<form className="form-inline justify-content-sm-end">
-															<select className="form-control form-control-sm">
-																<option value="Pending">Today</option>
-																<option value="Active">Last Week </option>
-																<option value="Cancelled">Last 30 Days</option>
-															</select>
-														</form>
-													</div>
-												</div>
-											</div>
-										</div>
-										<table className="table table-striped table-bordered">
-											<thead>
-												<tr>
-													<th>BRAND NAME</th>
-													<th>GENERIC NAME</th>
-													<th>QUANTITY DISPENSED</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td>John Mayers</td>
-													<td>12</td>
-													<td>
-														<img
-															alt=""
-															src="img/flags-icons/us.png"
-															width="25px"
-														/>
-													</td>
-												</tr>
-												<tr>
-													<td>Kelly Brans</td>
-													<td>45</td>
-													<td>
-														<img
-															alt=""
-															src="img/flags-icons/ca.png"
-															width="25px"
-														/>
-													</td>
-												</tr>
-												<tr>
-													<td>Tim Howard</td>
-													<td>112</td>
-													<td>
-														<img
-															alt=""
-															src="img/flags-icons/uk.png"
-															width="25px"
-														/>
-													</td>
-												</tr>
-												<tr>
-													<td>Joe Trulli</td>
-													<td>1,256</td>
-													<td>
-														<img
-															alt=""
-															src="img/flags-icons/es.png"
-															width="25px"
-														/>
-													</td>
-												</tr>
-												<tr>
-													<td>Fred Kolton</td>
-													<td>74</td>
-													<td>
-														<img
-															alt=""
-															src="img/flags-icons/fr.png"
-															width="25px"
-														/>
-													</td>
-												</tr>
-											</tbody>
-										</table>
-										<div className="controls-below-table">
-											<div className="table-records-info">
-												Showing records 1 - 5
-											</div>
-											<div className="table-records-pages">
-												<ul>
-													<li>
-														<a href="#">Previous</a>
-													</li>
-													<li>
-														<a className="current" href="#">
-															1
-														</a>
-													</li>
-													<li>
-														<a href="#">2</a>
-													</li>
-													<li>
-														<a href="#">3</a>
-													</li>
-													<li>
-														<a href="#">4</a>
-													</li>
-													<li>
-														<a href="#">Next</a>
-													</li>
-												</ul>
-											</div>
-										</div>
+																		<li>
+																			<a onClick={handleNextPage}>Next</a>
+																		</li>
+																	</ul>
+																</div>
+															</div>
+														</>
+													)}
+												</>
+												<>
+													{linkDen && (
+														<>
+															<div className="col-sm-8 col-lg-9 col-xl-6 col-xxl-9">
+																<div className="element-box">
+																	<div className="element-wrapper">
+																		<div className="element-box-tp">
+																			<div className="element-box-tp">
+																				<div className="controls-above-table">
+																					<div className="row">
+																						<div className="col-sm-12">
+																							<div className="element-actions">
+																								<form className="form-inline justify-content-sm-end">
+																									<select className="form-control form-control-sm">
+																										<option value="Pending">
+																											Today
+																										</option>
+																										<option value="Active">
+																											Last Week{' '}
+																										</option>
+																										<option value="Cancelled">
+																											Last 30 Days
+																										</option>
+																									</select>
+																								</form>
+																							</div>
+																						</div>
+																					</div>
+																				</div>
+																				<table className="table table-striped table-bordered">
+																					<thead>
+																						<tr>
+																							<th>BRAND NAME</th>
+																							<th>GENERIC NAME</th>
+																							<th>QUANTITY DISPENSED</th>
+																						</tr>
+																					</thead>
+																					<tbody>
+																						<tr>
+																							<td>John Mayers</td>
+																							<td>12</td>
+																							<td>
+																								<img
+																									alt=""
+																									src="img/flags-icons/us.png"
+																									width="25px"
+																								/>
+																							</td>
+																						</tr>
+																						<tr>
+																							<td>Kelly Brans</td>
+																							<td>45</td>
+																							<td>
+																								<img
+																									alt=""
+																									src="img/flags-icons/ca.png"
+																									width="25px"
+																								/>
+																							</td>
+																						</tr>
+																						<tr>
+																							<td>Tim Howard</td>
+																							<td>112</td>
+																							<td>
+																								<img
+																									alt=""
+																									src="img/flags-icons/uk.png"
+																									width="25px"
+																								/>
+																							</td>
+																						</tr>
+																						<tr>
+																							<td>Joe Trulli</td>
+																							<td>1,256</td>
+																							<td>
+																								<img
+																									alt=""
+																									src="img/flags-icons/es.png"
+																									width="25px"
+																								/>
+																							</td>
+																						</tr>
+																						<tr>
+																							<td>Fred Kolton</td>
+																							<td>74</td>
+																							<td>
+																								<img
+																									alt=""
+																									src="img/flags-icons/fr.png"
+																									width="25px"
+																								/>
+																							</td>
+																						</tr>
+																					</tbody>
+																				</table>
+																				<div className="controls-below-table">
+																					<div className="table-records-info">
+																						Showing records 1 - 5
+																					</div>
+																					<div className="table-records-pages">
+																						<ul>
+																							<li>
+																								<a href="#">Previous</a>
+																							</li>
+																							<li>
+																								<a className="current" href="#">
+																									1
+																								</a>
+																							</li>
+																							<li>
+																								<a href="#">2</a>
+																							</li>
+																							<li>
+																								<a href="#">3</a>
+																							</li>
+																							<li>
+																								<a href="#">4</a>
+																							</li>
+																							<li>
+																								<a href="#">Next</a>
+																							</li>
+																						</ul>
+																					</div>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</>
+													)}
+												</>
+											</>
+										)}
 									</div>
 								</div>
 							</div>
