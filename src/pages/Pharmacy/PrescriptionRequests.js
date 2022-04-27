@@ -73,6 +73,7 @@ class PrescriptionRequests extends Component {
 
 	render() {
 		const { filtering, prescriptions, meta, loading } = this.state;
+		console.log('pres', prescriptions);
 
 		const customStyle = {
 			minHeight: '24px !important',

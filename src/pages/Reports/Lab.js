@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { notifyError } from '../../services/notify';
 import { request, itemRender } from '../../services/utilities';
+import background from '../../assets/images/avatar1.jpg';
 
 const Lab = () => {
 	const [filtering, setFiltering] = useState(false);
@@ -35,7 +36,20 @@ const Lab = () => {
 	};
 	console.log('metaaa', meta);
 	console.log('malik lab', labs);
-	return <div>Lab</div>;
+
+	const pending = labs.filter(
+		lab =>
+			lab.item.cancelled === 0 &&
+			lab.item.transaction &&
+			(lab.item.transaction.status === 1 ||
+				lab.item.transaction.status === -1) &&
+			lab.item.filled === 0
+	);
+
+	console.log('pending', pending);
+	// return <pre>{JSON.stringify(pending, null, 4)}</pre>;
+
+	return <>Lab</>;
 };
 
 export default Lab;

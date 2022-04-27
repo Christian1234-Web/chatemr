@@ -118,6 +118,7 @@ const Dashboard = () => {
 
 			dispatch(startBlock());
 			setSubmitting(true);
+			console.log('testing');
 			const rs = await request('cafeteria/sale', 'POST', true, data);
 			setSubmitting(false);
 			dispatch(stopBlock());
@@ -208,7 +209,7 @@ const Dashboard = () => {
 											>
 												<div className="profile-tile profile-tile-inlined">
 													<a className="profile-tile-box">
-														<div>{item.name}</div>
+														<div>{item.foodItem.name}</div>
 														<div className="pt-avatar-w d-block">
 															{formatCurrency(item.price)}
 														</div>

@@ -51,7 +51,7 @@ const Cafeteria = ({ location }) => {
 								}`}
 								to="/cafeteria/showcase"
 							>
-								Showcase
+								Showcase Items
 							</Link>
 						</li>
 						<li className="nav-item">
