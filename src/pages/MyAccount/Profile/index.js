@@ -5,6 +5,8 @@ import AccountDetails from './ProfileAccountDetails';
 import AccountUserProfile from './AccountUserProfile';
 import { useSelector } from 'react-redux';
 import EditProfile from './EditProfile';
+import AccountUserPayroll from './AccountUserPayroll';
+import AccountUserAppraisal from './AccountUserAppraisal';
 
 const AccountProfile = () => {
 	const staff = useSelector(({ user }) => user.profile);
@@ -33,12 +35,12 @@ const AccountProfile = () => {
 			{editProfile ? (
 				<EditProfile staff={staff} />
 			) : (
-				<div className="col-sm-7">
-					<div className="element-wrapper">
-						<div className="element-box">
-							<div className="os-tabs-w">
+				<div className="col-lg-9">
+					<div className="os-tabs-w mx-4">
+						<div className="">
+							<div className="os-tabs-w mx-4">
 								<div className="os-tabs-controls">
-									<ul className="nav nav-tabs smaller">
+									<ul className="nav nav-tabs upper">
 										<li className="nav-item">
 											<a
 												className={
@@ -71,8 +73,17 @@ const AccountProfile = () => {
 										</li>
 									</ul>
 								</div>
+
 								<div className="tab-content">
 									{tab === 'profile' && <AccountUserProfile staff={staff} />}
+								</div>
+								<div className="tab-content">
+									{tab === 'payroll' && <AccountUserPayroll staff={staff} />}
+								</div>
+								<div className="tab-content">
+									{tab === 'appraisal' && (
+										<AccountUserAppraisal staff={staff} />
+									)}
 								</div>
 							</div>
 						</div>

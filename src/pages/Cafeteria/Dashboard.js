@@ -89,6 +89,7 @@ const Dashboard = () => {
 
 	const patientSet = pat => {
 		setSelectedCustomer(pat);
+
 		let name;
 		if (customer === 'patient') {
 			name = patientname(pat);

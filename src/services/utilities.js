@@ -518,6 +518,9 @@ export const redirectToPage = (role, history, permissions) => {
 			case 'records':
 				uri = '/records';
 				break;
+			case 'reports':
+				uri = '/reports';
+				break;
 			case 'accounts':
 				uri = '/accounting';
 				break;
