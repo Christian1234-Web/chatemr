@@ -4,6 +4,7 @@ import { diagnosisAPI } from '../../services/constants';
 import { notifySuccess, notifyError } from '../../services/notify';
 import waiting from '../../assets/images/waiting.gif';
 import { uploadFile } from '../../services/utilities';
+import ModalHeader from '../ModalHeader';
 
 class ModalUploadDiagnosis extends Component {
 	state = {
@@ -47,19 +48,13 @@ class ModalUploadDiagnosis extends Component {
 				role="dialog"
 				style={{ display: 'block' }}
 			>
-				<div className="modal-dialog modal-centered" role="document">
+				<div className="modal-dialog modal-centered">
 					<div className="modal-content text-center">
-						<button
-							aria-label="Close"
-							className="close"
-							type="button"
-							onClick={() => closeModal(false)}
-						>
-							<span className="os-icon os-icon-close"></span>
-						</button>
+						<ModalHeader
+							title="Upload Diagnosis"
+							closeModal={() => closeModal(false)}
+						/>
 						<div className="onboarding-content with-gradient">
-							<h4 className="onboarding-title">Upload Diagnosis</h4>
-
 							<form onSubmit={this.onUpload}>
 								<div className="form-group">
 									<input

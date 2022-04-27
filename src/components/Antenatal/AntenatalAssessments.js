@@ -105,7 +105,6 @@ const AntenatalAssessment = ({ can_request = true }) => {
 										<th>Measurements</th>
 										<th>Fetal Lie</th>
 										<th>Presentation</th>
-										<th>Comment</th>
 										<th>By</th>
 									</tr>
 								</thead>
@@ -137,13 +136,6 @@ const AntenatalAssessment = ({ can_request = true }) => {
 												</td>
 												<td>{item.fetal_lie || '--'}</td>
 												<td>{`${item.position_of_foetus || '--'}${rtbrim}`}</td>
-												<td>
-													<div
-														dangerouslySetInnerHTML={{
-															__html: item.comment?.description || '--',
-														}}
-													/>
-												</td>
 												<td nowrap="nowrap">{staffname(item.staff)}</td>
 											</tr>
 										);

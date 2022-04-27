@@ -7,20 +7,12 @@ import padLeft from 'pad-left';
 
 import PayrollItem from '../../components/PayrollItem';
 import { loadPayroll } from '../../actions/hr';
-import { request } from '../../services/utilities';
+import { request, itemRender } from '../../services/utilities';
 import { payrollAPI, months } from '../../services/constants';
 import waiting from '../../assets/images/waiting.gif';
+import { startBlock, stopBlock } from '../../actions/redux-block';
 import ModalPreparePayroll from '../../components/Modals/ModalPreparePayroll';
 
-const itemRender = (current, type, originalElement) => {
-	if (type === 'prev') {
-		return <a>Previous</a>;
-	}
-	if (type === 'next') {
-		return <a>Next</a>;
-	}
-	return originalElement;
-};
 const pageSize = 10;
 
 class Payroll extends Component {
@@ -30,6 +22,7 @@ class Payroll extends Component {
 		department_id: '',
 		filtering: false,
 		openModal: false,
+		meta: null,
 	};
 
 	doPreparePayroll = e => {
@@ -44,14 +37,17 @@ class Payroll extends Component {
 
 		const { year, month, department_id } = this.state;
 		const period = `${year}-${month}`;
-		this.fetchPayroll(period, department_id);
+		this.fetchPayroll(1, period, department_id);
 	};
 
-	onNavigatePage = pageNumber => {
-		console.log(pageNumber);
+	onNavigatePage = async pageNumber => {
+		const { year, month, department_id } = this.state;
+		const period = `${year}-${month}`;
+
+		await this.fetchPayroll(pageNumber, period, department_id);
 	};
 
-	componentDidMount() {
+	async componentDidMount() {
 		const { departments } = this.props;
 		const month = moment().format('MM');
 		const year = moment().format('YYYY');
@@ -59,18 +55,24 @@ class Payroll extends Component {
 		const department = departments.length > 0 ? departments[0] : null;
 		if (department) {
 			this.setState({ department_id: department.id, month, year });
-			this.fetchPayroll(period, department.id);
+			await this.fetchPayroll(1, period, department.id);
 		}
 	}
 
-	fetchPayroll = async (period, department_id) => {
+	fetchPayroll = async (page, period, department_id) => {
 		try {
-			const url = `${payrollAPI}/list-payroll?period=${period}&department_id=${department_id}`;
+			this.props.loadPayroll([]);
+			this.props.startBlock();
+			const p = page || 1;
+			const url = `${payrollAPI}/list-payroll?page=${p}&limit=${pageSize}&period=${period}&department_id=${department_id}`;
 			const rs = await request(url, 'GET', true);
-			this.props.loadPayroll([...rs]);
-			this.setState({ filtering: false });
+			const { result, ...meta } = rs;
+			this.props.loadPayroll([...result]);
+			this.setState({ filtering: false, meta });
+			this.props.stopBlock();
 		} catch (error) {
 			console.log(error);
+			this.props.stopBlock();
 			this.setState({ filtering: false });
 		}
 	};
@@ -79,17 +81,18 @@ class Payroll extends Component {
 		this.setState({ [type]: target.value });
 	};
 
-	doFilter = e => {
+	doFilter = async e => {
 		e.preventDefault();
 		this.setState({ filtering: true });
 		const { year, month, department_id } = this.state;
 		const period = `${year}-${month}`;
-		this.fetchPayroll(period, department_id);
+		await this.fetchPayroll(1, period, department_id);
 	};
 
 	render() {
 		const { payrolls, departments } = this.props;
-		const { department_id, filtering, year, month, openModal } = this.state;
+		const { department_id, filtering, year, month, openModal, meta } =
+			this.state;
 		const y = parseInt(moment().format('YYYY'), 10) + 1;
 		const years = [...Array(y - 2000).keys()].map(x => y - ++x);
 		return (
@@ -217,17 +220,19 @@ class Payroll extends Component {
 											</tbody>
 										</table>
 									</div>
-									<div className="pagination pagination-center mt-4">
-										<Pagination
-											current={1}
-											pageSize={pageSize}
-											total={0}
-											showTotal={total => `Total ${total} staffs`}
-											itemRender={itemRender}
-											onChange={this.onNavigatePage}
-											showSizeChanger={false}
-										/>
-									</div>
+									{meta && (
+										<div className="pagination pagination-center mt-4">
+											<Pagination
+												current={meta.currentPage}
+												pageSize={pageSize}
+												total={meta.totalPages}
+												showTotal={total => `Total ${total} staffs`}
+												itemRender={itemRender}
+												onChange={this.onNavigatePage}
+												showSizeChanger={false}
+											/>
+										</div>
+									)}
 								</div>
 							</div>
 						</div>
@@ -248,4 +253,6 @@ const mapStateToProps = (state, ownProps) => {
 	};
 };
 
-export default connect(mapStateToProps, { loadPayroll })(Payroll);
+export default connect(mapStateToProps, { loadPayroll, startBlock, stopBlock })(
+	Payroll
+);

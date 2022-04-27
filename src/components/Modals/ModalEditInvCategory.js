@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { closeModals } from '../../actions/general';
+import ModalHeader from '../ModalHeader';
 
 class ModalEditInvCategory extends Component {
 	componentDidMount() {
@@ -19,18 +20,13 @@ class ModalEditInvCategory extends Component {
 				role="dialog"
 				style={{ display: 'block' }}
 			>
-				<div className="modal-dialog modal-sm modal-centered" role="document">
+				<div className="modal-dialog modal-sm modal-centered">
 					<div className="modal-service_category_idcontent text-center">
-						<button
-							aria-label="Close"
-							className="close"
-							type="button"
-							onClick={() => this.props.closeModals(false)}
-						>
-							<span className="os-icon os-icon-close"></span>
-						</button>
+						<ModalHeader
+							title="Edit Inventory Category"
+							closeModal={() => this.props.closeModals(false)}
+						/>
 						<div className="onboarding-content with-gradient">
-							<h4 className="onboarding-title">Edit Inventory Category</h4>
 							<div className="form-block">
 								<form>
 									<div className="row">

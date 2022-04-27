@@ -4,6 +4,7 @@ import moment from 'moment';
 
 import { closeCurrentPayRoll } from '../../actions/general';
 import { formatCurrency } from '../../services/utilities';
+import ModalHeader from '../ModalHeader';
 
 class ModalCurrentPayroll extends Component {
 	state = {
@@ -28,6 +29,9 @@ class ModalCurrentPayroll extends Component {
 	render() {
 		const { is_modal } = this.props;
 		const { payroll, fetching } = this.state;
+		const date = payroll
+			? moment(payroll.createdAt).format('Do MMMM, YYYY')
+			: '--';
 		return (
 			!fetching && (
 				<div
@@ -35,21 +39,14 @@ class ModalCurrentPayroll extends Component {
 					role="dialog"
 					style={{ display: 'block' }}
 				>
-					<div className="modal-dialog modal-centered" role="document">
+					<div className="modal-dialog modal-centered">
 						<div className="modal-content text-center">
-							<button
-								aria-label="Close"
-								className="close"
-								type="button"
-								onClick={() => this.props.closeCurrentPayRoll(is_modal)}
-							>
-								<span className="os-icon os-icon-close"></span>
-							</button>
+							<ModalHeader
+								title={`Payslip for Period Ended: ${date}`}
+								closeModal={() => this.props.closeCurrentPayRoll(is_modal)}
+							/>
 							{payroll && (
 								<div className="onboarding-content with-gradient">
-									<h6 className="onboarding-title">{`Payslip for Period Ended: ${moment(
-										payroll.createdAt
-									).format('Do MMMM, YYYY')}`}</h6>
 									<div className="table-responsive mt-4">
 										<table className="table table-striped table-sm">
 											<tbody>

@@ -218,11 +218,7 @@ class ProcedureBlock extends Component {
 											</p>
 										</td>
 									)}
-									<td>
-										<a className="item-title text-color">
-											{data.created_by || data.createdBy || '--'}
-										</a>
-									</td>
+									<td>{data.created_by || data.createdBy || '--'}</td>
 									<td>
 										{data.requestNote ? (
 											<Popover
@@ -233,7 +229,7 @@ class ProcedureBlock extends Component {
 														closeModal={() => this.setState({ visible: null })}
 													/>
 												}
-												overlayClassNamedata="show-note"
+												overlayClassName="show-note"
 												trigger="click"
 												visible={visible && visible === data.id}
 												onVisibleChange={() =>

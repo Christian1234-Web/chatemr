@@ -132,7 +132,7 @@ class ModalCreateRecordDelivery extends Component {
 				role="dialog"
 				style={{ display: 'block' }}
 			>
-				<div className="modal-dialog modal-lg modal-centered" role="document">
+				<div className="modal-dialog modal-lg modal-centered">
 					<div className="modal-content text-center">
 						<button
 							aria-label="Close"

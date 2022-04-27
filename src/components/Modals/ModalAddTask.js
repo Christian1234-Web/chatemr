@@ -20,7 +20,7 @@ class ModalAddTask extends Component {
 				role="dialog"
 				style={{ display: 'block' }}
 			>
-				<div className="modal-dialog modal-centered" role="document">
+				<div className="modal-dialog modal-centered">
 					<div className="modal-content text-center">
 						<div className="modal-header faded smaller">
 							<div className="modal-title">
@@ -39,10 +39,9 @@ class ModalAddTask extends Component {
 								type="button"
 								onClick={() => this.props.closeModals(false)}
 							>
-								<span aria-hidden="true"> ×</span>
+								<span className="os-icon os-icon-close"></span>
 							</button>
 						</div>
-
 						<div className="onboarding-content with-gradient">
 							<div className="modal-body">
 								<form>

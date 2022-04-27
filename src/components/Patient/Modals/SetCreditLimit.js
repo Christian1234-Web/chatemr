@@ -47,7 +47,7 @@ const SetCreditLimit = ({ patient, onHide }) => {
 			role="dialog"
 			style={{ width: '300px' }}
 		>
-			<div className="modal-centered" role="document">
+			<div className="modal-centered">
 				<div className="modal-content">
 					<button
 						aria-label="Close"

@@ -1,11 +1,32 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 
 import RoleBlock from '../../components/RoleBlock';
 import Permission from '../../components/Permission';
+import { request } from '../../services/utilities';
+import { notifyError } from '../../services/notify';
 
 const Roles = () => {
 	const [tab, setTab] = useState('roles');
+	const [loaded, setLoaded] = useState(false);
+	const [permissions, setPermissions] = useState([]);
+
+	const fetchPermissions = useCallback(async () => {
+		try {
+			const rs = await request('settings/permissions', 'GET', true);
+			setPermissions(rs);
+			setLoaded(true);
+		} catch (error) {
+			setLoaded(true);
+			notifyError(error.message || 'could not fetch permissions');
+		}
+	}, []);
+
+	useEffect(() => {
+		if (!loaded) {
+			fetchPermissions();
+		}
+	}, [fetchPermissions, loaded]);
 
 	return (
 		<div className="content-i">
@@ -39,8 +60,14 @@ const Roles = () => {
 									</ul>
 								</div>
 							</div>
-							{tab === 'roles' && <RoleBlock />}
-							{tab === 'permissions' && <Permission />}
+							{tab === 'roles' && <RoleBlock permissions={permissions} />}
+							{tab === 'permissions' && (
+								<Permission
+									setPermissions={items => setPermissions(items)}
+									loaded={loaded}
+									permissions={permissions}
+								/>
+							)}
 						</div>
 					</div>
 				</div>

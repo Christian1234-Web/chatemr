@@ -993,8 +993,8 @@ h4.onboarding-title {
 }
 
 .modal-scroll {
-    max-height: calc(100vh - 65px);
-    overflow-y: auto;
+	max-height: calc(100vh - 65px);
+	overflow-y: auto;
 	border-radius: 6px;
 	border: 0px solid rgba(0, 0, 0, 0.2);
 }
@@ -1010,7 +1010,9 @@ h4.onboarding-title {
 		width: 85%;
 	}
 
-	i {color: #555;}
+	i {
+		color: #555;
+	}
 }
 
 .react-datepicker-popper {
@@ -1028,5 +1030,15 @@ h4.onboarding-title {
 }
 
 .fc-event {
-	&:hover {color: #ffffff !important;}
+	&:hover {
+		color: #ffffff !important;
+	}
+}
+
+.permissions-block {
+	h4 {
+		font-weight: 500;
+		font-size: 0.81rem;
+		color: #3E4B5B !important;
+	}
 }

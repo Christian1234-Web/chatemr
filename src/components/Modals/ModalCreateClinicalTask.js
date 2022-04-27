@@ -4,6 +4,7 @@ import { Link, withRouter } from 'react-router-dom';
 
 import { closeModals } from '../../actions/general';
 import { vitalItems } from '../../services/constants';
+import ModalHeader from '../ModalHeader';
 import VitalForm from '../Patient/VitalForm';
 
 // const BMI = lazy(() => import('../ClinicalTask/BMI'));
@@ -58,19 +59,13 @@ export class ModalCreateClinicalTask extends Component {
 				role="dialog"
 				style={{ display: 'block' }}
 			>
-				<div className="modal-dialog modal-lg modal-centered" role="document">
+				<div className="modal-dialog modal-lg modal-centered">
 					<div className="modal-content">
-						<button
-							aria-label="Close"
-							className="close"
-							type="button"
-							onClick={() => this.props.closeModals(false)}
-						>
-							<span className="os-icon os-icon-close"></span>
-						</button>
+						<ModalHeader
+							title="Clinical Task"
+							closeModal={() => this.props.closeModals(false)}
+						/>
 						<div className="onboarding-content with-gradient">
-							<h4 className="onboarding-title text-center">Clinical Task</h4>
-
 							<div className="col-md-12">
 								<div className="element-wrapper">
 									<div className="element-box-tp mb-3">

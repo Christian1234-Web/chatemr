@@ -6,21 +6,13 @@ import moment from 'moment';
 import padLeft from 'pad-left';
 
 import PayrollItem from '../PayrollItem';
+import ModalHeader from '../ModalHeader';
 import { payrollAPI, months } from '../../services/constants';
-import { request } from '../../services/utilities';
+import { request, itemRender } from '../../services/utilities';
 import waiting from '../../assets/images/waiting.gif';
 import { loadUnpaidPayroll } from '../../actions/hr';
 import { notifySuccess, notifyError } from '../../services/notify';
 
-const itemRender = (current, type, originalElement) => {
-	if (type === 'prev') {
-		return <a>Previous</a>;
-	}
-	if (type === 'next') {
-		return <a>Next</a>;
-	}
-	return originalElement;
-};
 const pageSize = 10;
 
 class ModalPreparePayroll extends Component {
@@ -134,18 +126,10 @@ class ModalPreparePayroll extends Component {
 				role="dialog"
 				style={{ display: 'block' }}
 			>
-				<div className="modal-dialog modal-lg modal-centered" role="document">
-					<div className="modal-content text-center">
-						<button
-							aria-label="Close"
-							className="close"
-							type="button"
-							onClick={closeModal}
-						>
-							<span className="os-icon os-icon-close"></span>
-						</button>
+				<div className="modal-dialog modal-lg modal-centered">
+					<div className="modal-content text-center modal-scroll">
+						<ModalHeader title="Prepare Payroll" closeModal={closeModal} />
 						<div className="onboarding-content with-gradient">
-							<h4 className="onboarding-title">Prepare Payroll</h4>
 							<div className="element-box">
 								<form className="form-inline" onSubmit={this.generatePayroll}>
 									<label className="mr-2">Month:</label>

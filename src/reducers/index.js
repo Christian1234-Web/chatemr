@@ -11,7 +11,6 @@ import hr from './hr';
 import patient from './patient';
 import transaction from './transaction';
 import utility from './utility';
-import permission from './permission';
 import department from './department';
 
 const reducers = combineReducers({
@@ -26,7 +25,6 @@ const reducers = combineReducers({
 	utility,
 	patient,
 	transaction,
-	permission,
 	department,
 });
 

@@ -46,11 +46,11 @@ const SelectRoomModal = ({ rooms, closeModal }) => {
 			{!rooms ? (
 				<TableLoading />
 			) : (
-				<div className="modal-dialog modal-centered" role="document">
+				<div className="modal-dialog modal-centered">
 					<div className="modal-content text-center no-scroll">
 						<ModalHeader
-							closeModal={() => closeModal(null)}
 							title="Select Room"
+							closeModal={() => closeModal(null)}
 						/>
 						<div className="onboarding-content with-gradient scroll-within">
 							<div className="row">

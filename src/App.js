@@ -122,7 +122,6 @@ class App extends Component {
 					isIdle: this.idleTimer.isIdle(),
 				});
 			}, 1000);
-			console.log(this.myInterval);
 		}
 
 		if (!connected && loggedIn) {

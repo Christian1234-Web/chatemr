@@ -127,7 +127,7 @@ class OpenEncounter extends Component {
 				{...ArrowKeysReact.events}
 				ref="theDiv"
 			>
-				<div className="modal-dialog modal-lg modal-centered" role="document">
+				<div className="modal-dialog modal-lg modal-centered">
 					<div className="modal-content">
 						<button
 							aria-label="Close"

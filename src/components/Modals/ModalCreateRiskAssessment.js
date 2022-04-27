@@ -11,6 +11,7 @@ import { closeModals } from '../../actions/general';
 import waiting from '../../assets/images/waiting.gif';
 import { notifySuccess, notifyError } from '../../services/notify';
 import { loadRiskAssessment } from '../../actions/patient';
+import ModalHeader from '../ModalHeader';
 
 const plainOptions = [
 	'Pre-eclampsia',
@@ -81,19 +82,13 @@ class ModalCreateRiskAssessment extends Component {
 				role="dialog"
 				style={{ display: 'block' }}
 			>
-				<div className="modal-dialog modal-lg modal-centered" role="document">
+				<div className="modal-dialog modal-lg modal-centered">
 					<div className="modal-content text-center">
-						<button
-							aria-label="Close"
-							className="close"
-							type="button"
-							onClick={() => this.props.closeModals(false)}
-						>
-							<span className="os-icon os-icon-close"></span>
-						</button>
+						<ModalHeader
+							title="Take Risk Assessment"
+							closeModal={() => this.props.closeModals(false)}
+						/>
 						<div className="onboarding-content with-gradient">
-							<h4 className="onboarding-title">Take Risk Assessment</h4>
-
 							<div className="form-block">
 								<form onSubmit={handleSubmit(this.createRisk)}>
 									{error && (

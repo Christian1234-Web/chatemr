@@ -48,7 +48,7 @@ const ViewVaccine = ({ data, setRecords }) => {
 
 	return (
 		<div className="onboarding-modal fade animated show" role="dialog">
-			<div className="modal-centered" role="document">
+			<div className="modal-centered">
 				<div className="modal-content text-center">
 					<div className="onboarding-content with-gradient">
 						<div className="element-wrapper p-0">

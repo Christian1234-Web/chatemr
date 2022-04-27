@@ -16,7 +16,7 @@ import ProcedureMenu from './ProcedureMenu';
 import RecordsMenu from './RecordsMenu';
 import AccountingMenu from './AccountingMenu';
 
-const AdminMenu = ({ role }) => {
+const AdminMenu = () => {
 	return (
 		<>
 			<li className="sub-header">
@@ -75,7 +75,7 @@ const AdminMenu = ({ role }) => {
 				<span>ACCOUNTING</span>
 			</li>
 			<AccountingMenu />
-			<SettingsMenu role={role} />
+			<SettingsMenu />
 		</>
 	);
 };

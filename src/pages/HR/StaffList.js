@@ -11,11 +11,12 @@ import { notifyError } from '../../services/notify';
 import TableLoading from '../../components/TableLoading';
 import ModalCreateStaff from '../../components/Modals/ModalCreateStaff';
 import ModalEditUserAccount from '../../components/Modals/ModalEditUserAccount';
+import ModalEditSalary from '../../components/Modals/ModalEditSalary';
 import waiting from '../../assets/images/waiting.gif';
 
-const pageLimit = 24;
+const pageLimit = 10;
 
-const StaffList = ({ location }) => {
+const StaffList = () => {
 	const [loaded, setLoaded] = useState(false);
 	const [meta, setMeta] = useState({
 		currentPage: 1,
@@ -24,6 +25,7 @@ const StaffList = ({ location }) => {
 	});
 	const [staffs, setStaffs] = useState([]);
 	const [showModal, setShowModal] = useState(false);
+	const [showSalaryModal, setShowSalaryModal] = useState(false);
 	const [showAccountModal, setShowAccountModal] = useState(false);
 	const [staff, setStaff] = useState(null);
 	const [searchValue, setSearchValue] = useState('');
@@ -31,12 +33,6 @@ const StaffList = ({ location }) => {
 	const [filtering, setFiltering] = useState(false);
 
 	const dispatch = useDispatch();
-
-	const path = location.pathname
-		.split('/')
-		.filter(l => l !== 'staffs')
-		.pop();
-	const isHr = path === 'hr';
 
 	const fetchStaffs = useCallback(
 		async page => {
@@ -79,6 +75,7 @@ const StaffList = ({ location }) => {
 
 	const closeModal = () => {
 		setShowModal(false);
+		setShowSalaryModal(false);
 		setShowAccountModal(false);
 		setStaff(null);
 		document.body.classList.remove('modal-open');
@@ -189,6 +186,11 @@ const StaffList = ({ location }) => {
 																setShowModal(true);
 															}
 														}}
+														editSalary={staff => {
+															setStaff(staff);
+															document.body.classList.add('modal-open');
+															setShowSalaryModal(true);
+														}}
 													/>
 												</tbody>
 											</table>
@@ -219,11 +221,18 @@ const StaffList = ({ location }) => {
 					staffs={staffs}
 					updateStaffs={updateStaffs}
 					closeModal={() => closeModal()}
-					hidden={!isHr}
 				/>
 			)}
 			{showAccountModal && (
 				<ModalEditUserAccount
+					staff={staff}
+					staffs={staffs}
+					updateStaffs={updateStaffs}
+					closeModal={() => closeModal()}
+				/>
+			)}
+			{showSalaryModal && (
+				<ModalEditSalary
 					staff={staff}
 					staffs={staffs}
 					updateStaffs={updateStaffs}

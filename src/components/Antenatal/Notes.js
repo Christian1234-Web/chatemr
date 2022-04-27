@@ -28,7 +28,7 @@ const Notes = ({ can_request = true }) => {
 			try {
 				dispatch(startBlock());
 				const p = page || 1;
-				const url = `patient-notes?page=${p}&limit=10&antenatal_id=${antenatal.id}&type=antenatal`;
+				const url = `patient-notes?page=${p}&limit=10&antenatal_id=${antenatal.id}&type=antenatal|anc-comment`;
 				const rs = await request(url, 'GET', true);
 				const { result, ...meta } = rs;
 				setNotes(result);
