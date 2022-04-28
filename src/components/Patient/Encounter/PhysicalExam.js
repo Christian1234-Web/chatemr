@@ -115,7 +115,7 @@ const PhysicalExam = ({ next, previous, patient }) => {
 	};
 
 	return (
-		<div className="form-block encounter" style={divStyle}>
+		<div className="form-block encounter">
 			{options.length > 0 && (
 				<div className="rentals-list-w">
 					<div className="filter-side">

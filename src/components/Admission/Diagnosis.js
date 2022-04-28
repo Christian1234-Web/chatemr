@@ -94,11 +94,6 @@ const Diagnosis = ({ previous, next, patient }) => {
 		dispatch(next);
 	};
 
-	const divStyle = {
-		height: '500px',
-		overflowY: 'scroll',
-	};
-
 	const onSubmit = () => {
 		if (diagnosis !== '' && type !== '') {
 			const items = [...diagnoses, { comment, diagnosis, type }];
@@ -147,7 +142,7 @@ const Diagnosis = ({ previous, next, patient }) => {
 	};
 
 	return (
-		<div className="form-block encounter" style={divStyle}>
+		<div className="form-block encounter">
 			<div className="row">
 				<div className="col-md-7">
 					<form>

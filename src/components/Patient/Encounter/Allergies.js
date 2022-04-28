@@ -20,15 +20,10 @@ const Allergies = ({ previous, next, patient }) => {
 	const { register, reset } = useForm();
 	const [loaded, setLoaded] = useState(false);
 	const [allergens, setAllergens] = useState([]);
-	const [pastAllergies, setPastAllergies] = useState([]);
-	const [selectedPastAllergies, setSelectedPastAllergies] = useState([]);
 	const [category, setCategory] = useState('');
 	const [severity, setSeverity] = useState('');
 	const [reaction, setReaction] = useState('');
 	const [allerg, setAllerg] = useState('');
-	const [existing, setExisting] = useState(false);
-	// eslint-disable-next-line no-unused-vars
-	const [meta, setMeta] = useState(null);
 	const [genericDrugs, setGenericDrugs] = useState([]);
 	const [generic, setGeneric] = useState(null);
 
@@ -48,17 +43,17 @@ const Allergies = ({ previous, next, patient }) => {
 		}
 	}, [dispatch]);
 
-	const fetchAllergies = useCallback(async () => {
-		try {
-			const url = `patient-allergens?patient_id=${patient.id}`;
-			const rs = await request(url, 'GET', true);
-			const { result, ...metadata } = rs;
-			setPastAllergies(result);
-			setMeta(metadata);
-		} catch (error) {
-			notifyError('Could not fetch allergens for the patient');
-		}
-	}, [patient]);
+	// const fetchAllergies = useCallback(async () => {
+	// 	try {
+	// 		const url = `patient-allergens?patient_id=${patient.id}`;
+	// 		const rs = await request(url, 'GET', true);
+	// 		const { result, ...metadata } = rs;
+	// 		setPastAllergies(result);
+	// 		setMeta(metadata);
+	// 	} catch (error) {
+	// 		notifyError('Could not fetch allergens for the patient');
+	// 	}
+	// }, [patient]);
 
 	const saveAllergens = useCallback(
 		data => {
@@ -76,22 +71,6 @@ const Allergies = ({ previous, next, patient }) => {
 		[dispatch, encounter, patient]
 	);
 
-	const savePastAllergens = useCallback(
-		data => {
-			setSelectedPastAllergies(data);
-			dispatch(
-				updateEncounterData(
-					{
-						...encounter,
-						pastAllergies: [...data],
-					},
-					patient.id
-				)
-			);
-		},
-		[dispatch, encounter, patient]
-	);
-
 	const retrieveData = useCallback(async () => {
 		const data = await storage.getItem(CK_ENCOUNTER);
 
@@ -100,23 +79,16 @@ const Allergies = ({ previous, next, patient }) => {
 				? data?.encounter?.allergies
 				: null;
 
-		const pastAllergiesData =
-			data && data.patient_id === patient.id
-				? data?.encounter?.pastAllergies
-				: null;
-
 		saveAllergens(allergiesData || defaultEncounter.allergies);
-		savePastAllergens(pastAllergiesData || defaultEncounter.pastAllergies);
-	}, [patient, saveAllergens, savePastAllergens]);
+	}, [patient, saveAllergens]);
 
 	useEffect(() => {
 		if (!loaded) {
 			retrieveData();
 			loadGenericDrugs();
-			fetchAllergies();
 			setLoaded(true);
 		}
-	}, [fetchAllergies, loadGenericDrugs, loaded, retrieveData]);
+	}, [loadGenericDrugs, loaded, retrieveData]);
 
 	const remove = index => {
 		const newItems = allergens.filter((item, i) => index !== i);
@@ -129,7 +101,6 @@ const Allergies = ({ previous, next, patient }) => {
 				{
 					...encounter,
 					allergies: [...allergens],
-					pastAllergies: [...selectedPastAllergies],
 				},
 				patient.id
 			)
@@ -137,19 +108,13 @@ const Allergies = ({ previous, next, patient }) => {
 		next();
 	};
 
-	const divStyle = {
-		height: '500px',
-		overflowY: 'scroll',
-	};
-
-	const onSubmit = e => {
-		setSeverity(e);
+	const onSubmit = () => {
 		if (category !== '' && reaction !== '') {
 			const items = [
 				{
 					allergen: allerg,
 					category,
-					severity: e,
+					severity,
 					reaction,
 					generic,
 					generic_id: generic?.id || '',
@@ -169,15 +134,13 @@ const Allergies = ({ previous, next, patient }) => {
 		}
 	};
 
-	const onSelect = (checked, index, allergy) => {};
-
 	return (
-		<div className="form-block encounter" style={divStyle}>
+		<div className="form-block encounter">
 			<div className="row">
-				<div className="col-md-7">
+				<div className="col-md-12">
 					<form>
 						<div className="row">
-							<div className="col-sm-6">
+							<div className="col-sm-4">
 								<div className="form-group">
 									<label>Category</label>
 									<Select
@@ -185,13 +148,11 @@ const Allergies = ({ previous, next, patient }) => {
 										ref={register}
 										options={allergyCategories}
 										value={category}
-										onChange={e => {
-											setCategory(e);
-										}}
+										onChange={e => setCategory(e)}
 									/>
 								</div>
 							</div>
-							<div className="col-sm-6">
+							<div className="col-sm-4">
 								<div className="form-group">
 									<label>Drug Generic Name</label>
 									<Select
@@ -199,16 +160,14 @@ const Allergies = ({ previous, next, patient }) => {
 										defaultValue
 										getOptionValue={option => option.id}
 										getOptionLabel={option => option.name}
-										onChange={e => {
-											setGeneric(e);
-										}}
+										onChange={e => setGeneric(e)}
 										value={generic}
 										isSearchable={true}
 										options={genericDrugs}
 									/>
 								</div>
 							</div>
-							<div className="col-sm-6">
+							<div className="col-sm-4">
 								<div className="form-group">
 									<label>Allergen</label>
 									<input
@@ -221,7 +180,7 @@ const Allergies = ({ previous, next, patient }) => {
 									/>
 								</div>
 							</div>
-							<div className="col-sm-6">
+							<div className="col-sm-4">
 								<div className="form-group">
 									<label>Reaction</label>
 									<input
@@ -234,41 +193,35 @@ const Allergies = ({ previous, next, patient }) => {
 									/>
 								</div>
 							</div>
-							<div className="col-sm-6">
+							<div className="col-sm-4">
 								<div className="form-group">
 									<label>Severity</label>
 									<Select
 										placeholder="Select Severity"
 										options={severities}
 										value={severity}
-										onChange={e => {
-											onSubmit(e);
-										}}
+										onChange={e => setSeverity(e)}
 									/>
 								</div>
+							</div>
+							<div className="col-sm-2" style={{ position: 'relative' }}>
+								<a
+									className="btn btn-info btn-sm text-white pointer"
+									style={{ margin: '40px 0 0', display: 'block' }}
+									onClick={() => onSubmit()}
+								>
+									<i className="os-icon os-icon-plus-circle" /> Add
+								</a>
 							</div>
 						</div>
 					</form>
 				</div>
-				<div className="col-md-5">
+				{/* <div className="col-md-5">
 					<div className="allergen-block">
 						<div className="row">
 							<div className="col-md-12">
 								<div className="form-group">
-									<label>
-										Existing Allergies{' '}
-										<input
-											type="checkbox"
-											checked={existing}
-											className="form-control"
-											onChange={e => {
-												setExisting(e.target.checked);
-												setSelectedPastAllergies(
-													e.target.checked ? [...pastAllergies] : []
-												);
-											}}
-										/>
-									</label>
+									<label>Existing Allergies</label>
 								</div>
 							</div>
 						</div>
@@ -297,7 +250,7 @@ const Allergies = ({ previous, next, patient }) => {
 							})}
 						</div>
 					</div>
-				</div>
+				</div> */}
 			</div>
 			<div className="row">
 				<div className="element-box p-3 m-0 mt-3 w-100">
