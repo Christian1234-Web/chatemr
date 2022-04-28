@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Doctor = () => {
-	return <>Doctor</>;
+	return <></>;
 };
 
 export default Doctor;

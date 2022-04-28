@@ -96,7 +96,6 @@ class StaffItem extends Component {
 	render() {
 		const { staffs, editStaff, profile, hidden } = this.props;
 		const { collapsed } = this.state;
-		console.log('Input hidden', hidden);
 		return (
 			<>
 				{staffs.map((item, i) => {

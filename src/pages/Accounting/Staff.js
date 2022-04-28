@@ -91,8 +91,6 @@ const Staff = () => {
 		await fetchStaffs(1);
 	};
 
-	console.log('disable testing', disable);
-
 	return (
 		<div className="content-i">
 			<div className="content-box">

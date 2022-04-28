@@ -90,8 +90,6 @@ const StaffList = () => {
 		await fetchStaffs(1);
 	};
 
-	console.log('hidden', hidden);
-
 	return (
 		<div className="content-i">
 			<div className="content-box">
