@@ -1,7 +1,7 @@
 import React from 'react';
 
 const FrontDesk = () => {
-	return <div>Front Desk</div>;
+	return <></>;
 };
 
 export default FrontDesk;
