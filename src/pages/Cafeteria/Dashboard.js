@@ -118,6 +118,7 @@ const Dashboard = () => {
 
 			dispatch(startBlock());
 			setSubmitting(true);
+			console.log('testing');
 			const rs = await request('cafeteria/sale', 'POST', true, data);
 			setSubmitting(false);
 			dispatch(stopBlock());

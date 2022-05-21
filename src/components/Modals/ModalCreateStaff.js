@@ -38,6 +38,7 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 	const [dateOfEmployment, setDateOfEmployment] = useState(null);
 	const [nokDateOfBirth, setNokDateOfBirth] = useState(null);
 	const [avatar, setAvatar] = useState(null);
+	const [imageBase, setImageBase] = useState(null);
 
 	const departments = useSelector(state => state.department);
 	const roles = useSelector(state => state.role.roles);
@@ -262,12 +263,13 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 												<img
 													alt=""
 													style={{ width: '110px', borderRadius: '65px' }}
-													src={require('../../assets/images/placeholder.jpg')}
+													src={imageBase}
 												/>
 											</div>
 											<div className="mt-3 text-center">
 												<button className="btn btn-info btn-small text-white">
-													<i className="os-icon os-icon-ui-51" /> upload picture
+													<i className="os-icon os-icon-ui-51" />
+													upload picture
 												</button>
 												<button className="btn btn-primary btn-small mt-2">
 													<i className="os-icon os-icon-ui-65" /> take photo
