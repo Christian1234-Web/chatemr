@@ -229,23 +229,26 @@ class AllTransactions extends Component {
 			dateRange,
 			filtered,
 		} = this.state;
-		const { transactions } = this.props;
+		const { transactions, staff } = this.props;
 		return (
 			<>
-				<div className="element-actions">
-					<Link
-						to="/hmo/transactions/pending"
-						className="btn btn-primary btn-sm"
-					>
-						Pending Transactions
-					</Link>
-					<Link
-						to="/hmo/transactions/all"
-						className="btn btn-primary btn-sm btn-outline-primary ml-2"
-					>
-						All transactions
-					</Link>
-				</div>
+				{(staff?.role?.slug === 'hmo-officer' ||
+					staff?.role?.slug === 'it-amin') && (
+					<div className="element-actions">
+						<Link
+							to="/hmo/transactions/pending"
+							className="btn btn-primary btn-sm"
+						>
+							Pending Transactions
+						</Link>
+						<Link
+							to="/hmo/transactions/all"
+							className="btn btn-primary btn-sm btn-outline-primary ml-2"
+						>
+							All transactions
+						</Link>
+					</div>
+				)}
 				<h6 className="element-header">Transactions</h6>
 				<div className="element-box m-0 mb-4 p-3">
 					<form className="row">
@@ -525,6 +528,7 @@ class AllTransactions extends Component {
 const mapStateToProps = state => {
 	return {
 		transactions: state.transaction.transactions,
+		staff: state.user.profile,
 	};
 };
 

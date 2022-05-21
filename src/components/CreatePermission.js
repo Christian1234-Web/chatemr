@@ -6,7 +6,6 @@ import Select from 'react-select';
 import { renderTextInput, request } from '../services/utilities';
 import { notifyError, notifySuccess } from '../services/notify';
 import waiting from '../assets/images/waiting.gif';
-import { addPermission } from '../actions/permission';
 
 const validate = values => {
 	const errors = {};
@@ -24,7 +23,6 @@ class CreatePermission extends Component {
 
 	save = async data => {
 		try {
-			console.log(data);
 			if (!data.department || (data.department && data.department === '')) {
 				notifyError('select department');
 				return;
@@ -33,7 +31,7 @@ class CreatePermission extends Component {
 			this.setState({ submitting: true });
 			const datum = { ...data, department_id: data.department.id };
 			const rs = await request('settings/permissions', 'POST', true, datum);
-			this.props.addPermission(rs);
+			this.props.setDataList(rs);
 			this.setState({ submitting: false, department: null });
 			this.props.reset('create_permission');
 			notifySuccess('permission created!');
@@ -111,6 +109,4 @@ CreatePermission = reduxForm({
 	validate,
 })(CreatePermission);
 
-export default connect(mapStateToProps, { reset, addPermission, change })(
-	CreatePermission
-);
+export default connect(mapStateToProps, { reset, change })(CreatePermission);

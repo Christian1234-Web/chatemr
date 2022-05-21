@@ -17,3 +17,7 @@ export function hasDisableStaffPermission(permissions) {
 export function hasEnableStaffPermission(permissions) {
 	return permissions.find(p => p === 'enable-staff');
 }
+
+export function hasEditSalaryPermission(permissions) {
+	return permissions.find(p => p === 'edit-salary');
+}

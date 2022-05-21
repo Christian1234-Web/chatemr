@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { confirmAlert } from 'react-confirm-alert';
 import Tooltip from 'antd/lib/tooltip';
 import capitalize from 'lodash.capitalize';
@@ -13,6 +13,10 @@ import { hmoAPI } from '../../services/constants';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import HmoSchemeForm from '../../components/Modals/HmoSchemeForm';
 import ModalHmoTariff from '../../components/Modals/ModalHmoTariff';
+import {
+	hasDeleteHmoSchemePermission,
+	hasEditHmoSchemePermission,
+} from '../../permission-utils/hmo';
 
 const HmoScheme = () => {
 	const [schemes, setSchemes] = useState([]);
@@ -26,6 +30,8 @@ const HmoScheme = () => {
 	const [categories, setCategories] = useState([]);
 
 	const dispatch = useDispatch();
+
+	const staff = useSelector(state => state.user.profile);
 
 	const fetchCategories = useCallback(async () => {
 		try {
@@ -215,26 +221,33 @@ const HmoScheme = () => {
 																</td>
 																<td>{`${hmo.patients || 0} patients`}</td>
 																<td className="row-actions">
-																	<Tooltip title="Edit">
-																		<a onClick={() => editScheme(hmo)}>
-																			<i className="os-icon os-icon-edit-1" />
-																		</a>
-																	</Tooltip>
+																	{hasEditHmoSchemePermission(
+																		staff.permissions
+																	) && (
+																		<Tooltip title="Edit">
+																			<a onClick={() => editScheme(hmo)}>
+																				<i className="os-icon os-icon-edit-1" />
+																			</a>
+																		</Tooltip>
+																	)}
 																	<Tooltip title="HMO Tariffs">
 																		<a onClick={() => showTariffs(hmo)}>
 																			<i className="os-icon os-icon-documents-03" />
 																		</a>
 																	</Tooltip>
-																	{hmo.name !== 'Private' && (
-																		<Tooltip title="Delete">
-																			<a
-																				className="danger"
-																				onClick={() => confirmDelete(hmo)}
-																			>
-																				<i className="os-icon os-icon-ui-15" />
-																			</a>
-																		</Tooltip>
-																	)}
+																	{hmo.name !== 'Private' &&
+																		hasDeleteHmoSchemePermission(
+																			staff.permissions
+																		) && (
+																			<Tooltip title="Delete">
+																				<a
+																					className="danger"
+																					onClick={() => confirmDelete(hmo)}
+																				>
+																					<i className="os-icon os-icon-ui-15" />
+																				</a>
+																			</Tooltip>
+																		)}
 																</td>
 															</tr>
 														);

@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Others = () => {
-	return <div>Others</div>;
+	return <div></div>;
 };
 
 export default Others;

@@ -16,7 +16,7 @@ const UploadRoster = ({ onHide, uploading, doUpload, departments }) => {
 			role="dialog"
 			style={{ width: '300px' }}
 		>
-			<div className="modal-centered" role="document">
+			<div className="modal-centered">
 				<div className="modal-content text-center">
 					<button
 						aria-label="Close"

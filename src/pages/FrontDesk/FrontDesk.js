@@ -11,7 +11,6 @@ import PatientForm from '../../components/Modals/PatientForm';
 import { hasCreateAppointmentPermission } from '../../permission-utils/appointment';
 
 const AllPatients = lazy(() => import('./AllPatients'));
-const InsuranceTransactions = lazy(() => import('./InsuranceTransactions'));
 const InPatientCare = lazy(() => import('../Nurse/InPatientCare'));
 
 const FrontDesk = ({ location }) => {
@@ -78,10 +77,6 @@ const FrontDesk = ({ location }) => {
 						<Switch>
 							<Route path="/front-desk/patients" component={AllPatients} />
 							<Route path="/front-desk/admitted" component={InPatientCare} />
-							<Route
-								path="/front-desk/insurance-transactions"
-								component={InsuranceTransactions}
-							/>
 							<Route component={NoMatch} />
 						</Switch>
 					</Suspense>

@@ -93,10 +93,9 @@ class AntenatalProfile extends Component {
 	};
 
 	componentDidMount() {
-		const { location } = this.props;
-		if (!location.hash) {
-			this.props.history.push(`${location.pathname}#assessments`);
-		}
+		setTimeout(() => {
+			this.props.history.push('/antenatal/enrolled#assessments');
+		}, 1200);
 	}
 
 	componentWillUnmount() {

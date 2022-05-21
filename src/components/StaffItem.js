@@ -17,6 +17,7 @@ import { startBlock, stopBlock } from '../actions/redux-block';
 import {
 	hasDisableStaffPermission,
 	hasEditAccountPermission,
+	hasEditSalaryPermission,
 	hasEditStaffPermission,
 	hasEnableStaffPermission,
 	hasResetPasswordPermission,
@@ -101,7 +102,7 @@ class StaffItem extends Component {
 	};
 
 	render() {
-		const { staffs, editStaff, profile } = this.props;
+		const { staffs, editStaff, editSalary, profile } = this.props;
 		const { collapsed } = this.state;
 		return (
 			<>
@@ -150,6 +151,13 @@ class StaffItem extends Component {
 										<Tooltip title="Edit Account">
 											<a onClick={() => editStaff(item, true)}>
 												<i className="os-icon os-icon-user-male-circle" />
+											</a>
+										</Tooltip>
+									)}
+									{hasEditSalaryPermission(profile.permissions) && (
+										<Tooltip title="Edit Salary">
+											<a onClick={() => editSalary(item)}>
+												<i className="os-icon os-icon-coins-4" />
 											</a>
 										</Tooltip>
 									)}

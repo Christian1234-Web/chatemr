@@ -22,6 +22,7 @@ import { messageService } from '../../services/message';
 const storage = new SSRStorage();
 
 const { RangePicker } = DatePicker;
+
 const limit = 10;
 
 const Appointments = () => {
@@ -36,8 +37,10 @@ const Appointments = () => {
 	const [loading, setLoading] = useState(true);
 	const [allAppointments, setAllAppointments] = useState([]);
 	const [patientId, setPatientId] = useState('');
+	const [departmentId, setDepartmentId] = useState('');
 
 	const profile = useSelector(state => state.user.profile);
+	const departments = useSelector(state => state.department);
 
 	const dispatch = useDispatch();
 
@@ -49,7 +52,7 @@ const Appointments = () => {
 				const p = page || 1;
 				const startDate = state.startDate || '';
 				const endDate = state.endDate || '';
-				const url = `front-desk/appointments?page=${p}&limit=${limit}&canSeeDoctor=1&startDate=${startDate}&endDate=${endDate}&patient_id=${patientId}&staff_id=${staff.id}`;
+				const url = `front-desk/appointments?page=${p}&limit=${limit}&canSeeDoctor=1&startDate=${startDate}&endDate=${endDate}&patient_id=${patientId}&staff_id=${staff.id}&department_id=${departmentId}`;
 				const rs = await request(url, 'GET', true);
 				const { result, ...meta } = rs;
 				setAllAppointments(result);
@@ -62,7 +65,7 @@ const Appointments = () => {
 				notifyError(error.message || 'could not fetch transactions');
 			}
 		},
-		[dispatch, patientId, profile, state]
+		[departmentId, dispatch, patientId, profile, state]
 	);
 
 	const loadEncounter = useCallback(async () => {
@@ -129,7 +132,7 @@ const Appointments = () => {
 		<div className="element-wrapper">
 			<div className="element-actions">
 				<form style={{ display: 'flex' }}>
-					<div className="form-group">
+					<div className="form-group m-0 mr-2">
 						<input
 							style={{ height: '32px' }}
 							id="search"
@@ -138,6 +141,25 @@ const Appointments = () => {
 							onChange={e => setPatientId(e.target.value)}
 							placeholder="search for patient: emr id, name, phone number, email"
 						/>
+					</div>
+					<div className="form-group m-0 mr-2">
+						<select
+							style={{ height: '32px' }}
+							className="form-control"
+							name="departments"
+							onChange={e => setDepartmentId(e.target.value)}
+						>
+							<option value="">Select Department</option>
+							{departments
+								.filter(d => d.has_appointment === 1)
+								.map((status, i) => {
+									return (
+										<option key={i} value={status.id}>
+											{status.name}
+										</option>
+									);
+								})}
+						</select>
 					</div>
 					<div className="mr-2">
 						<RangePicker onChange={e => dateChange(e)} />

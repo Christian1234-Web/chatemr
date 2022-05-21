@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { closeModals } from '../../actions/general';
+import ModalHeader from '../ModalHeader';
 
 class ModalViewAppraisal extends Component {
 	componentDidMount() {
@@ -23,18 +24,13 @@ class ModalViewAppraisal extends Component {
 				role="dialog"
 				style={{ display: 'block' }}
 			>
-				<div className="modal-dialog modal-lg modal-centered" role="document">
+				<div className="modal-dialog modal-lg modal-centered">
 					<div className="modal-content text-center">
-						<button
-							aria-label="Close"
-							className="close"
-							type="button"
-							onClick={() => this.props.closeModals(false)}
-						>
-							<span className="os-icon os-icon-close"></span>
-						</button>
+						<ModalHeader
+							title="Performance Appraisal"
+							closeModal={() => this.props.closeModals(false)}
+						/>
 						<div className="onboarding-content with-gradient">
-							<h4 className="onboarding-title">Performance Appraisal</h4>
 							<div className="table-responsive col-md-12">
 								<table className="table table-striped">
 									<tbody>

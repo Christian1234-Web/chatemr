@@ -19,6 +19,7 @@ import waiting from '../../assets/images/waiting.gif';
 import { vouchersAPI } from '../../services/constants';
 import { notifySuccess } from '../../services/notify';
 import { searchAPI } from '../../services/constants';
+import ModalHeader from '../ModalHeader';
 
 const validate = values => {
 	const errors = {};
@@ -102,19 +103,13 @@ class ModalCreateVoucher extends Component {
 				role="dialog"
 				style={{ display: 'block' }}
 			>
-				<div className="modal-dialog modal-centered" role="document">
+				<div className="modal-dialog modal-centered">
 					<div className="modal-content text-center">
-						<button
-							aria-label="Close"
-							className="close"
-							type="button"
-							onClick={closeModal}
-						>
-							<span className="os-icon os-icon-close"></span>
-						</button>
+						<ModalHeader
+							title="Create New Voucher"
+							closeModal={() => closeModal()}
+						/>
 						<div className="onboarding-content with-gradient">
-							<h4 className="onboarding-title">Create New Voucher</h4>
-
 							<div className="form-block">
 								<form onSubmit={handleSubmit(this.createVoucher)}>
 									{error && (

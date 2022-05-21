@@ -398,7 +398,7 @@ const ModalQueueAppointment = ({ appointment, closeModal, update }) => {
 										<div className="row mt-2">
 											<div className="col-sm-12 text-right">
 												<button
-													className="btn btn-secondary"
+													className="btn btn-secondary mr-2"
 													onClick={closeModal}
 												>
 													Cancel

@@ -2,9 +2,10 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import moment from 'moment';
 import { withRouter } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
 
+import waiting from '../../assets/images/waiting.gif';
 import { CK_ENCOUNTER } from '../../services/constants';
 import { request, itemRender, updateImmutable } from '../../services/utilities';
 import { notifyError } from '../../services/notify';
@@ -19,6 +20,7 @@ const storage = new SSRStorage();
 const limit = 15;
 
 const Dashboard = () => {
+	const [state, setState] = useState({ filtering: false });
 	const [loading, setLoading] = useState(true);
 	const [appointments, setAppointments] = useState([]);
 	const [meta, setMeta] = useState({
@@ -26,27 +28,33 @@ const Dashboard = () => {
 		itemsPerPage: limit,
 		totalPages: 0,
 	});
+	const [departmentId, setDepartmentId] = useState('');
 
 	const dispatch = useDispatch();
+
+	const departments = useSelector(state => state.department);
 
 	const getAppointments = useCallback(
 		async page => {
 			try {
+				dispatch(startBlock());
 				const today = moment().format('YYYY-MM-DD');
 				const p = page || 1;
-				const url = `front-desk/appointments?page=${p}&limit=${limit}&today=${today}&canSeeDoctor=1&is_queue=1&status=Approved`;
+				const url = `front-desk/appointments?page=${p}&limit=${limit}&today=${today}&canSeeDoctor=1&is_queue=1&status=Approved&department_id=${departmentId}`;
 				const res = await request(url, 'GET', true);
 				const { result, ...meta } = res;
 				setAppointments([...result]);
 				setMeta(meta);
 				setLoading(false);
+				setState({ ...state, filtering: false });
 				dispatch(stopBlock());
 			} catch (e) {
 				dispatch(stopBlock());
+				setState({ ...state, filtering: false });
 				notifyError(e.message || 'could not fetch appointments');
 			}
 		},
-		[dispatch]
+		[departmentId, dispatch, state]
 	);
 
 	const loadEncounter = useCallback(async () => {
@@ -99,12 +107,53 @@ const Dashboard = () => {
 	}, [appointments, meta]);
 
 	const onNavigatePage = nextPage => {
-		dispatch(startBlock());
 		getAppointments(nextPage);
 	};
 
+	const doFilter = e => {
+		e.preventDefault();
+		setState({ ...state, filtering: true });
+		getAppointments();
+	};
+
+	const { filtering } = state;
+
 	return (
 		<div className="element-wrapper">
+			<div className="element-actions">
+				<form style={{ display: 'flex' }}>
+					<div className="form-group m-0 mr-2">
+						<select
+							style={{ height: '32px' }}
+							className="form-control"
+							name="departments"
+							onChange={e => setDepartmentId(e.target.value)}
+						>
+							<option value="">Select Department</option>
+							{departments
+								.filter(d => d.has_appointment === 1)
+								.map((status, i) => {
+									return (
+										<option key={i} value={status.id}>
+											{status.name}
+										</option>
+									);
+								})}
+						</select>
+					</div>
+					<div>
+						<button
+							className="btn btn-sm btn-primary btn-upper text-white filter-btn"
+							onClick={doFilter}
+						>
+							<i className="os-icon os-icon-ui-37" />
+							<span>
+								{filtering ? <img src={waiting} alt="submitting" /> : 'Filter'}
+							</span>
+						</button>
+					</div>
+				</form>
+			</div>
 			<h6 className="element-header">Today's Appointments</h6>
 			<div className="element-box p-3 m-0">
 				<div className="table-responsive">

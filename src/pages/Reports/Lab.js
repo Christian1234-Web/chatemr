@@ -49,7 +49,7 @@ const Lab = () => {
 	console.log('pending', pending);
 	// return <pre>{JSON.stringify(pending, null, 4)}</pre>;
 
-	return <>Lab</>;
+	return <></>;
 };
 
 export default Lab;

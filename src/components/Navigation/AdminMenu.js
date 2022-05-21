@@ -17,7 +17,7 @@ import RecordsMenu from './RecordsMenu';
 import AccountingMenu from './AccountingMenu';
 import ReportAndAnalyticsMenu from './ReportAndAnalyticsMenu';
 
-const AdminMenu = ({ role }) => {
+const AdminMenu = () => {
 	return (
 		<>
 			<li className="sub-header">
@@ -77,10 +77,10 @@ const AdminMenu = ({ role }) => {
 			</li>
 			<AccountingMenu />
 			<li className="sub-header">
-				<span>REPORTS & ANALYTICS</span>
+				<span>REPORTS &amp; ANALYTICS</span>
 			</li>
 			<ReportAndAnalyticsMenu />
-			<SettingsMenu role={role} />
+			<SettingsMenu />
 		</>
 	);
 };

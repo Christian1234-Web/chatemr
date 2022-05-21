@@ -11,6 +11,7 @@ import {
 import waiting from '../../assets/images/waiting.gif';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import { notifyError, notifySuccess } from '../../services/notify';
+import ModalHeader from '../ModalHeader';
 
 const validate = values => {
 	const errors = {};
@@ -81,18 +82,10 @@ const ModalEditUserAccount = ({
 			role="dialog"
 			style={{ display: 'block' }}
 		>
-			<div className="modal-dialog modal-md modal-centered" role="document">
+			<div className="modal-dialog modal-md modal-centered">
 				<div className="modal-content">
-					<button
-						aria-label="Close"
-						className="close"
-						type="button"
-						onClick={closeModal}
-					>
-						<span className="os-icon os-icon-close"></span>
-					</button>
+					<ModalHeader title="Edit Staff Account" closeModal={closeModal} />
 					<div className="onboarding-content with-gradient">
-						<h4 className="onboarding-title">Edit Staff Account</h4>
 						<div className="form-block">
 							<form onSubmit={handleSubmit(save)}>
 								{error && (

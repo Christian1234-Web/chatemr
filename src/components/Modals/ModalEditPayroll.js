@@ -8,6 +8,7 @@ import { formatCurrency, request } from '../../services/utilities';
 import { payrollAPI } from '../../services/constants';
 import { notifySuccess, notifyError } from '../../services/notify';
 import waiting from '../../assets/images/waiting.gif';
+import ModalHeader from '../ModalHeader';
 
 const allowances = {
 	Basic: 0.4,
@@ -100,7 +101,9 @@ class ModalEditPayroll extends Component {
 	render() {
 		const { is_modal } = this.props;
 		const { new_deductions, payroll, fetching, saving } = this.state;
-		console.log(payroll);
+		const date = payroll
+			? moment(payroll.createdAt).format('Do MMMM, YYYY')
+			: '--';
 		return (
 			!fetching && (
 				<div
@@ -108,21 +111,14 @@ class ModalEditPayroll extends Component {
 					role="dialog"
 					style={{ display: 'block' }}
 				>
-					<div className="modal-dialog modal-centered" role="document">
+					<div className="modal-dialog modal-centered">
 						<div className="modal-content text-center">
-							<button
-								aria-label="Close"
-								className="close"
-								type="button"
-								onClick={() => this.props.closeEditPayRoll(is_modal)}
-							>
-								<span className="os-icon os-icon-close"></span>
-							</button>
+							<ModalHeader
+								title={`Payslip for Period Ended: ${date}`}
+								closeModal={() => this.props.closeEditPayRoll(is_modal)}
+							/>
 							{payroll ? (
 								<div className="onboarding-content with-gradient">
-									<h6 className="onboarding-title">{`Payslip for Period Ended: ${moment(
-										payroll.createdAt
-									).format('Do MMMM, YYYY')}`}</h6>
 									<div className="table-responsive mt-4">
 										<table className="table table-striped table-sm">
 											<tbody>

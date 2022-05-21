@@ -23,6 +23,8 @@ import SettingsMenu from './SettingsMenu';
 import RecordsMenu from './RecordsMenu';
 import AccountingMenu from './AccountingMenu';
 import { APP_NAME } from '../../services/constants';
+import { hasViewHmoPermission } from '../../permission-utils/hmo';
+import { hasViewSettingsPermission } from '../../permission-utils/settings';
 
 class MainMenu extends Component {
 	menu_ref = null;
@@ -103,33 +105,43 @@ class MainMenu extends Component {
 					</div>
 				</div> */}
 				<ul className="main-menu" ref={ref => (this.menu_list = ref)}>
-					{role === 'front-desk' && <FrontDeskMenu />}
-					{(role === 'lab-manager' ||
-						role === 'lab-supervisor' ||
-						role === 'lab-user') && <ClinicalLabMenu />}
-					{role === 'paypoint' && <PayPointMenu />}
-					{role === 'pharmacy' && <PharmacyMenu />}
-					{role === 'radiology' && <RadiologyMenu />}
-					{role === 'nurse' && <NurseMenu />}
-					{role === 'doctor' && <DoctorMenu />}
-					{(role === 'doctor' || role === 'nurse') && (
-						<li className="sub-header">
-							<span>PROCEDURE</span>
-						</li>
-					)}
-					{(role === 'doctor' || role === 'nurse') && <ProcedureMenu />}
-					{role === 'hr-manager' && <HrMenu />}
-					{role === 'store' && <StoreMenu />}
-					{(role === 'cafeteria' ||
-						role === 'cafeteria-manager' ||
-						role === 'cafeteria-sales') && <CafeteriaMenu />}
-					{role === 'hmo-officer' && <HMOMenu />}
-					{role === 'records' && <RecordsMenu />}
-					{role === 'accounts' && <AccountingMenu />}
-					{role === 'it-admin' && <AdminMenu role={role} />}
-					<MyAccount />
-					{(role === 'lab-manager' || role === 'it-admin') && (
-						<SettingsMenu role={role} />
+					{role === 'it-admin' ? (
+						<AdminMenu />
+					) : (
+						<>
+							{role === 'front-desk' && <FrontDeskMenu />}
+							{(role === 'lab-manager' ||
+								role === 'lab-supervisor' ||
+								role === 'lab-user') && <ClinicalLabMenu />}
+							{role === 'paypoint' && <PayPointMenu />}
+							{role === 'pharmacy' && <PharmacyMenu />}
+							{role === 'radiology' && <RadiologyMenu />}
+							{role === 'nurse' && <NurseMenu />}
+							{role === 'doctor' && <DoctorMenu />}
+							{(role === 'doctor' || role === 'nurse') && (
+								<li className="sub-header">
+									<span>PROCEDURE</span>
+								</li>
+							)}
+							{(role === 'doctor' || role === 'nurse') && <ProcedureMenu />}
+							{role === 'hr-manager' && <HrMenu />}
+							{role === 'store' && <StoreMenu />}
+							{(role === 'cafeteria' ||
+								role === 'cafeteria-manager' ||
+								role === 'cafeteria-sales') && <CafeteriaMenu />}
+							{hasViewHmoPermission(profile.permissions) && (
+								<li className="sub-header">
+									<span>HMO MGT</span>
+								</li>
+							)}
+							{hasViewHmoPermission(profile.permissions) && <HMOMenu />}
+							{role === 'records' && <RecordsMenu />}
+							{role === 'accounts' && <AccountingMenu />}
+							<MyAccount />
+							{hasViewSettingsPermission(profile.permissions) && (
+								<SettingsMenu />
+							)}
+						</>
 					)}
 				</ul>
 			</div>

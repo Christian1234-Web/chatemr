@@ -21,6 +21,14 @@ import TableLoading from './TableLoading';
 import ProfilePopup from './Patient/ProfilePopup';
 import { toggleProfile } from '../actions/user';
 import Admitted from './Admitted';
+import {
+	hasApproveResultPermission,
+	hasCancelLabPermission,
+	hasFillResultPermission,
+	hasPrintResultPermission,
+	hasReceiveSpecimenPermission,
+	hasViewResultPermission,
+} from '../permission-utils/lab';
 
 class LabBlock extends Component {
 	state = {
@@ -309,28 +317,19 @@ class LabBlock extends Component {
 											(lab.item.transaction.status === 1 ||
 												lab.item.transaction.status === -1) && (
 												<>
-													{lab.item.received === 0 && (
-														<Tooltip title="Receive Specimen">
-															<a
-																className="secondary"
-																onClick={() => this.receiveSpecimen(lab)}
-															>
-																<i className="os-icon os-icon-check-circle" />
-															</a>
-														</Tooltip>
-													)}
-													{lab.item.received === 1 && lab.item.approved === 0 && (
-														<Tooltip title="Fill Result">
-															<a
-																className="primary"
-																onClick={() => this.fillResult(lab)}
-															>
-																<i className="os-icon os-icon-edit" />
-															</a>
-														</Tooltip>
-													)}
-													{lab.item.approved === 1 &&
-														user.role.slug === 'lab-manager' && (
+													{lab.item.received === 0 &&
+														hasReceiveSpecimenPermission(user.permissions) && (
+															<Tooltip title="Receive Specimen">
+																<a
+																	className="secondary"
+																	onClick={() => this.receiveSpecimen(lab)}
+																>
+																	<i className="os-icon os-icon-check-circle" />
+																</a>
+															</Tooltip>
+														)}
+													{lab.item.received === 1 &&
+														hasFillResultPermission(user.permissions) && (
 															<Tooltip title="Fill Result">
 																<a
 																	className="primary"
@@ -342,9 +341,7 @@ class LabBlock extends Component {
 														)}
 													{lab.item.filled === 1 &&
 														lab.item.approved === 0 &&
-														(user.role.slug === 'lab-manager' ||
-															user.role.slug === 'lab-supervisor' ||
-															user.role.slug === 'it-admin') && (
+														hasApproveResultPermission(user.permissions) && (
 															<Tooltip title="Approve Lab Result">
 																<a
 																	className="info"
@@ -355,7 +352,7 @@ class LabBlock extends Component {
 															</Tooltip>
 														)}
 													{lab.item.filled === 1 &&
-														user.role.slug === 'doctor' && (
+														hasViewResultPermission(user.permissions) && (
 															<Tooltip title="View Lab Result">
 																<a
 																	className="info"
@@ -365,18 +362,8 @@ class LabBlock extends Component {
 																</a>
 															</Tooltip>
 														)}
-													{lab.status === 1 && (
-														<>
-															{user.role.slug !== 'doctor' && (
-																<Tooltip title="View Lab Result">
-																	<a
-																		className="info"
-																		onClick={() => this.viewResult(lab)}
-																	>
-																		<i className="os-icon os-icon-eye" />
-																	</a>
-																</Tooltip>
-															)}
+													{lab.status === 1 &&
+														hasPrintResultPermission(user.permissions) && (
 															<Tooltip title="Print Lab Test">
 																<a
 																	className="info"
@@ -387,20 +374,21 @@ class LabBlock extends Component {
 																	<i className="os-icon os-icon-printer" />
 																</a>
 															</Tooltip>
-														</>
-													)}
+														)}
 												</>
 											)}
-										{lab.item.cancelled === 0 && lab.item.filled === 0 && (
-											<Tooltip title="Cancel Lab Test">
-												<a
-													className="danger"
-													onClick={() => this.cancelLab(lab)}
-												>
-													<i className="os-icon os-icon-ui-15" />
-												</a>
-											</Tooltip>
-										)}
+										{lab.item.cancelled === 0 &&
+											lab.item.filled === 0 &&
+											hasCancelLabPermission(user.permissions) && (
+												<Tooltip title="Cancel Lab Test">
+													<a
+														className="danger"
+														onClick={() => this.cancelLab(lab)}
+													>
+														<i className="os-icon os-icon-ui-15" />
+													</a>
+												</Tooltip>
+											)}
 									</td>
 								</tr>
 							);

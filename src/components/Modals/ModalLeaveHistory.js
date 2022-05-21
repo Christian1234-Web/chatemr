@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { closeModals } from '../../actions/general';
+import ModalHeader from '../ModalHeader';
 
 class ModalLeaveHistory extends Component {
 	componentDidMount() {
@@ -19,18 +20,13 @@ class ModalLeaveHistory extends Component {
 				role="dialog"
 				style={{ display: 'block' }}
 			>
-				<div className="modal-dialog modal-centered" role="document">
+				<div className="modal-dialog modal-centered">
 					<div className="modal-content text-center">
-						<button
-							aria-label="Close"
-							className="close"
-							type="button"
-							onClick={() => this.props.closeModals(false)}
-						>
-							<span className="os-icon os-icon-close"></span>
-						</button>
+						<ModalHeader
+							title="Leave History"
+							closeModal={() => this.props.closeModals(false)}
+						/>
 						<div className="onboarding-content with-gradient">
-							<h4 className="onboarding-title">Leave History</h4>
 							<div className="onboarding-text">
 								history of leave of absense for staff
 							</div>

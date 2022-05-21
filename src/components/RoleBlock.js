@@ -6,7 +6,6 @@ import { request } from '../services/utilities';
 import { notifyError } from '../services/notify';
 import { rolesAPI } from '../services/constants';
 import { loadRoles } from '../actions/role';
-import { loadPermissions } from '../actions/permission';
 import CreateRole from './CreateRole';
 import RolePermissionModal from './Modals/RolePermissionModal';
 import TableLoading from './TableLoading';
@@ -22,22 +21,11 @@ class RoleBlock extends Component {
 		this.fetchRoles();
 	}
 
-	fetchPermissions = async () => {
-		try {
-			const rs = await request('settings/permissions', 'GET', true);
-			this.props.loadPermissions(rs);
-		} catch (error) {
-			this.setState({ loading: false });
-			notifyError(error.message || 'could not fetch permissions');
-		}
-	};
-
 	fetchRoles = async () => {
 		try {
 			this.setState({ loading: true });
 			const rs = await request(`${rolesAPI}`, 'GET', true);
 			this.props.loadRoles(rs);
-			this.fetchPermissions();
 			this.setState({ loading: false });
 		} catch (error) {
 			// console.log(error);
@@ -67,7 +55,7 @@ class RoleBlock extends Component {
 	};
 
 	render() {
-		const { roles } = this.props;
+		const { roles, permissions } = this.props;
 		const { loading, role, showModal } = this.state;
 		return (
 			<div className="row">
@@ -117,7 +105,11 @@ class RoleBlock extends Component {
 					<CreateRole />
 				</div>
 				{showModal && role && (
-					<RolePermissionModal role={role} closeModal={this.closeModal} />
+					<RolePermissionModal
+						role={role}
+						permissions={permissions}
+						closeModal={this.closeModal}
+					/>
 				)}
 			</div>
 		);
@@ -130,6 +122,4 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(mapStateToProps, { loadRoles, loadPermissions })(
-	RoleBlock
-);
+export default connect(mapStateToProps, { loadRoles })(RoleBlock);
