@@ -204,7 +204,6 @@ class ModalPreparePayroll extends Component {
 									</thead>
 									<tbody>
 										{payrolls.map((pay, i) => {
-											console.log(pay);
 											return (
 												<PayrollItem
 													key={i}

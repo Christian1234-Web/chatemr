@@ -21,6 +21,14 @@ const CafeteriaMenu = () => {
 				</Link>
 			</li>
 			<li>
+				<Link to="/cafeteria/vendors">
+					<div className="icon-w">
+						<div className="os-icon os-icon-layers" />
+					</div>
+					<span>Vendors</span>
+				</Link>
+			</li>
+			<li>
 				<Link to="/cafeteria/requisitions">
 					<div className="icon-w">
 						<div className="os-icon os-icon-layers" />

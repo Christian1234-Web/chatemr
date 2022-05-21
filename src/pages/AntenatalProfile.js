@@ -94,7 +94,7 @@ class AntenatalProfile extends Component {
 
 	componentDidMount() {
 		setTimeout(() => {
-			this.props.history.push('/antenatal/enrolled#assessments');
+			this.props.history.push('/antenatal/enrolled#notes');
 		}, 1200);
 	}
 

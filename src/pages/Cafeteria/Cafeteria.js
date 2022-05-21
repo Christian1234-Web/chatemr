@@ -29,7 +29,7 @@ const Cafeteria = ({ location }) => {
 								}`}
 								to="/cafeteria"
 							>
-								Dashboard
+								Showcase
 							</Link>
 						</li>
 						<li className="nav-item">
@@ -51,7 +51,7 @@ const Cafeteria = ({ location }) => {
 								}`}
 								to="/cafeteria/showcase"
 							>
-								Showcase
+								Showcase Items
 							</Link>
 						</li>
 						<li className="nav-item">

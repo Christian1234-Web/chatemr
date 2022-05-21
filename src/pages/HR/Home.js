@@ -13,7 +13,12 @@ const Home = ({ match }) => {
 			<Route path={`${match.url}/staffs`} component={StaffList} />
 			<Route path={`${match.url}/leave-mgt`} component={LeaveMgt} />
 			<Route path={`${match.url}/duty-roster`} component={Roster} />
-			<Route path={`${match.url}/appraisal`} component={Appraisal} />
+			<Route path={`${match.url}/appraisal`}>
+				<Appraisal />
+			</Route>
+			<Route path={`${match.url}/appraisal/:id/view`}>
+				<Appraisal />
+			</Route>
 			<Route component={NoMatch} />
 		</Switch>
 	);

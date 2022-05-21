@@ -14,6 +14,7 @@ const PrescriptionForm = lazy(() =>
 const PrescriptionRequests = lazy(() => import('./PrescriptionRequests'));
 const Billing = lazy(() => import('./PayPoint'));
 const Inventory = lazy(() => import('./Inventory'));
+const Vendors = lazy(() => import('../../components/Vendor/List'));
 
 const Home = ({ match, location }) => {
 	const dispatch = useDispatch();
@@ -29,6 +30,8 @@ const Home = ({ match, location }) => {
 		pageTitle = 'Transactions';
 	} else if (page === 'inventory') {
 		pageTitle = 'Inventory';
+	} else if (page === 'vendors') {
+		pageTitle = 'Vendors';
 	}
 
 	const newGeneric = () => {
@@ -45,7 +48,7 @@ const Home = ({ match, location }) => {
 				<div className="row">
 					<div className="col-sm-12">
 						<div className="element-wrapper">
-							{page !== 'inventory' && (
+							{page !== 'inventory' && page !== 'vendors' && (
 								<div className="element-actions">
 									<Link
 										to={`${match.path}`}
@@ -114,6 +117,10 @@ const Home = ({ match, location }) => {
 											<Route
 												path={`${match.url}/inventory`}
 												component={Inventory}
+											/>
+											<Route
+												path={`${match.url}/vendors`}
+												component={Vendors}
 											/>
 											<Route component={NoMatch} />
 										</Switch>

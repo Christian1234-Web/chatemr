@@ -175,7 +175,7 @@ class Roster extends Component {
 					<div className="row">
 						<div className="col-sm-12">
 							<div className="element-wrapper">
-								<div className="element-actions">
+								<div className="element-actions" style={{ marginTop: '1px' }}>
 									<Popover
 										content={
 											<DownloadRoster
@@ -215,15 +215,14 @@ class Roster extends Component {
 										</a>
 									</Popover>
 								</div>
-								{/* <h6 className="element-header"></h6> */}
 								<div className="control-header">
 									<div className="row align-items-center">
-										<div className="col-8">
+										<div className="col-12">
 											<form action="" className="form-inline">
 												<div className="form-group">
 													<label className="mr-2">Filter by: </label>
 												</div>
-												<div className="form-group mr-4">
+												<div className="form-group mr-2">
 													<label className="mr-2">Department</label>
 													<select
 														id="department"
@@ -240,7 +239,7 @@ class Roster extends Component {
 														})}
 													</select>
 												</div>
-												<div className="form-group mr-4">
+												<div className="form-group mr-0">
 													<a
 														className="btn btn-sm btn-primary btn-upper text-white"
 														onClick={this.doFilter}
@@ -257,7 +256,6 @@ class Roster extends Component {
 												</div>
 											</form>
 										</div>
-										<div className="col-4 text-right" />
 									</div>
 								</div>
 								<div className="element-box m-0 p-3">

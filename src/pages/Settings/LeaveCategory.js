@@ -1,19 +1,18 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import waiting from '../../assets/images/waiting.gif';
 import { notifySuccess, notifyError } from '../../services/notify';
-import { request, confirmAction } from '../../services/utilities';
-import TableLoading from '../../components/TableLoading';
 import {
-	add_leave_category,
-	get_all_leave_category,
-	update_leave_category,
-	delete_leave_category,
-} from '../../actions/settings';
+	request,
+	confirmAction,
+	updateImmutable,
+} from '../../services/utilities';
+import TableLoading from '../../components/TableLoading';
+import { startBlock, stopBlock } from '../../actions/redux-block';
 
-const LeaveCategory = props => {
+const LeaveCategory = () => {
 	const initialState = {
 		name: '',
 		duration: '',
@@ -26,6 +25,9 @@ const LeaveCategory = props => {
 	const [{ edit, save }, setSubmitButton] = useState(initialState);
 	const [payload, getDataToEdit] = useState(null);
 	const [dataLoaded, setDataLoaded] = useState(false);
+	const [categories, setCategories] = useState([]);
+
+	const dispatch = useDispatch();
 
 	const handleInputChange = e => {
 		const { name, value } = e.target;
@@ -38,7 +40,7 @@ const LeaveCategory = props => {
 			setLoading(true);
 			const data = { name, duration };
 			const rs = await request('leave-category', 'POST', true, data);
-			props.add_leave_category(rs);
+			setCategories([rs, ...categories]);
 			setLoading(false);
 			setState({ ...initialState });
 			notifySuccess('Leave Category created');
@@ -55,7 +57,8 @@ const LeaveCategory = props => {
 			const data = { name, duration };
 			const url = `leave-category/${payload.id}/update`;
 			const rs = await request(url, 'PATCH', true, data);
-			props.update_leave_category(rs, payload);
+			const items = updateImmutable(categories, rs);
+			setCategories(items);
 			setState({ ...initialState });
 			setSubmitButton({ save: true, edit: false });
 			setLoading(false);
@@ -81,9 +84,9 @@ const LeaveCategory = props => {
 
 	const onDeleteLeaveCategory = async data => {
 		try {
-			const res = await request(`leave-category/${data.id}`, 'DELETE', true);
+			const rs = await request(`leave-category/${data.id}`, 'DELETE', true);
 			setLoading(false);
-			props.delete_leave_category(res);
+			setCategories(categories.filter(item => item.id !== rs.id));
 			notifySuccess('Leave Category deleted');
 		} catch (error) {
 			setLoading(false);
@@ -103,11 +106,14 @@ const LeaveCategory = props => {
 	useEffect(() => {
 		const fetchLeaveCategory = async () => {
 			try {
+				dispatch(startBlock());
 				const rs = await request('leave-category', 'GET', true);
-				props.get_all_leave_category(rs);
+				setCategories(rs);
 				setDataLoaded(true);
+				dispatch(stopBlock());
 			} catch (error) {
 				setDataLoaded(true);
+				dispatch(stopBlock());
 				notifyError(error.message || 'could not fetch leave categories!');
 			}
 		};
@@ -115,9 +121,7 @@ const LeaveCategory = props => {
 		if (!dataLoaded) {
 			fetchLeaveCategory();
 		}
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [dataLoaded, props]);
+	}, [dataLoaded, dispatch]);
 
 	return (
 		<div className="content-i">
@@ -139,7 +143,7 @@ const LeaveCategory = props => {
 									<TableLoading />
 								) : (
 									<>
-										{props.leaveCategories.map((leaveCategory, i) => {
+										{categories.map((item, i) => {
 											return (
 												<div className="col-lg-4" key={i}>
 													<div className="pt-3">
@@ -148,24 +152,24 @@ const LeaveCategory = props => {
 																<div className="pi-settings os-dropdown-trigger">
 																	<i
 																		className="os-icon os-icon-ui-49"
-																		onClick={() => onClickEdit(leaveCategory)}
+																		onClick={() => onClickEdit(item)}
 																	></i>
 																</div>
 																<div className="pi-settings os-dropdown-trigger text-danger">
 																	<i
 																		className="os-icon os-icon-ui-15"
-																		onClick={() => confirmDelete(leaveCategory)}
+																		onClick={() => confirmDelete(item)}
 																	></i>
 																</div>
 															</div>
 															<div className="pi-body">
 																<div className="pi-info">
-																	<div className="h6 pi-name">
-																		{leaveCategory.name}
-																	</div>
-																	<div className="pi-sub">
-																		{leaveCategory.duration} days
-																	</div>
+																	<div className="h6 pi-name">{item.name}</div>
+																	{item.duration && (
+																		<div className="pi-sub">
+																			{item.duration} days
+																		</div>
+																	)}
 																</div>
 															</div>
 														</div>
@@ -173,7 +177,7 @@ const LeaveCategory = props => {
 												</div>
 											);
 										})}
-										{props.leaveCategories.length === 0 && (
+										{categories.length === 0 && (
 											<div
 												className="alert alert-info text-center"
 												style={{ width: '100%' }}
@@ -262,14 +266,4 @@ const LeaveCategory = props => {
 	);
 };
 
-const mapStateToProps = state => {
-	return {
-		leaveCategories: state.settings.leave_categories,
-	};
-};
-export default connect(mapStateToProps, {
-	add_leave_category,
-	get_all_leave_category,
-	update_leave_category,
-	delete_leave_category,
-})(LeaveCategory);
+export default LeaveCategory;

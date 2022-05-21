@@ -8,9 +8,7 @@ let socket;
 export const initSocket = () => {
 	console.log('socket initiatied');
 
-	socket = io(`${API_URI}/socket`, {
-		transports: ['websocket', 'polling'],
-	});
+	socket = io(`${API_URI}/socket`, { transports: ['websocket', 'polling'] });
 
 	if (socket) {
 		socket.on('connect', () => {

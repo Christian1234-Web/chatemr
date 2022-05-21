@@ -5,30 +5,10 @@ import { Switch, withRouter, Route } from 'react-router-dom';
 import NoMatch from '../NoMatch';
 import Splash from '../../components/Splash';
 
-const AccountProfile = lazy(() => import('./Profile/index'));
-const Payslip = lazy(() => import('./Payslip'));
-const DutyRoster = lazy(() => import('../../components/StaffBlock/DutyRoster'));
-const CreateAppraisal = lazy(() =>
-	import('../../components/StaffBlock/CreateAppraisal')
-);
-const NewAppraisal = lazy(() =>
-	import('../../components/StaffBlock/NewAppraisal')
-);
-const LeaveRequest = lazy(() =>
-	import('../../components/StaffBlock/LeaveRequest')
-);
-const Appraisal = lazy(() => import('../../components/StaffBlock/Appraisal'));
-// const StaffDetail = lazy(() => import('../../components/StaffBlock/StaffDetail'));
-const CreateLeave = lazy(() => import('../../components/CreateLeave'));
-const CreateExcuseDuty = lazy(() =>
-	import('../../components/CreateExcuseDuty')
-);
-const LineAppraisal = lazy(() =>
-	import('../../components/StaffBlock/LineAppraisal')
-);
-const StaffAppraisal = lazy(() =>
-	import('../../components/StaffBlock/StaffAppraisal')
-);
+const Payslips = lazy(() => import('./Payslips'));
+const DutyRoster = lazy(() => import('./DutyRoster'));
+const Appraisals = lazy(() => import('./Appraisals'));
+const LeaveRequests = lazy(() => import('./LeaveRequests'));
 const Requisitions = lazy(() => import('./Requisitions'));
 
 const Home = ({ match }) => {
@@ -37,60 +17,14 @@ const Home = ({ match }) => {
 			<div className="content-box">
 				<Suspense fallback={<Splash />}>
 					<Switch>
-						<Route exact path={`${match.url}/`} component={AccountProfile} />
+						<Route path={`${match.url}/payslips`} component={Payslips} />
+						<Route path={`${match.url}/duty-roster`} component={DutyRoster} />
+						<Route path={`${match.url}/appraisals`} component={Appraisals} />
 						<Route
-							exact
-							path={`${match.url}/appraisal`}
-							component={Appraisal}
+							path={`${match.url}/leave-requests`}
+							component={LeaveRequests}
 						/>
 						<Route
-							exact
-							path={`${match.url}/duty-roster`}
-							component={DutyRoster}
-						/>
-						<Route
-							exact
-							path={`${match.url}/excuse-duty/new`}
-							component={CreateExcuseDuty}
-						/>
-						<Route
-							exact
-							path={`${match.url}/leave-request`}
-							component={LeaveRequest}
-						/>
-						<Route
-							exact
-							path={`${match.url}/leave-request/new`}
-							component={CreateLeave}
-						/>
-						<Route
-							exact
-							path={`${match.url}/excuse-duty/create-excuse-duty`}
-							component={CreateExcuseDuty}
-						/>
-						<Route
-							exact
-							path={`${match.url}/appraisal/line-appraisal`}
-							component={LineAppraisal}
-						/>
-						<Route
-							exact
-							path={`${match.url}/appraisal/staff-appraisal`}
-							component={StaffAppraisal}
-						/>
-						<Route
-							exact
-							path={`${match.url}/appraisal/create-appraisal`}
-							component={CreateAppraisal}
-						/>
-						<Route
-							exact
-							path={`${match.url}/appraisal/new-appraisal`}
-							component={NewAppraisal}
-						/>
-						<Route exact path={`${match.url}/payslips`} component={Payslip} />
-						<Route
-							exact
 							path={`${match.url}/requisitions`}
 							component={Requisitions}
 						/>

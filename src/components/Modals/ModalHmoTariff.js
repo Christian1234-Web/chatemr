@@ -18,6 +18,7 @@ import { notifyError, notifySuccess } from '../../services/notify';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import useSearchInputState from '../../services/search-hook';
 import { API_URI } from '../../services/constants';
+import ModalHeader from '../ModalHeader';
 
 const ModalHmoTariff = ({ closeModal, hmo, categories }) => {
 	const [loaded, setLoaded] = useState(false);
@@ -150,16 +151,8 @@ const ModalHmoTariff = ({ closeModal, hmo, categories }) => {
 				style={{ maxWidth: '1024px' }}
 			>
 				<div className="modal-content">
-					<button
-						aria-label="Close"
-						className="close"
-						type="button"
-						onClick={closeModal}
-					>
-						<span className="os-icon os-icon-close" />
-					</button>
+					<ModalHeader title={hmo.name} closeModal={closeModal} />
 					<div className="onboarding-content with-gradient">
-						<h4 className="onboarding-title text-center">{hmo.name}</h4>
 						<div className="element-box m-0 p-3">
 							<div className="row">
 								<div className="col-lg-4">

@@ -24,7 +24,7 @@ const MyAccount = () => {
 				</Link>
 			</li>
 			<li>
-				<Link to="/my-account/appraisal">
+				<Link to="/my-account/appraisals">
 					<div className="icon-w">
 						<div className="os-icon os-icon-bar-chart-stats-up" />
 					</div>
@@ -32,7 +32,7 @@ const MyAccount = () => {
 				</Link>
 			</li>
 			<li>
-				<Link to="/my-account/leave-request">
+				<Link to="/my-account/leave-requests">
 					<div className="icon-w">
 						<div className="os-icon os-icon-agenda-1" />
 					</div>

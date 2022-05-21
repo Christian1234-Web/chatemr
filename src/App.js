@@ -3,7 +3,6 @@ import { Switch, Route, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import ReduxBlockUi from 'react-block-ui/redux';
-import { AbilityBuilder } from '@casl/ability';
 import IdleTimer from 'react-idle-timer';
 
 import ScrollToTop from './containers/ScrollToTop';
@@ -22,8 +21,6 @@ import {
 } from './services/constants';
 import { toggleProfile, signOut } from './actions/user';
 import { setConnection, toggleChat } from './actions/general';
-import ability from './services/ability';
-import { AbilityContext } from './components/common/Can';
 import { request } from './services/utilities';
 import { notifyError } from './services/notify';
 import { initSocket, subscribeIO, disconnectSocket } from './services/socket';
@@ -32,6 +29,7 @@ import Login from './pages/Login';
 import ChangePassword from './pages/ChangePassword';
 import NoMatch from './pages/NoMatch';
 import PatientProfile from './pages/PatientProfile';
+import StaffProfile from './pages/StaffProfile';
 import ProcedureProfile from './pages/ProcedureProfile';
 import AntenatalProfile from './pages/AntenatalProfile';
 import AdmissionProfile from './pages/AdmissionProfile';
@@ -47,7 +45,6 @@ const Procedure = lazy(() => import('./pages/Procedure/Home'));
 const Hr = lazy(() => import('./pages/HR/Home'));
 const Store = lazy(() => import('./pages/Store/Home'));
 const Settings = lazy(() => import('./pages/Settings/Home'));
-const StaffProfile = lazy(() => import('./pages/StaffProfile'));
 const Hmo = lazy(() => import('./pages/Hmo/Home'));
 const ClinicalLab = lazy(() => import('./pages/ClinicalLab/Home'));
 const PayPoint = lazy(() => import('./pages/PayPoint/Home'));
@@ -60,6 +57,7 @@ const Cafeteria = lazy(() => import('./pages/Cafeteria/Home'));
 const MyAccount = lazy(() => import('./pages/MyAccount/Home'));
 const Doctor = lazy(() => import('./pages/Doctor/Home'));
 const Records = lazy(() => import('./pages/Records/Home'));
+const Report = lazy(() => import('./pages/Report/Home'));
 const Accounting = lazy(() => import('./pages/Accounting/Home'));
 
 const storage = new SSRStorage();
@@ -88,14 +86,6 @@ class App extends Component {
 	async componentDidMount() {
 		const fullscreen = await storage.getItem(FULLSCREEN_COOKIE);
 		const theme_mode = await storage.getItem(MODE_COOKIE);
-		// get user permissions
-		const permissions = [];
-		// casal/ability
-		const { can, rules } = new AbilityBuilder();
-		// set user permissions
-		can(permissions, 'all');
-		// update user permission
-		ability.update(rules);
 
 		const { location, connected, loggedIn } = this.props;
 
@@ -208,7 +198,7 @@ class App extends Component {
 									<Route path="/change-password" component={ChangePassword} />
 								</Switch>
 							) : (
-								<AbilityContext.Provider value={ability}>
+								<>
 									<ReduxBlockUi block="REQUEST_START" unblock="REQUEST_STOP">
 										<div className="all-wrapper with-side-panel solid-bg-all">
 											<Suspense fallback={<Splash />}>
@@ -248,11 +238,11 @@ class App extends Component {
 															<Route path="/cafeteria" component={Cafeteria} />
 															<Route path="/paypoint" component={PayPoint} />
 															<Route path="/records" component={Records} />
+															<Route path="/report" component={Report} />
 															<Route
 																path="/accounting"
 																component={Accounting}
 															/>
-															{/* remove path later */}
 															<Route path="/my-account" component={MyAccount} />
 															<Route component={NoMatch} />
 														</Switch>
@@ -303,7 +293,7 @@ class App extends Component {
 										}}
 										stopOnIdle={true}
 									/>
-								</AbilityContext.Provider>
+								</>
 							)}
 						</>
 					) : (

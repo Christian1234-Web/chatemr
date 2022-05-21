@@ -1,6 +1,5 @@
 import {
 	LOAD_APPRAISALS,
-	LOAD_LEAVE,
 	LOAD_PAYROLL,
 	LOAD_UNPAID_PAYROLL,
 	LOAD_PAYROLL_HISTORY,
@@ -13,13 +12,6 @@ import {
 export const loadAppraisals = data => {
 	return {
 		type: LOAD_APPRAISALS,
-		payload: data,
-	};
-};
-
-export const loadStaffLeave = data => {
-	return {
-		type: LOAD_LEAVE,
 		payload: data,
 	};
 };

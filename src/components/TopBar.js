@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import upperCase from 'lodash.uppercase';
 import startCase from 'lodash.startcase';
@@ -194,17 +194,11 @@ class TopBar extends Component {
 									<i className="os-icon os-icon-wallet-loaded" />
 								</div>
 								<ul>
-									{/* <li>
+									<li>
 										<a onClick={this.openProfile}>
 											<i className="os-icon os-icon-user-male-circle2" />
-											<span>Slide Profile Details</span>
-										</a>
-									</li> */}
-									<li>
-										<Link to="/my-account">
-											<i className="os-icon os-icon-user-male-circle2" />
 											<span>Profile Details</span>
-										</Link>
+										</a>
 									</li>
 									<li>
 										<a onClick={this.doLogout} to="/logout" className="pointer">

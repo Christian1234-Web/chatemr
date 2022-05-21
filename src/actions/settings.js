@@ -1,5 +1,3 @@
-import axios from 'axios';
-import { API_URI } from '../services/constants';
 import {
 	ADD_LAB_TEST,
 	SET_LAB_TESTS,
@@ -9,10 +7,6 @@ import {
 	GET_ALL_LAB_TEST_CATEGORIES,
 	UPDATE_LAB_TEST_CATEGORY,
 	DELETE_LAB_TEST_CATEGORY,
-	ADD_LEAVE_CATEGORY,
-	GET_ALL_LEAVE_CATEGORIES,
-	UPDATE_LEAVE_CATEGORY,
-	DELETE_LEAVE_CATEGORY,
 	ADD_SPECIALIZATION,
 	GET_ALL_SPECIALIZATIONS,
 	UPDATE_SPECIALIZATION,
@@ -124,36 +118,6 @@ export const deleteLabCategory = payload => {
 	};
 };
 
-//Leave Category
-export const add_leave_category = payload => {
-	return {
-		type: ADD_LEAVE_CATEGORY,
-		payload,
-	};
-};
-
-export const get_all_leave_category = payload => {
-	return {
-		type: GET_ALL_LEAVE_CATEGORIES,
-		payload,
-	};
-};
-
-export const update_leave_category = (payload, previousData) => {
-	return {
-		type: UPDATE_LEAVE_CATEGORY,
-		payload,
-		previousData,
-	};
-};
-
-export const delete_leave_category = payload => {
-	return {
-		type: DELETE_LEAVE_CATEGORY,
-		payload,
-	};
-};
-
 //Specialization
 export const addSpecialization = payload => {
 	return {
@@ -180,76 +144,5 @@ export const deleteSpecialization = payload => {
 	return {
 		type: DELETE_SPECIALIZATION,
 		payload,
-	};
-};
-
-//Leave Category
-export const addLeaveCategory = data => {
-	return dispatch => {
-		return new Promise((resolve, reject) => {
-			axios
-				.post(`${API_URI}/leave-category`, {
-					name: data.name,
-					duration: data.duration,
-				})
-				.then(response => {
-					dispatch(add_leave_category(response.data));
-					return resolve({ success: true });
-				})
-				.catch(error => {
-					return reject({ success: false });
-				});
-		});
-	};
-};
-
-export const getAllLeaveCategory = data => {
-	return dispatch => {
-		return new Promise((resolve, reject) => {
-			axios
-				.get(`${API_URI}/leave-category`)
-				.then(response => {
-					dispatch(get_all_leave_category(response.data));
-					return resolve({ success: true });
-				})
-				.catch(error => {
-					return reject({ success: false });
-				});
-		});
-	};
-};
-
-export const updateLeaveCategory = data => {
-	return dispatch => {
-		return new Promise((resolve, reject) => {
-			axios
-				.patch(`${API_URI}/leave-category/${data.id}/update`, {
-					name: data.name,
-					duration: data.duration,
-				})
-				.then(response => {
-					dispatch(update_leave_category(response.data, data));
-					return resolve({ success: true });
-				})
-				.catch(error => {
-					return reject({ success: false });
-				});
-		});
-	};
-};
-
-export const deleteLeaveCategory = data => {
-	return dispatch => {
-		return new Promise((resolve, reject) => {
-			axios
-				.delete(`${API_URI}/leave-category/${data.id}`)
-				.then(response => {
-					dispatch(delete_leave_category(data));
-					return resolve({ success: true });
-				})
-				.catch(error => {
-					return reject({ success: false });
-				});
-		});
 	};
 };

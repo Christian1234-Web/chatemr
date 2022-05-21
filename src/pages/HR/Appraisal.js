@@ -17,13 +17,7 @@ const initialDate = item => ({
 	endDate: item ? item.endDate : '',
 });
 
-const PerformanceIndicatorForm = ({
-	uploading,
-	doUpload,
-	hide,
-	clear,
-	item,
-}) => {
+const PerformanceIndicatorForm = ({ uploading, doUpload, hide, item }) => {
 	const [period, setPeriod] = useState(item ? item.performancePeriod : '');
 
 	const [date, setDate] = useState(initialDate(item));
@@ -43,13 +37,6 @@ const PerformanceIndicatorForm = ({
 		});
 	};
 
-	// const clearData = () => {
-	// 	setPeriod('');
-	// 	setDate({
-	// 		startDate: '',
-	// 		endDate: '',
-	// 	});
-	// };
 	return (
 		<div
 			className="onboarding-modal fade animated show"
@@ -65,7 +52,6 @@ const PerformanceIndicatorForm = ({
 						<h4 className="onboarding-title">
 							{item ? 'Edit Performance Period' : 'Create Performance Period'}
 						</h4>
-
 						<form
 							name="performanceForm"
 							className="form-block w-100"
@@ -73,7 +59,6 @@ const PerformanceIndicatorForm = ({
 						>
 							<div className="row my-3">
 								<div className="form-group col-12">
-									{/* {label ? <textarea>{label}</textarea> : null} */}
 									<label>Performance Period</label>
 									<input
 										type="text"
@@ -84,11 +69,8 @@ const PerformanceIndicatorForm = ({
 										required
 									/>
 								</div>
-
 								<div className="form-group col-12">
-									{/* {label ? <textarea>{label}</textarea> : null} */}
 									<label>Start Date - End Date</label>
-
 									<RangePicker
 										defaultPickerValue={
 											item
@@ -102,7 +84,6 @@ const PerformanceIndicatorForm = ({
 									/>
 								</div>
 							</div>
-
 							<div className="row">
 								<div className="col-sm-12 text-right pr-0">
 									<button
@@ -171,12 +152,8 @@ class Appraisal extends Component {
 		try {
 			//load it into database and add it to the store
 			if (!this.state.editItem) {
-				let rs = await request(
-					`${appraisalAPI}/save-period`,
-					'POST',
-					true,
-					payload
-				);
+				const uri = `${appraisalAPI}/save-period`;
+				let rs = await request(uri, 'POST', true, payload);
 				const { performancePeriods } = this.props;
 				const newArray = [...performancePeriods, rs.performancePeriod];
 				this.props.loadPerformancePeriod(newArray);
@@ -186,12 +163,8 @@ class Appraisal extends Component {
 				if (payload.performancePeriod === '') {
 					payload.performancePeriod = editItem.performancePeriod;
 				}
-				let rs = await request(
-					`${appraisalAPI}/update-period`,
-					'PATCH',
-					true,
-					payload
-				);
+				const url = `${appraisalAPI}/update-period`;
+				let rs = await request(url, 'PATCH', true, payload);
 				const { performancePeriods } = this.props;
 				const newArray = updateImmutable(
 					performancePeriods,
@@ -222,11 +195,6 @@ class Appraisal extends Component {
 	editPerformancePeriod = item => {
 		this.performanceIndicatorForm();
 		this.setState({ editItem: item });
-	};
-
-	createAppraisal = item => {
-		this.props.setPerformancePeriod(item);
-		this.props.history.push('/my-account/appraisal/staff-appraisal');
 	};
 
 	render() {
@@ -283,11 +251,9 @@ class Appraisal extends Component {
 													rev.map((el, i) => {
 														return (
 															<AppraisalItem
+																key={i}
 																item={el}
-																createAppraisal={this.createAppraisal}
 																performancePeriods={performancePeriods}
-																key={i + 1}
-																index={i + 1}
 																edit={this.editPerformancePeriod}
 															/>
 														);

@@ -15,6 +15,8 @@ import FrontDeskMenu from './FrontDeskMenu';
 import ProcedureMenu from './ProcedureMenu';
 import RecordsMenu from './RecordsMenu';
 import AccountingMenu from './AccountingMenu';
+import ReportMenu from './ReportMenu';
+import MyAccount from './MyAccount';
 
 const AdminMenu = () => {
 	return (
@@ -75,7 +77,12 @@ const AdminMenu = () => {
 				<span>ACCOUNTING</span>
 			</li>
 			<AccountingMenu />
+			<li className="sub-header">
+				<span>REPORTS &amp; ANALYTICS</span>
+			</li>
+			<ReportMenu />
 			<SettingsMenu />
+			<MyAccount />
 		</>
 	);
 };

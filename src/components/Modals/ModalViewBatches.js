@@ -16,6 +16,7 @@ import {
 import ModalEditBatch from './ModalEditBatch';
 import ModalUpdateBatchQty from './ModalUpdateBatchQty';
 import ModalNewBatch from './ModalNewBatch';
+import ModalHeader from '../ModalHeader';
 
 const ModalViewBatches = ({ closeModal, drug }) => {
 	const [loaded, setLoaded] = useState(false);
@@ -97,16 +98,8 @@ const ModalViewBatches = ({ closeModal, drug }) => {
 		>
 			<div className="modal-dialog modal-lg modal-centered">
 				<div className="modal-content text-center">
-					<button
-						aria-label="Close"
-						className="close"
-						type="button"
-						onClick={closeModal}
-					>
-						<span className="os-icon os-icon-close" />
-					</button>
+					<ModalHeader title="Drug Batch" closeModal={closeModal} />
 					<div className="onboarding-content with-gradient">
-						<h4 className="onboarding-title">Drug Batch</h4>
 						<div className="onboarding-text alert-custom mb-3">
 							<div className="text-center">{drug.name}</div>
 							<div>

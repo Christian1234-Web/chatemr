@@ -7,10 +7,6 @@ import {
 	GET_ALL_LAB_TEST_CATEGORIES,
 	UPDATE_LAB_TEST_CATEGORY,
 	DELETE_LAB_TEST_CATEGORY,
-	ADD_LEAVE_CATEGORY,
-	GET_ALL_LEAVE_CATEGORIES,
-	UPDATE_LEAVE_CATEGORY,
-	DELETE_LEAVE_CATEGORY,
 	ADD_SPECIALIZATION,
 	GET_ALL_SPECIALIZATIONS,
 	UPDATE_SPECIALIZATION,
@@ -29,7 +25,6 @@ const INITIAL_STATE = {
 	room_categories: [],
 	lab_tests: [],
 	lab_categories: [],
-	leave_categories: [],
 	specializations: [],
 	staff_list: [],
 	roles: [],
@@ -180,30 +175,6 @@ const settings = (state = INITIAL_STATE, action) => {
 				...state,
 				lab_categories: state.lab_categories.filter(
 					item => item.id !== action.payload.id
-				),
-			};
-		case ADD_LEAVE_CATEGORY:
-			return {
-				...state,
-				leave_categories: [...state.leave_categories, action.payload],
-			};
-		case GET_ALL_LEAVE_CATEGORIES:
-			return { ...state, leave_categories: action.payload };
-		case UPDATE_LEAVE_CATEGORY:
-			return {
-				...state,
-				leave_categories: [
-					...state.leave_categories.filter(
-						deletedItem => deletedItem.id !== action.previousData.id
-					),
-					action.payload,
-				],
-			};
-		case DELETE_LEAVE_CATEGORY:
-			return {
-				...state,
-				leave_categories: state.leave_categories.filter(
-					deletedItem => deletedItem.id !== action.payload.id
 				),
 			};
 

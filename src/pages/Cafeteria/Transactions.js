@@ -95,8 +95,6 @@ class Transactions extends Component {
 	};
 
 	patientSet = (pat, type) => {
-		console.log(pat);
-
 		if (type === 'patient') {
 			let name = patientname(pat);
 			document.getElementById('patient').value = name;

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 import { closeModals } from '../../actions/general';
-import LineManagerAssessment from '../StaffBlock/LineManagerAssessment';
+// import LineManagerAssessment from '../StaffBlock/LineManagerAssessment';
 
 export class ModalStaffAppraisal extends Component {
 	state = {
@@ -47,7 +47,7 @@ export class ModalStaffAppraisal extends Component {
 							</div>
 
 							<div className="row">
-								<LineManagerAssessment isStaffAppraisal={true} />
+								{/* <LineManagerAssessment isStaffAppraisal={true} /> */}
 							</div>
 						</div>
 					</div>

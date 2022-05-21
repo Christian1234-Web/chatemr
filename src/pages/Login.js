@@ -3,7 +3,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, connect } from 'react-redux';
 import { Field, reduxForm, SubmissionError, change } from 'redux-form';
 import axios from 'axios';
-import { AbilityBuilder } from '@casl/ability';
 import { v4 as uuidv4 } from 'uuid';
 
 import waiting from '../assets/images/waiting.gif';
@@ -21,7 +20,6 @@ import { loadRoles } from '../actions/role';
 import { loadDepartments } from '../actions/department';
 import { loadSpecializations } from '../actions/settings';
 import { setConnection } from '../actions/general';
-import ability from '../services/ability';
 import { initSocket, subscribeIO } from '../services/socket';
 
 const storage = new SSRStorage();
@@ -115,12 +113,6 @@ const Login = ({ location, history, error, handleSubmit }) => {
 
 					dispatch(loginUser(rs));
 					storage.setItem(TOKEN_COOKIE, rs);
-
-					const { can, rules } = new AbilityBuilder();
-
-					can(rs.permissions, 'all');
-
-					ability.update(rules);
 
 					notifySuccess('login successful!');
 

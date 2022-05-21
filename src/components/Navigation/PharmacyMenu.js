@@ -36,6 +36,14 @@ const PharmacyMenu = () => {
 					<span>Inventory</span>
 				</Link>
 			</li>
+			<li>
+				<Link to="/pharmacy/vendors">
+					<div className="icon-w">
+						<div className="os-icon os-icon-layers" />
+					</div>
+					<span>Vendors</span>
+				</Link>
+			</li>
 		</>
 	);
 };

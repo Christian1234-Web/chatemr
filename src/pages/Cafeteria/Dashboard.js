@@ -89,6 +89,7 @@ const Dashboard = () => {
 
 	const patientSet = pat => {
 		setSelectedCustomer(pat);
+
 		let name;
 		if (customer === 'patient') {
 			name = patientname(pat);
@@ -207,7 +208,7 @@ const Dashboard = () => {
 											>
 												<div className="profile-tile profile-tile-inlined">
 													<a className="profile-tile-box">
-														<div>{item.name}</div>
+														<div>{item.foodItem.name}</div>
 														<div className="pt-avatar-w d-block">
 															{formatCurrency(item.price)}
 														</div>

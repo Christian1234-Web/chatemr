@@ -22,7 +22,7 @@ import { hasViewAppointmentPermission } from '../permission-utils/appointment';
 
 export const formatCurrency = (amount, abs) => {
 	if (!amount) {
-		return 0.0;
+		return '₦0.0';
 	}
 	return `₦${numeral(abs ? Math.abs(amount) : amount).format('0,0.00')}`;
 };
@@ -517,6 +517,9 @@ export const redirectToPage = (role, history, permissions) => {
 				break;
 			case 'records':
 				uri = '/records';
+				break;
+			case 'report':
+				uri = '/report';
 				break;
 			case 'accounts':
 				uri = '/accounting';

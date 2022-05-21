@@ -1,6 +1,5 @@
 import {
 	LOAD_APPRAISALS,
-	LOAD_LEAVE,
 	LOAD_PAYROLL,
 	LOAD_UNPAID_PAYROLL,
 	LOAD_PAYROLL_HISTORY,
@@ -11,7 +10,6 @@ import {
 
 const INITIAL_STATE = {
 	appraisals: [],
-	staff_leave: [],
 	payrolls: [],
 	unpaid_payrolls: [],
 	history_payrolls: [],
@@ -23,8 +21,6 @@ const hr = (state = INITIAL_STATE, action) => {
 	switch (action.type) {
 		case LOAD_APPRAISALS:
 			return { ...state, appraisals: action.payload };
-		case LOAD_LEAVE:
-			return { ...state, staff_leave: action.payload };
 		case LOAD_PAYROLL:
 			return { ...state, payrolls: action.payload };
 		case LOAD_UNPAID_PAYROLL:

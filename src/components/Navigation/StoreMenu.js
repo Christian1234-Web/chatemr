@@ -13,6 +13,14 @@ const StoreMenu = () => {
 				</Link>
 			</li>
 			<li>
+				<Link to="/store/vendors">
+					<div className="icon-w">
+						<div className="os-icon os-icon-layers" />
+					</div>
+					<span>Vendors</span>
+				</Link>
+			</li>
+			<li>
 				<Link to="/store/requisitions">
 					<div className="icon-w">
 						<div className="os-icon os-icon-layers" />

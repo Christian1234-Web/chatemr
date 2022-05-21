@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Form, Field } from 'react-final-form';
 import DatePicker from 'react-datepicker';
 import { format, isValid } from 'date-fns';
-// import AsyncSelect from 'react-select/async/dist/react-select.esm';
 import moment from 'moment';
 import { useDispatch } from 'react-redux';
 import { FORM_ERROR } from 'final-form';
@@ -25,16 +24,6 @@ const OutPatientAppointmentForm = ({ closeModal, history, location }) => {
 	const [dateOfBirth, setDateOfBirth] = useState(null);
 
 	const dispatch = useDispatch();
-
-	// const getOptions = async q => {
-	// 	if (!q || q.length < 1) {
-	// 		return [];
-	// 	}
-
-	// 	const url = `${searchAPI}?q=${q}&is_opd=1`;
-	// 	const res = await request(url, 'GET', true);
-	// 	return res;
-	// };
 
 	const handleSubmit = async values => {
 		try {

@@ -9,6 +9,7 @@ import waiting from '../../assets/images/waiting.gif';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import { notifyError, notifySuccess } from '../../services/notify';
 import { allUnitOfMeasures } from '../../services/constants';
+import ModalHeader from '../ModalHeader';
 
 const validate = values => {
 	const errors = {};
@@ -113,16 +114,8 @@ const ModalNewDrug = ({ closeModal, handleSubmit, error, addDrug }) => {
 				style={{ maxWidth: '320px' }}
 			>
 				<div className="modal-content text-center">
-					<button
-						aria-label="Close"
-						className="close"
-						type="button"
-						onClick={closeModal}
-					>
-						<span className="os-icon os-icon-close" />
-					</button>
+					<ModalHeader title="Create Drug" closeModal={closeModal} />
 					<div className="onboarding-content with-gradient">
-						<h4 className="onboarding-title">Create Drug</h4>
 						<div className="form-block">
 							<form onSubmit={handleSubmit(save)}>
 								{error && (

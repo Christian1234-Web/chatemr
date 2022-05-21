@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 
 import { closeCurrentPayRoll } from '../../actions/general';
-import { formatCurrency } from '../../services/utilities';
+import { formatCurrency, staffname } from '../../services/utilities';
 import ModalHeader from '../ModalHeader';
 
 class ModalCurrentPayroll extends Component {
@@ -51,23 +51,27 @@ class ModalCurrentPayroll extends Component {
 										<table className="table table-striped table-sm">
 											<tbody>
 												<tr>
-													<th className="text-left">EMP Code:</th>
-													<td className="text-right">{payroll.emp_code}</td>
+													<th className="text-left">EMP Number:</th>
+													<td className="text-right">
+														{payroll.staff.employee_number || '--'}
+													</td>
 												</tr>
 												<tr>
 													<th className="text-left">Staff Name:</th>
-													<td className="text-right">{payroll.staff_name}</td>
+													<td className="text-right">
+														{staffname(payroll.staff)}
+													</td>
 												</tr>
 												<tr>
 													<th className="text-left">Designation:</th>
 													<td className="text-right">
-														{payroll.designation || '-'}
+														{payroll.staff.job_title || '--'}
 													</td>
 												</tr>
 												<tr>
-													<th className="text-left">Bank A/c No:</th>
+													<th className="text-left">Bank A/C No:</th>
 													<td className="text-right">
-														{payroll.bank_account || '-'}
+														{payroll.staff.account_number || '--'}
 													</td>
 												</tr>
 											</tbody>
@@ -80,17 +84,14 @@ class ModalCurrentPayroll extends Component {
 														<th className="text-left">Earnings</th>
 														<th className="text-right">Amount</th>
 													</tr>
-													{payroll.allowances &&
-														payroll.allowances.map((_, i) => {
-															return (
-																<tr key={i}>
-																	<td className="text-left">Basic:</td>
-																	<td className="text-right">
-																		{formatCurrency(10000)}
-																	</td>
-																</tr>
-															);
-														})}
+													{payroll.allowances?.map((_, i) => {
+														return (
+															<tr key={i}>
+																<td className="text-left"></td>
+																<td className="text-right"></td>
+															</tr>
+														);
+													})}
 												</tbody>
 												<tfoot>
 													<tr>
@@ -112,19 +113,14 @@ class ModalCurrentPayroll extends Component {
 														<th className="text-left">Deductions</th>
 														<th className="text-right">Amount</th>
 													</tr>
-													{payroll.deductions &&
-														payroll.deductions.map((_, i) => {
-															return (
-																<tr key={i}>
-																	<td className="text-left">
-																		Pension Contribution:
-																	</td>
-																	<td className="text-right">
-																		{formatCurrency(10000)}
-																	</td>
-																</tr>
-															);
-														})}
+													{payroll.deductions?.map((_, i) => {
+														return (
+															<tr key={i}>
+																<td className="text-left"></td>
+																<td className="text-right"></td>
+															</tr>
+														);
+													})}
 												</tbody>
 												<tfoot>
 													<tr>
@@ -142,7 +138,7 @@ class ModalCurrentPayroll extends Component {
 											<tbody>
 												<tr>
 													<th className="text-left">Prepared By:</th>
-													<td className="text-right">Staff Name</td>
+													<td className="text-right">{payroll.createdBy}</td>
 												</tr>
 											</tbody>
 										</table>

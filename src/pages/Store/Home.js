@@ -9,6 +9,7 @@ import { messageService } from '../../services/message';
 
 const Inventory = lazy(() => import('./Inventory'));
 const Requisitions = lazy(() => import('./Requisitions'));
+const Vendors = lazy(() => import('../../components/Vendor/List'));
 
 const Home = ({ match, location }) => {
 	const [addModal, setAddModal] = useState(false);
@@ -18,6 +19,8 @@ const Home = ({ match, location }) => {
 	let pageTitle = 'Inventory';
 	if (page === 'requisitions') {
 		pageTitle = 'Requisitions';
+	} else if (page === 'vendors') {
+		pageTitle = 'Vendors';
 	}
 
 	const addItem = () => {
@@ -36,7 +39,7 @@ const Home = ({ match, location }) => {
 				<div className="row">
 					<div className="col-sm-12">
 						<div className="element-wrapper">
-							{page !== 'requisitions' && (
+							{page !== 'requisitions' && page !== 'vendors' && (
 								<div className="element-actions">
 									<a
 										className="btn btn-primary btn-sm text-white"
@@ -60,6 +63,10 @@ const Home = ({ match, location }) => {
 											<Route
 												path={`${match.url}/requisitions`}
 												component={Requisitions}
+											/>
+											<Route
+												path={`${match.url}/vendors`}
+												component={Vendors}
 											/>
 											<Route component={NoMatch} />
 										</Switch>

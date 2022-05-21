@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
 import moment from 'moment';
 import { Carousel } from 'antd';
+import DatePicker from 'react-datepicker';
+
 import { loadLabourMeasurement } from '../../actions/patient';
 import Select from 'react-select';
 import {
@@ -10,7 +12,6 @@ import {
 	request,
 	renderSelect,
 } from '../../services/utilities';
-import DatePicker from 'react-datepicker';
 import waiting from '../../assets/images/waiting.gif';
 import { closeModals } from '../../actions/general';
 import {
@@ -42,6 +43,7 @@ const validate = values => {
 
 	return errors;
 };
+
 const otherMeasurement = [
 	'difficult_breathing',
 	'shock',
@@ -61,6 +63,7 @@ const position = [
 		name: 'Breech',
 	},
 ];
+
 class ModalCreateLabMeasurement extends Component {
 	state = {
 		submitting: false,

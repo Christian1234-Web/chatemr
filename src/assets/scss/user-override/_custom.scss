@@ -748,7 +748,7 @@ tr {
 	font-size: 14px;
 }
 .d-block {
-	display: block;
+	display: block !important;
 }
 
 .o-order {
@@ -1042,4 +1042,9 @@ h4.onboarding-title {
 		font-size: 0.81rem;
 		color: #3E4B5B !important;
 	}
+}
+
+.col-block {
+	flex: 0 0 20%;
+    max-width: 20%;
 }
