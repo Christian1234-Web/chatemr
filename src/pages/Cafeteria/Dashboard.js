@@ -1,70 +1,73 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, {
+	useState,
+	useEffect,
+	useCallback,
+	useMemo,
+	useRef,
+} from 'react';
 import Pagination from 'antd/lib/pagination';
-import { useDispatch } from 'react-redux';
+import pluralize from 'pluralize';
+import { useDispatch, useSelector } from 'react-redux';
+import { Form, Field } from 'react-final-form';
+import { FORM_ERROR } from 'final-form';
+import createDecorator from 'final-form-calculate';
 import AsyncSelect from 'react-select/async/dist/react-select.esm';
 
-import { searchAPI, cafeteriaAPI, paginate } from '../../services/constants';
+import { cafeteriaAPI, paginate, searchAPI } from '../../services/constants';
 import {
-	request,
+	Condition,
+	ErrorBlock,
 	formatCurrency,
+	getPageList,
 	itemRender,
-	updateImmutable,
 	patientname,
+	request,
+	staffname,
+	updateImmutable,
+	ConditionNot,
+	confirmAction,
 } from '../../services/utilities';
-import CafeteriaTransaction from '../../components/CafeteriaTransaction';
+import { notifyError, notifySuccess } from '../../services/notify';
+import CafeteriaReceipt from '../../components/Modals/CafeteriaReceipt';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 
-const Dashboard = () => {
-	const [customer, setCustomer] = useState('');
-	const [special, setSpecial] = useState('');
-	const [loaded, setLoaded] = useState(false);
-	const [cafeteriaItems, setCafeteriaItems] = useState([]);
-	const [selectedCustomer, setSelectedCustomer] = useState('');
+const pageLimit = 12;
 
-	const [submitting, setSubmitting] = useState(false);
-	const [cart, setCart] = useState([]);
-	const [searchTerm, setSearchTerm] = useState('');
+const Dashboard = () => {
+	const [loaded, setLoaded] = useState(false);
 	const [meta, setMeta] = useState({ ...paginate });
+	const [foodItems, setFoodItems] = useState([]);
+	const [items, setItems] = useState([]);
+	const [cartItems, setCartItems] = useState([]);
+	const [staff, setStaff] = useState(null);
+	const [patient, setPatient] = useState(null);
+	const [showReceipt, setShowReceipt] = useState(false);
+	const [cafeteriaCart, setCafeteriaCart] = useState(null);
+
+	const formRef = useRef();
 
 	const dispatch = useDispatch();
 
-	const clearCart = () => {};
+	const paymentMethods = useSelector(state => state.utility.methods);
 
-	const clearAll = () => {
-		setCart([]);
-		setSelectedCustomer('');
-		setCustomer('');
-	};
-
-	const fetchInventories = useCallback(async page => {
+	const fetchInventories = useCallback(async () => {
 		try {
-			const p = page || 1;
-			const url = `${cafeteriaAPI}/items?page=${p}&limit=20&approved=1`;
+			const url = `${cafeteriaAPI}/showcase-items`;
 			const rs = await request(url, 'GET', true);
-			const { result, ...info } = rs;
-			setCafeteriaItems(result);
-			setMeta(info);
+			setFoodItems(rs);
+			const items = getPageList(rs, pageLimit, 1);
+			setMeta({
+				...meta,
+				itemsPerPage: pageLimit,
+				totalPages: rs.length,
+				currentPage: 1,
+			});
+			setItems(items);
 		} catch (error) {
 			console.log(error);
 		}
-	}, []);
-
-	const updateCafeteria = data => {
-		for (let i = 0; i < data.transaction_details.length; i++) {
-			const item = data.transaction_details[i];
-
-			const cafeteriaItem = cafeteriaItems.find(c => c.id === item.id);
-			if (cafeteriaItem) {
-				const product = updateImmutable(cafeteriaItems, {
-					id: item.id,
-					quantity: cafeteriaItem.quantity - item.qty,
-				});
-
-				setCafeteriaItems(product);
-			}
-		}
-	};
+	}, [meta]);
 
 	useEffect(() => {
 		if (!loaded) {
@@ -73,83 +76,124 @@ const Dashboard = () => {
 		}
 	}, [fetchInventories, loaded]);
 
-	const changeCustomer = e => {
-		setCustomer(e.target.value);
-	};
+	const calculatePrice = items => {
+		formRef.current.getFieldState();
 
-	const addToCart = product => {
-		const item = cart.find(el => el.id === product.id);
-		if (!item) {
-			setCart([...cart, { ...product, qty: 1, amount: product.price }]);
-		} else {
-			const qty = item.qty === '' ? 1 : item.qty + 1;
-			updateCart(qty, item.id, product.price * qty);
-		}
-	};
+		const total = items.reduce((total, item) => total + item.price, 0);
+		formRef.current.change('total', total);
 
-	const patientSet = pat => {
-		setSelectedCustomer(pat);
-
-		let name;
-		if (customer === 'patient') {
-			name = patientname(pat);
-		} else {
-			name = `${pat?.first_name ? pat?.first_name : ''} ${
-				pat?.last_name ? pat?.last_name : ''
-			}`;
-		}
-
-		setSpecial(name);
-	};
-
-	const saveSale = async summary => {
-		try {
-			const data = {
-				user_type: customer ? customer : 'walk-in',
-				user_id: selectedCustomer ? selectedCustomer.id : '',
-				sub_total: summary.subTotal,
-				vat: summary.vat,
-				total_amount: summary.total,
-				amount_paid: summary.amountPaid,
-				payment_method: summary.type,
-				items: cart,
-				change: summary.change,
-			};
-
-			dispatch(startBlock());
-			setSubmitting(true);
-			const rs = await request('cafeteria/sale', 'POST', true, data);
-			setSubmitting(false);
-			dispatch(stopBlock());
-			return rs;
-		} catch (e) {
-			console.log(e);
-			dispatch(stopBlock());
-			setSubmitting(false);
-			throw e;
-		}
-	};
-
-	const setHandleChange = event => {
-		const text = event.target.value;
-		setSearchTerm(text);
-
-		const results = cafeteriaItems.filter(data =>
-			data.item.toLowerCase().includes(text.toLowerCase())
+		const staffTotal = items.reduce(
+			(total, item) => total + item.staff_price,
+			0
 		);
-
-		setCafeteriaItems(results);
+		formRef.current.change('staff_total', staffTotal);
 	};
+
+	const selectItem = item => {
+		if (item.quantity <= 0) {
+			notifyError(`${item.foodItem.name} has finished`);
+			return;
+		}
+
+		const cartItem = cartItems.find(e => e.id === item.id);
+		if (!cartItem) {
+			const list = [
+				...cartItems,
+				{
+					id: item.id,
+					name: item.foodItem.name,
+					qty: 1,
+					price: parseFloat(item.foodItem.price),
+					staff_price: parseFloat(item.foodItem.staff_price),
+				},
+			];
+			setCartItems(list);
+			calculatePrice(list);
+		} else {
+			const quantity = cartItem.qty + 1;
+			const list = updateImmutable(cartItems, {
+				...cartItem,
+				qty: quantity,
+				price: parseFloat(item.foodItem.price) * quantity,
+				staff_price: parseFloat(item.foodItem.staff_price) * quantity,
+			});
+			setCartItems(list);
+			calculatePrice(list);
+		}
+
+		const newQty = parseInt(item.quantity, 10) - 1;
+		const itemsList = updateImmutable(items, { ...item, quantity: newQty });
+		setItems(itemsList);
+	};
+
+	const removeItem = cart => {
+		const item = items.find(e => e.id === cart.id);
+		const itemsList = updateImmutable(items, {
+			...item,
+			quantity: parseInt(item.quantity, 10) + parseInt(cart.qty, 10),
+		});
+		setItems(itemsList);
+		const carts = cartItems.filter(e => e.id !== cart.id);
+		setCartItems(carts);
+
+		calculatePrice(carts);
+
+		if (carts.length === 0) {
+			formRef.current.getFieldState();
+			formRef.current.reset();
+		}
+	};
+
+	const minus = cart => {
+		const item = items.find(i => i.id === cart.id);
+
+		const quantity = cart.qty - 1;
+
+		if (quantity === 0) {
+			removeItem(cart);
+		} else {
+			const list = updateImmutable(cartItems, {
+				...cart,
+				qty: quantity,
+				price: parseFloat(item.foodItem.price) * quantity,
+				staff_price: parseFloat(item.foodItem.staff_price) * quantity,
+			});
+			setCartItems(list);
+			calculatePrice(list);
+
+			const newQty = parseInt(item.quantity, 10) + 1;
+			const itemsList = updateImmutable(items, { ...item, quantity: newQty });
+			setItems(itemsList);
+		}
+	};
+
+	const calculateAmount = useMemo(
+		() =>
+			createDecorator({
+				field: 'paid',
+				updates: {
+					balance: (paid, values) => {
+						const totalAmount =
+							values?.customer === 'staff'
+								? parseFloat(values.staff_total || 0)
+								: parseFloat(values.total || 0);
+						return totalAmount > 0
+							? Math.abs(totalAmount - parseFloat(paid || 0))
+							: 0;
+					},
+				},
+			}),
+		[]
+	);
 
 	const onNavigatePage = pageNumber => {
-		fetchInventories(pageNumber);
+		const items = getPageList(foodItems, pageLimit, pageNumber);
+		setItems(items);
+		setMeta({ ...meta, currentPage: pageNumber });
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
 
-	const getOptionValues = option => option.id;
-	const getOptionLabels = option => patientname(option, true);
-
-	const getOptions = async q => {
+	const fetchPatients = async q => {
 		if (!q || q.length < 1) {
 			return [];
 		}
@@ -159,11 +203,7 @@ const Dashboard = () => {
 		return res;
 	};
 
-	const getOptionValuesStaff = option => option.id;
-	const getOptionLabelsStaff = option =>
-		`${option.first_name} ${option.last_name}`;
-
-	const getOptionsStaff = async q => {
+	const fetchStaff = async q => {
 		if (!q || q.length < 1) {
 			return [];
 		}
@@ -173,223 +213,467 @@ const Dashboard = () => {
 		return res;
 	};
 
-	const updateCart = (qty, id, amount) => {
-		const product = updateImmutable(cart, { id, qty, amount });
-		setCart(product);
+	const makeSale = values => {
+		confirmAction(
+			doMakeSale,
+			values,
+			'Do you want to make payment?',
+			'Are you sure?'
+		);
+	};
+
+	const doMakeSale = async values => {
+		try {
+			if (cartItems.length === 0) {
+				notifyError('select food items for sale');
+				return;
+			}
+
+			const data = {
+				...values,
+				cartItems,
+				patient_id: values.patient?.id,
+				staff_id: values.staff?.id,
+			};
+			dispatch(startBlock());
+			const rs = await request('cafeteria/sale', 'POST', true, data);
+			dispatch(stopBlock());
+			if (rs.success) {
+				notifySuccess('payment accepted!');
+				console.log(rs.transaction);
+				showReceiptModal(rs.transaction);
+			} else {
+				return {
+					[FORM_ERROR]: rs.message || 'could not make sale',
+				};
+			}
+		} catch (e) {
+			dispatch(stopBlock());
+			return { [FORM_ERROR]: 'could not make sale' };
+		}
+	};
+
+	const showReceiptModal = cart => {
+		document.body.classList.add('modal-open');
+		setCafeteriaCart(cart);
+		setShowReceipt(true);
+	};
+
+	const closeModal = () => {
+		setShowReceipt(false);
+		setCafeteriaCart(null);
+		document.body.classList.remove('modal-open');
 	};
 
 	return (
-		<div className="element-box-tp">
-			<div className="row">
-				<div className="col-lg-7">
-					<div className="padded-lg">
-						<div className="projects-list">
-							<div className="element-wrapper">
-								<div className="inline-profile-tiles">
-									<div className="row">
-										<div className="input-group mb-3">
-											<input
-												type="text"
-												onChange={setHandleChange}
-												value={searchTerm}
-												className="form-control"
-												placeholder="search"
-												aria-label="Recipient's username"
-												aria-describedby="basic-addon2"
-											/>
-										</div>
-									</div>
-									<div className="row">
-										{cafeteriaItems.map((item, i) => (
-											<div
-												key={i}
-												onClick={() => addToCart(item)}
-												className="col-4 col-sm-4"
-											>
-												<div className="profile-tile profile-tile-inlined">
-													<a className="profile-tile-box">
-														<div>{item.foodItem.name}</div>
-														<div className="pt-avatar-w d-block">
-															{formatCurrency(item.price)}
-														</div>
-														<div className="d-block">
-															{`${item.quantity} items`}
-														</div>
-													</a>
-												</div>
-											</div>
-										))}
-									</div>
-									<div className="pagination pagination-center mt-4">
-										<Pagination
-											current={parseInt(meta.currentPage, 10)}
-											pageSize={parseInt(meta.itemsPerPage, 10)}
-											total={parseInt(meta.totalPages, 10)}
-											showTotal={total => `Total ${total} items`}
-											itemRender={itemRender}
-											onChange={onNavigatePage}
-											showSizeChanger={false}
+		<div className="row">
+			<div className="col-lg-8">
+				<div className="padded-lg px-2">
+					<div className="projects-list">
+						<div className="pipelines-w">
+							<div className="row mb-3">
+								<div className="col-md-12">
+									<div className="input-group">
+										<input
+											type="text"
+											className="form-control"
+											placeholder="search"
 										/>
+										<div className="input-group-append">
+											<button className="btn btn-primary" type="button">
+												Button
+											</button>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-					</div>
-				</div>
-
-				<div className="col-lg-5 b-l-lg">
-					<div className="padded-lg">
-						<div className="element-wrapper">
-							<div className="content-panel compact py-0 mt-2 bg-white">
-								<div className="element-wrapper">
-									<h6 className="element-header">Payment Calculator</h6>
-									<div className="element-box-tp">
-										<div className="row">
-											<div className="col-sm-12">
-												<div className="form-group">
-													<select
-														className="form-control"
-														name="customer"
-														onChange={changeCustomer}
-														value={customer}
-													>
-														<option value="">Choose Customer ...</option>
-														<option value="staff">Staff</option>
-														<option value="patient">Patient</option>
-														<option value="walk-in">Walk-in</option>
-													</select>
-												</div>
-											</div>
-										</div>
-
-										<div>
-											{['', 'walk-in'].includes(customer) ? null : (
-												<form>
-													<div className="row">
-														<div className="col-sm-12">
-															<div
-																className="form-group"
-																hidden={customer !== 'staff'}
-															>
-																<label>Staff</label>
-
-																<AsyncSelect
-																	isClearable
-																	getOptionValue={getOptionValuesStaff}
-																	getOptionLabel={getOptionLabelsStaff}
-																	defaultOptions
-																	name="staff"
-																	value={selectedCustomer}
-																	loadOptions={getOptionsStaff}
-																	onChange={e => patientSet(e)}
-																	placeholder="Search staff"
-																/>
+							<div className="row">
+								{items.map((item, i) => {
+									return (
+										<div key={i} className="col-lg-4 col-xxl-4 mb-3">
+											<div
+												className="pipeline-body pointer"
+												onClick={() => selectItem(item)}
+											>
+												<div className="pipeline-item">
+													<div className="pi-body">
+														<div className="pi-info">
+															<div className="h6 pi-name">
+																{item.foodItem.name}
 															</div>
-
-															<div
-																className="form-group"
-																hidden={customer !== 'patient'}
-															>
-																<label>Patient</label>
-
-																<AsyncSelect
-																	isClearable
-																	getOptionValue={getOptionValues}
-																	getOptionLabel={getOptionLabels}
-																	defaultOptions
-																	name="patient"
-																	value={selectedCustomer}
-																	loadOptions={getOptions}
-																	onChange={e => patientSet(e)}
-																	placeholder="Search patients"
-																/>
+															<div className="pi-sub mt-2">
+																{formatCurrency(item.foodItem.price)}
 															</div>
 														</div>
 													</div>
-												</form>
-											)}
-										</div>
-									</div>
-								</div>
-								<div className="element-wrapper compact">
-									<div className="element-box-tp">
-										<table className="table table-compact smaller text-faded mb-0">
-											<thead>
-												<tr>
-													<th>Item</th>
-													<th>Qty</th>
-													<th className="text-center">Price(&#x20A6;)</th>
-													<th></th>
-												</tr>
-											</thead>
-											<tbody>
-												{cart.map((item, i) => {
-													return (
-														<tr key={i}>
-															<td className="text-center">
-																<span>{item.name}</span>
-															</td>
-															<td className="text-center">
-																<input
-																	type="number"
-																	className="form-control no-arrows"
-																	value={item.qty}
-																	min="1"
-																	onChange={e => {
-																		if (e.target.value !== '') {
-																			const qty = parseInt(e.target.value);
-																			updateCart(
-																				parseInt(qty, 10),
-																				item.id,
-																				item.price * qty
-																			);
-																		} else {
-																			updateCart('', item.id, 0);
-																		}
-																	}}
-																	style={{ width: '80px', height: '25px' }}
-																/>
-															</td>
-															<td className="text-center">{item.amount}</td>
-															<td className="text-center">
-																<a
-																	style={{
-																		fontWeight: 'bold',
-																		fontSize: '18px',
-																	}}
-																	onClick={() => {
-																		const newVal = cart.filter(
-																			val => val.id !== item.id
-																		);
-																		setCart(newVal);
-																	}}
-																>
-																	<i className="os-icon os-icon-x-circle"></i>
+													<div className="pi-foot">
+														{item.foodItem.description && (
+															<div className="tags">
+																<a className="tag">
+																	{item.foodItem.description}
 																</a>
-															</td>
-														</tr>
-													);
-												})}
-											</tbody>
-										</table>
-									</div>
-								</div>
+															</div>
+														)}
+														<a className="extra-info">
+															<span>
+																{pluralize(
+																	item.foodItem.unit,
+																	item.quantity,
+																	true
+																)}
+															</span>
+														</a>
+													</div>
+												</div>
+											</div>
+										</div>
+									);
+								})}
 							</div>
-							<CafeteriaTransaction
-								cart={cart}
-								clearCart={clearCart}
-								clearAll={clearAll}
-								customer={customer}
-								selectedCustomer={selectedCustomer}
-								special={special}
-								saveSale={saveSale}
-								submitting={submitting}
-								updateCafeteria={updateCafeteria}
-							/>
+							<div className="pagination pagination-center mt-4">
+								<Pagination
+									current={parseInt(meta.currentPage, 10)}
+									pageSize={parseInt(meta.itemsPerPage, 10)}
+									total={parseInt(meta.totalPages, 10)}
+									showTotal={total => `Total ${total} items`}
+									itemRender={itemRender}
+									onChange={onNavigatePage}
+									showSizeChanger={false}
+								/>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
+			<div className="col-lg-4 b-l-lg">
+				<div className="padded-lg px-3">
+					<div className="element-wrapper">
+						<h6 className="element-header">Make Payment</h6>
+						<Form
+							onSubmit={makeSale}
+							initialValues={{ total: 0, staff_total: 0, balance: 0 }}
+							validate={values => {
+								const errors = {};
+								if (!values.customer) {
+									errors.customer = 'Select customer';
+								}
+								if (!values.paid) {
+									errors.paid = 'Enter paid amount';
+								}
+								if (!values.payment_method) {
+									errors.payment_method = 'Select payment method';
+								}
+								if (
+									!values.staff &&
+									values.customer &&
+									values.customer === 'staff'
+								) {
+									errors.staff = 'Select staff';
+								}
+								if (
+									!values.patient &&
+									values.customer &&
+									values.customer === 'patient'
+								) {
+									errors.patient = 'Select patient';
+								}
+								return errors;
+							}}
+							decorators={[calculateAmount]}
+							render={({
+								handleSubmit,
+								submitting,
+								submitError,
+								form,
+								values,
+							}) => {
+								formRef.current = form;
+								return (
+									<form onSubmit={handleSubmit}>
+										{submitError && (
+											<div
+												className="alert alert-danger"
+												dangerouslySetInnerHTML={{
+													__html: `<strong>Error!</strong> ${submitError}`,
+												}}
+											/>
+										)}
+										<div className="element-box-tp px-3 py-4">
+											<div className="col-sm-12">
+												<div className="form-group">
+													<Field
+														name="customer"
+														component="select"
+														className="form-control"
+														onChange={e => {
+															form.change('customer', e.target.value);
+															form.change('paid', 0);
+															form.change('balance', 0);
+														}}
+													>
+														<option value="">Choose Customer</option>
+														<option value="staff">Staff</option>
+														<option value="patient">Patient</option>
+														<option value="walk-in">Walk-in</option>
+													</Field>
+													<ErrorBlock name="customer" />
+												</div>
+											</div>
+											<Condition when="customer" is="staff">
+												<div className="col-sm-12">
+													<div className="form-group">
+														<label>Staff</label>
+														<Field name="staff">
+															{({ input, meta }) => (
+																<AsyncSelect
+																	isClearable
+																	getOptionValue={option => option.id}
+																	getOptionLabel={option => staffname(option)}
+																	defaultOptions
+																	value={staff}
+																	loadOptions={fetchStaff}
+																	onChange={e => {
+																		input.onChange(e);
+																		setStaff(e);
+																	}}
+																	placeholder="Search staff"
+																/>
+															)}
+														</Field>
+														<ErrorBlock name="staff" />
+													</div>
+												</div>
+											</Condition>
+											<Condition when="customer" is="patient">
+												<div className="col-sm-12">
+													<div className="form-group">
+														<label>Patient</label>
+														{patient?.admission && (
+															<div className="posit-top">
+																<div className="row">
+																	<div className="col-sm-12">
+																		{patient?.admission?.room ? (
+																			<span className="badge badge-primary">{`${patient?.admission?.room?.category?.name}, Room ${patient?.admission?.room?.name}`}</span>
+																		) : (
+																			<span>No Room Assigned</span>
+																		)}
+																	</div>
+																</div>
+															</div>
+														)}
+														<Field name="patient">
+															{({ input, meta }) => (
+																<AsyncSelect
+																	isClearable
+																	getOptionValue={option => option.id}
+																	getOptionLabel={option =>
+																		patientname(option, true)
+																	}
+																	defaultOptions
+																	value={patient}
+																	loadOptions={fetchPatients}
+																	onChange={e => {
+																		input.onChange(e);
+																		setPatient(e);
+																	}}
+																	placeholder="Select patient"
+																/>
+															)}
+														</Field>
+														<ErrorBlock name="patient" />
+													</div>
+												</div>
+											</Condition>
+											<table className="table table-compact smaller text-faded mb-0">
+												<thead>
+													<tr>
+														<th>Item</th>
+														<th className="text-center">Qty</th>
+														<th className="text-right">Price</th>
+													</tr>
+												</thead>
+												<tbody>
+													{cartItems.map((cart, i) => {
+														return (
+															<tr key={i}>
+																<td>
+																	<span>{cart.name}</span>
+																</td>
+																<td>
+																	<div className="d-flex align-items-center">
+																		<a
+																			className="text-danger mr-2"
+																			style={{ fontSize: '14px' }}
+																			onClick={() => minus(cart)}
+																		>
+																			<i className="os-icon os-icon-minus-circle"></i>
+																		</a>
+																		<input
+																			type="number"
+																			className="form-control no-arrows m-0"
+																			value={cart.qty}
+																			min="1"
+																			style={{
+																				width: '40px',
+																				height: '25px',
+																				padding: '0.375rem 0.25rem',
+																			}}
+																			readOnly
+																		/>
+																	</div>
+																</td>
+																<td className="text-right text-bright">
+																	{values?.customer === 'staff'
+																		? formatCurrency(cart.staff_price)
+																		: formatCurrency(cart.price)}
+																</td>
+																<td className="text-center">
+																	<a
+																		className="text-danger"
+																		style={{ fontSize: '14px' }}
+																		onClick={() => removeItem(cart)}
+																	>
+																		<i className="os-icon os-icon-x-circle"></i>
+																	</a>
+																</td>
+															</tr>
+														);
+													})}
+													{cartItems.length === 0 && (
+														<tr>
+															<td colSpan="3" className="text-center">
+																No items in cart!
+															</td>
+														</tr>
+													)}
+												</tbody>
+											</table>
+											<div className="row pt-4">
+												<div className="col-md-12">
+													<div className="form-group mb-0">
+														<div className="input-group">
+															<div className="input-group-prepend">
+																<div className="input-group-text">
+																	TOTAL (₦)
+																</div>
+															</div>
+															<ConditionNot when="customer" isNot="staff">
+																<Field
+																	name="total"
+																	className="form-control no-arrows"
+																	component="input"
+																	type="number"
+																	placeholder="Total"
+																	readOnly
+																/>
+															</ConditionNot>
+															<Condition when="customer" is="staff">
+																<Field
+																	name="staff_total"
+																	className="form-control no-arrows"
+																	component="input"
+																	type="number"
+																	placeholder="Total"
+																	readOnly
+																/>
+															</Condition>
+														</div>
+													</div>
+												</div>
+												<div className="col-md-12">
+													<div className="form-group text-right">
+														VAT Inclusive
+													</div>
+												</div>
+												<div className="col-md-12">
+													<div className="form-group">
+														<div className="input-group">
+															<div className="input-group-prepend">
+																<div className="input-group-text">PAID (₦)</div>
+															</div>
+															<Field
+																name="paid"
+																className="form-control no-arrows"
+																component="input"
+																type="number"
+																placeholder="Paid"
+															/>
+														</div>
+														<ErrorBlock name="paid" />
+													</div>
+												</div>
+												<div className="col-md-12">
+													<div className="form-group">
+														<div className="input-group">
+															<div className="input-group-prepend">
+																<div className="input-group-text">
+																	BALANCE (₦)
+																</div>
+															</div>
+															<Field
+																name="balance"
+																className="form-control no-arrows"
+																component="input"
+																type="number"
+																placeholder="Balance"
+																readOnly
+															/>
+														</div>
+													</div>
+												</div>
+												<div className="col-md-12">
+													<div className="form-group">
+														<Field
+															name="payment_method"
+															component="select"
+															className="form-control"
+														>
+															<option value="">Payment Method</option>
+															{paymentMethods.map((pm, i) => (
+																<option key={i} value={pm.id}>
+																	{pm.name}
+																</option>
+															))}
+														</Field>
+														<ErrorBlock name="payment_method" />
+													</div>
+												</div>
+											</div>
+											<div className="row mt-2">
+												<div className="col-md-12 text-right">
+													<button
+														className="btn btn-primary"
+														disabled={submitting}
+														type="submit"
+													>
+														Process
+													</button>
+													<button
+														className="btn btn-warning ml-1"
+														type="button"
+														onClick={() => {
+															form.reset();
+															setCartItems([]);
+														}}
+													>
+														Reset
+													</button>
+												</div>
+											</div>
+										</div>
+									</form>
+								);
+							}}
+						/>
+					</div>
+				</div>
+			</div>
+			{showReceipt && cafeteriaCart && (
+				<CafeteriaReceipt
+					cafeteriaCart={cafeteriaCart}
+					closeModal={closeModal}
+				/>
+			)}
 		</div>
 	);
 };

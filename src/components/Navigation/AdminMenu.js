@@ -78,7 +78,7 @@ const AdminMenu = () => {
 			</li>
 			<AccountingMenu />
 			<li className="sub-header">
-				<span>REPORTS &amp; ANALYTICS</span>
+				<span>REPORTS</span>
 			</li>
 			<ReportMenu />
 			<SettingsMenu />

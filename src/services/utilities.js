@@ -796,6 +796,12 @@ export const Condition = ({ when, is, children }) => (
 	</Field>
 );
 
+export const ConditionNot = ({ when, isNot, children }) => (
+	<Field name={when} subscription={{ value: true }}>
+		{({ input: { value } }) => (value !== isNot ? children : null)}
+	</Field>
+);
+
 export const countDate = ({ start_date, end_date }) => {
 	return moment(end_date, 'YYYY-MM-DD').diff(
 		moment(start_date, 'YYYY-MM-DD'),

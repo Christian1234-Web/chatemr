@@ -2,16 +2,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Pagination from 'antd/lib/pagination';
 import Tooltip from 'antd/lib/tooltip';
-import moment from 'moment';
 import { useDispatch } from 'react-redux';
 import AsyncSelect from 'react-select/async';
 
 import {
 	request,
 	itemRender,
-	formatCurrency,
 	updateImmutable,
 	confirmAction,
+	formatDate,
 } from '../../services/utilities';
 import { cafeteriaAPI, paginate } from '../../services/constants';
 import { notifyError, notifySuccess } from '../../services/notify';
@@ -20,12 +19,11 @@ import TableLoading from '../../components/TableLoading';
 
 const Showcase = () => {
 	const initialState = {
-		price: '',
 		quantity: '',
 		edit: false,
 		create: true,
 	};
-	const [{ price, quantity }, setState] = useState(initialState);
+	const [{ quantity }, setState] = useState(initialState);
 	const [{ edit, create }, setSubmitButton] = useState(initialState);
 	const [data, getDataToEdit] = useState(null);
 	const [loaded, setLoaded] = useState(false);
@@ -65,10 +63,11 @@ const Showcase = () => {
 		try {
 			e.preventDefault();
 			dispatch(startBlock());
-			const info = { item_id: foodItem.id, price, quantity };
+			const info = { item_id: foodItem.id, quantity };
 			const rs = await request(`${cafeteriaAPI}/items`, 'POST', true, info);
 			setItems([rs, ...items]);
 			dispatch(stopBlock());
+			setFoodItem(null);
 			setState({ ...initialState });
 			notifySuccess('Showcase item created');
 		} catch (error) {
@@ -81,13 +80,14 @@ const Showcase = () => {
 		try {
 			e.preventDefault();
 			dispatch(startBlock());
-			const info = { item_id: foodItem.id, price, quantity };
+			const info = { item_id: foodItem.id, quantity };
 			const url = `${cafeteriaAPI}/items/${data.id}`;
 			const rs = await request(url, 'PUT', true, info);
 			setItems([...updateImmutable(items, rs)]);
 			setState({ ...initialState });
 			setSubmitButton({ create: true, edit: false });
 			dispatch(stopBlock());
+			setFoodItem(null);
 			notifySuccess('Show case item updated');
 		} catch (error) {
 			dispatch(stopBlock());
@@ -99,7 +99,6 @@ const Showcase = () => {
 		setSubmitButton({ edit: true, create: false });
 		setState(prevState => ({
 			...prevState,
-			price: data.price,
 			quantity: data.quantity,
 		}));
 		setFoodItem(data.foodItem);
@@ -174,9 +173,11 @@ const Showcase = () => {
 									<thead>
 										<tr>
 											<th>Name</th>
-											<th>Amount</th>
 											<th>Quantity</th>
-											<th>Date</th>
+											<th width="120px">Date</th>
+											<th>Approved</th>
+											<th width="120px">Approved At</th>
+											<th>Approved By</th>
 											<th></th>
 										</tr>
 									</thead>
@@ -185,10 +186,9 @@ const Showcase = () => {
 											return (
 												<tr key={i}>
 													<td>{item.foodItem.name}</td>
-													<td>{formatCurrency(item.price)}</td>
 													<td>{item.quantity}</td>
 													<td>
-														{moment(item.createdAt).format('DD-MM-YYYY h:mm a')}
+														{formatDate(item.createdAt, 'DD-MMM-YYYY h:mm a')}
 													</td>
 													<td>
 														{item.approved === 0 ? (
@@ -196,15 +196,15 @@ const Showcase = () => {
 																pending
 															</span>
 														) : (
-															<>
-																<span className="badge badge-success">
-																	approved
-																</span>
-																<br />
-																{`by ${item.approved_by}`}
-															</>
+															<span className="badge badge-success">
+																approved
+															</span>
 														)}
 													</td>
+													<td>
+														{formatDate(item.approved_at, 'DD-MMM-YYYY h:mm a')}
+													</td>
+													<td>{item.approved_by || '--'}</td>
 													<td className="row-actions">
 														{item.approved === 0 && (
 															<>
@@ -240,7 +240,7 @@ const Showcase = () => {
 										})}
 										{loaded && items.length === 0 && (
 											<tr>
-												<td colSpan="5" className="text-center">
+												<td colSpan="7" className="text-center">
 													No Items
 												</td>
 											</tr>
@@ -282,16 +282,6 @@ const Showcase = () => {
 									setFoodItem(e);
 								}}
 								placeholder="--Select--"
-							/>
-						</div>
-						<div className="form-group">
-							<input
-								className="form-control"
-								placeholder="Item price"
-								type="text"
-								name="price"
-								onChange={handleInputChange}
-								value={price}
 							/>
 						</div>
 						<div className="form-group">

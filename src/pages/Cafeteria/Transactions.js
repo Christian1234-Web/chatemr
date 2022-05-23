@@ -320,7 +320,7 @@ class Transactions extends Component {
 													.join(', ') || '-'}
 											</td>
 											<td>{request.payment_method}</td>
-											<td>{formatCurrency(request.amount)}</td>
+											<td>{formatCurrency(request.amount, true)}</td>
 											<td>
 												{request.status === 1 ? (
 													<span className="badge badge-success">paid</span>

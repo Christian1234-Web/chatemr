@@ -19,6 +19,7 @@ import NicuAccommodation from './NicuAccommodation';
 import PaymentMethod from './PaymentMethod';
 import Settings from './Settings';
 import SendMail from './SendMail';
+import FoodItems from './FoodItems';
 
 const Home = ({ match, location }) => {
 	const [toggle, setToggle] = useState(false);
@@ -159,6 +160,12 @@ const Home = ({ match, location }) => {
 								</span>
 							</Link>
 						</li>
+						<li className={page === 'food-items' ? 'active' : ''}>
+							<Link to="/settings/food-items">
+								<i className="os-icon os-icon-layers" />
+								<span>Food Items</span>
+							</Link>
+						</li>
 						<li className={page === 'send-mail' ? 'active' : ''}>
 							<Link to="/settings/send-mail">
 								<i className="os-icon os-icon-layers" />
@@ -200,6 +207,7 @@ const Home = ({ match, location }) => {
 					component={PaymentMethod}
 				/>
 				<Route path={`${match.url}/send-mail`} component={SendMail} />
+				<Route path={`${match.url}/food-items`} component={FoodItems} />
 			</Switch>
 		</div>
 	);

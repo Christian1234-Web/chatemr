@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const ReportAndAnalyticsMenu = () => {
+const ReportMenu = () => {
 	return (
 		<>
 			<li>
@@ -72,4 +72,4 @@ const ReportAndAnalyticsMenu = () => {
 	);
 };
 
-export default ReportAndAnalyticsMenu;
+export default ReportMenu;

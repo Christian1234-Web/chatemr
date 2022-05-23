@@ -2,10 +2,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
 import waiting from '../../assets/images/waiting.gif';
-import searchingGIF from '../../assets/images/searching.gif';
 import { notifySuccess, notifyError } from '../../services/notify';
 import { request, confirmAction } from '../../services/utilities';
 import { updateImmutable } from '../../services/utilities';
+import TableLoading from '../../components/TableLoading';
 
 const ConsultingRoom = () => {
 	const initialState = {
@@ -130,9 +130,7 @@ const ConsultingRoom = () => {
 						</div>
 					</div>
 					{!dataLoaded ? (
-						<div className="loading-block">
-							<img alt="searching" src={searchingGIF} />
-						</div>
+						<TableLoading />
 					) : (
 						<div className="row">
 							<div className="col-lg-8">

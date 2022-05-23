@@ -5,6 +5,7 @@ import { request, updateImmutable } from '../../services/utilities';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import { hmoAPI } from '../../services/constants';
 import { notifyError } from '../../services/notify';
+import ModalHeader from '../ModalHeader';
 
 const initialState = {
 	name: '',
@@ -128,18 +129,11 @@ const ModalHmoCompany = ({
 		>
 			<div className="modal-dialog modal-centered">
 				<div className="modal-content text-center">
-					<button
-						aria-label="Close"
-						className="close"
-						type="button"
-						onClick={() => closeModal()}
-					>
-						<span className="os-icon os-icon-close" />
-					</button>
+					<ModalHeader
+						title={`${edit ? 'Edit' : 'Add New'} HMO Scheme`}
+						closeModal={() => closeModal()}
+					/>
 					<div className="onboarding-content with-gradient">
-						<h4 className="onboarding-title">{`${
-							edit ? 'Edit' : 'Add New'
-						} HMO Scheme`}</h4>
 						<div className="element-box">
 							<form onSubmit={edit ? onEditHmo : onAddHmo}>
 								<div className="form-group">
