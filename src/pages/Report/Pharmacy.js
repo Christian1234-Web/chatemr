@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { formatCurrency, itemRender, request } from '../../services/utilities';
+import { itemRender, request } from '../../services/utilities';
 import moment from 'moment';
 import Pagination from 'antd/lib/pagination';
 import TableLoading from '../../components/TableLoading';
-import { Alert } from 'antd';
-import { Link } from 'react-router-dom';
-import { async } from 'rxjs';
 import { paginate } from '../../services/constants';
 
 const Pharmacy = () => {
-	// const [p, setP] = useState(1);
 	const [drugTransactions, setDrugTransactions] = useState([]);
 	const [drugDispensation, setDrugDispensation] = useState([]);
 	const [meta, setMeta] = useState({ ...paginate });
