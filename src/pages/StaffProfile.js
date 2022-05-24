@@ -2,14 +2,13 @@ import React, { Component, Suspense, lazy } from 'react';
 import { connect } from 'react-redux';
 import { Switch, withRouter, Link } from 'react-router-dom';
 
-import avatar from '../assets/images/placeholder.jpg';
 import { toggleProfile } from '../actions/user';
 import StaffMenu from '../components/Navigation/StaffMenu';
 import SSRStorage from '../services/storage';
 import { USER_RECORD } from '../services/constants';
 import Splash from '../components/Splash';
 import HashRoute from '../components/HashRoute';
-import { staffname } from '../services/utilities';
+import { parseAvatar, staffname } from '../services/utilities';
 
 const Profile = lazy(() => import('../components/Staff/Profile'));
 const Payroll = lazy(() => import('../components/Staff/Payroll'));
@@ -84,7 +83,10 @@ class StaffProfile extends Component {
 															className="avatar"
 															style={{ boxShadow: 'none' }}
 														>
-															<img alt="" src={avatar} />
+															<img
+																alt=""
+																src={parseAvatar(staff?.profile_pic)}
+															/>
 														</div>
 														<h4 className="customer-name">
 															{staffname(staff.details)}

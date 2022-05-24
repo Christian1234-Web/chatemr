@@ -59,7 +59,7 @@ const Documents = () => {
 	const handleDownload = data => {
 		try {
 			dispatch(startBlock());
-			const url = `${API_URI}/uploads/docs/${data.document_name}`;
+			const url = `${API_URI}/documents/${data.document_name}`;
 			setTimeout(() => {
 				dispatch(stopBlock());
 				window.open(url, '_blank').focus();

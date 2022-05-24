@@ -676,9 +676,7 @@ export const nth = n => {
 };
 
 export const parseAvatar = avatar => {
-	return avatar
-		? `${process.env.REACT_APP_API}/uploads/avatars/${avatar}`
-		: placeholder;
+	return avatar ? `${process.env.REACT_APP_API}/images/${avatar}` : placeholder;
 };
 
 export const parseNote = (note, hasHeading = false) => {

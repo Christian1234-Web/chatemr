@@ -30,7 +30,7 @@ export default function ViewScanImage({ scan, closeModal }) {
 							<h4 className="onboarding-title">View Scan 1</h4>
 							<div className="element-box m-0 p-2">
 								<img
-									src={`${API_URI}/uploads/docs/${scan.document.document_name}`}
+									src={`${API_URI}/documents/${scan.document.document_name}`}
 									alt=""
 									style={imageStyle}
 								/>

@@ -21,15 +21,6 @@ export const CK_TREATMENT_PLAN = 'E:TREATMENT_PLAN';
 
 export const hmoAPI = 'hmos';
 export const cafeteriaAPI = 'cafeteria';
-export const inventoryAPI = 'inventory/stocks';
-export const inventoryUpdateQuantityAPI = 'inventory/stocks/update-quantity';
-export const stocksAPI = 'stocks';
-export const inventoryCatAPI = 'inventory/categories';
-export const vendorAPI = 'inventory/vendors';
-export const inventoryDownloadAPI = 'inventory/download';
-export const inventoryUploadAPI = 'inventory/stocks/bulk-upload';
-export const stockByCategoryAPI = 'inventory/stocks-by-category-name';
-export const inventorySubCatAPI = 'inventory/sub-categories';
 export const rolesAPI = 'settings/roles';
 export const staffAPI = 'hr/staffs';
 export const appraisalAPI = 'hr/appraisal';

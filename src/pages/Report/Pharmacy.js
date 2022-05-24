@@ -131,7 +131,7 @@ const Pharmacy = () => {
 																			}`}
 																			onClick={handleLinkPharm}
 																		>
-																			<a>Pharmacy</a>
+																			<span>Pharmacy</span>
 																		</div>
 																	</li>
 																	<li className="nav-item">
@@ -142,7 +142,7 @@ const Pharmacy = () => {
 																			}`}
 																			onClick={handleLinkDen}
 																		>
-																			<a>Dispensed</a>
+																			<span>Dispensed</span>
 																		</div>
 																	</li>
 																</ul>
