@@ -155,6 +155,7 @@ class ProcedureBlock extends Component {
 					<thead>
 						<tr>
 							<th>Request Date</th>
+							<th>ID</th>
 							<th>Procedure</th>
 							{!patient && <th>Patient</th>}
 							<th>By</th>
@@ -176,6 +177,7 @@ class ProcedureBlock extends Component {
 											{moment(data.createdAt).format('DD-MM-YYYY h:mmA')}
 										</span>
 									</td>
+									<td>{data.code}</td>
 									<td>
 										<p className="item-title text-color m-0">
 											<a
@@ -301,10 +303,10 @@ class ProcedureBlock extends Component {
 												) : (
 													`${formatDate(
 														data.item.scheduledStartDate,
-														'DD/MM/YYYY h:mm A'
+														'DD/MMM/YYYY h:mm A'
 													)} => ${formatDate(
 														data.item.scheduledEndDate,
-														'DD/MM/YYYY h:mm A'
+														'DD/MMM/YYYY h:mm A'
 													)}`
 												)}
 											</>

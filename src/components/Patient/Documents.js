@@ -7,7 +7,12 @@ import Pagination from 'antd/lib/pagination';
 
 import TableLoading from '../TableLoading';
 import { notifySuccess, notifyError } from '../../services/notify';
-import { itemRender, request, upload } from '../../services/utilities';
+import {
+	formatDate,
+	itemRender,
+	request,
+	upload,
+} from '../../services/utilities';
 import { API_URI, patientAPI, documentType } from '../../services/constants';
 import UploadDocument from './UploadDocument';
 import { startBlock, stopBlock } from '../../actions/redux-block';
@@ -145,17 +150,22 @@ const Documents = () => {
 											<th>ID</th>
 											<th>Document Name</th>
 											<th>Document Type</th>
+											<th>Uploaded By</th>
+											<th>Date</th>
 											<th></th>
 										</tr>
 									</thead>
 									<tbody>
 										{documentList.map((item, i) => {
-											console.log(item);
 											return (
 												<tr key={i}>
 													<td>{item.id}</td>
 													<td>{item.document_name}</td>
 													<td>{item.document_type}</td>
+													<td>{item.createdBy}</td>
+													<td>
+														{formatDate(item.createdAt, 'DD-MMM-YYYY h:mm A')}
+													</td>
 													<td className="row-actions">
 														<Tooltip title="Download File">
 															<a onClick={() => handleDownload(item)}>
@@ -177,7 +187,7 @@ const Documents = () => {
 								current={parseInt(meta.currentPage, 10)}
 								pageSize={parseInt(meta.itemsPerPage, 10)}
 								total={parseInt(meta.totalPages, 10)}
-								showTotal={total => `Total ${total} lab results`}
+								showTotal={total => `Total ${total} documents`}
 								itemRender={itemRender}
 								onChange={current => onNavigatePage(current)}
 								showSizeChanger={false}

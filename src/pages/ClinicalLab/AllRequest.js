@@ -150,7 +150,7 @@ class AllRequest extends Component {
 								current={parseInt(meta.currentPage, 10)}
 								pageSize={parseInt(meta.itemsPerPage, 10)}
 								total={parseInt(meta.totalPages, 10)}
-								showTotal={total => `Total ${total} lab results`}
+								showTotal={total => `Total ${total} lab requests`}
 								itemRender={itemRender}
 								onChange={current => this.onNavigatePage(current)}
 								showSizeChanger={false}

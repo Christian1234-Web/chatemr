@@ -207,7 +207,7 @@ const ConsultingTypes = ({ hmo, toggle, doToggle, category }) => {
 													current={parseInt(meta.currentPage, 10)}
 													pageSize={parseInt(meta.itemsPerPage, 10)}
 													total={parseInt(meta.totalPages, 10)}
-													showTotal={total => `Total ${total} services`}
+													showTotal={total => `Total ${total} types`}
 													itemRender={itemRender}
 													onChange={current => onNavigatePage(current)}
 													showSizeChanger={false}

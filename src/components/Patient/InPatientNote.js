@@ -129,7 +129,7 @@ const InPatientNote = ({ itemId, type, can_request }) => {
 										current={parseInt(meta.currentPage, 10)}
 										pageSize={parseInt(meta.itemsPerPage, 10)}
 										total={parseInt(meta.totalPages, 10)}
-										showTotal={total => `Total ${total} items`}
+										showTotal={total => `Total ${total} notes`}
 										itemRender={itemRender}
 										onChange={current => onNavigatePage(current)}
 										showSizeChanger={false}

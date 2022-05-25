@@ -83,7 +83,7 @@ const LabTest = ({ doToggleForm }) => {
 							current={parseInt(meta.currentPage, 10)}
 							pageSize={parseInt(meta.itemsPerPage, 10)}
 							total={parseInt(meta.totalPages, 10)}
-							showTotal={total => `Total ${total} HMOs`}
+							showTotal={total => `Total ${total} Tests`}
 							itemRender={itemRender}
 							onChange={current => onNavigatePage(current)}
 							showSizeChanger={false}
