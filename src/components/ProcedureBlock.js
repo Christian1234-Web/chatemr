@@ -163,9 +163,7 @@ class ProcedureBlock extends Component {
 							<th>Status</th>
 							<th>Resources</th>
 							<th>Scheduled</th>
-							<th>
-								<div className="th-inner"></div>
-							</th>
+							<th nowrap="nowrap"></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -314,7 +312,7 @@ class ProcedureBlock extends Component {
 											'--'
 										)}
 									</td>
-									<td className="row-actions">
+									<td nowrap="nowrap" className="row-actions">
 										{data?.item?.scheduledDate && !data?.item?.startedDate && (
 											<a
 												onClick={() => this.startProcedure(data)}
@@ -331,8 +329,8 @@ class ProcedureBlock extends Component {
 												Conclude
 											</a>
 										)}
-										{data.item.cancelled === 0 && !data.item?.scheduledDate && (
-											<Tooltip title="Cancel Lab Test">
+										{data.item.cancelled === 0 && !data.item?.startedDate && (
+											<Tooltip title="Cancel Procedure">
 												<a
 													className="danger"
 													onClick={() => this.cancelProcedure(data)}
