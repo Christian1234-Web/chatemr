@@ -1,9 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import moment from 'moment';
 import Pagination from 'antd/lib/pagination';
-import { itemRender } from '../../services/utilities';
+import { formatDate, itemRender } from '../../services/utilities';
 // import { notifySuccess, notifyError } from '../../services/notify';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 
@@ -93,9 +92,12 @@ class PatientEquipment extends Component {
 												<tbody>
 													{notes?.map((note, i) => {
 														return (
-															<tr key={i} role="row" className="odd">
-																<td className="sorting_1">
-																	{moment(note.note_date).format('DD-MM-YYYY')}
+															<tr key={i}>
+																<td>
+																	{formatDate(
+																		note.note_date,
+																		'DD-MMM-YYYY h:mma'
+																	)}
 																</td>
 
 																<td>{note.equipment}</td>

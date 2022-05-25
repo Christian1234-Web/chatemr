@@ -174,7 +174,7 @@ class ProcedureBlock extends Component {
 								<tr key={i} className={data.urgent ? 'urgent' : ''}>
 									<td>
 										<span>
-											{moment(data.createdAt).format('DD-MM-YYYY h:mmA')}
+											{moment(data.createdAt).format('DD-MMM-YYYY h:mmA')}
 										</span>
 									</td>
 									<td>{data.code}</td>

@@ -18,6 +18,7 @@ import {
 	patientname,
 	updateImmutable,
 	parseSource,
+	formatDate,
 } from '../../services/utilities';
 import { loadTransactions } from '../../actions/transaction';
 import ModalServiceDetails from '../../components/Modals/ModalServiceDetails';
@@ -342,7 +343,7 @@ class PendingTransactions extends Component {
 										return (
 											<tr key={index}>
 												<td style={{ width: '120px' }}>
-													{moment(item.createdAt).format('DD-MM-YYYY H:mma')}
+													{formatDate(item.createdAt, 'DD-MMM-YYYY H:mma')}
 												</td>
 												<td>{patientname(item.patient, true)}</td>
 												<td>{`${item.scheme?.name || '--'} ${

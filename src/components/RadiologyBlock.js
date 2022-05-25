@@ -274,7 +274,7 @@ class RadiologyBlock extends Component {
 								<tr key={i} className={scan.urgent ? 'urgent' : ''}>
 									<td style={{ width: '120px' }}>
 										<span>
-											{moment(scan.createdAt).format('DD-MM-YYYY h:mmA')}
+											{moment(scan.createdAt).format('DD-MMM-YYYY h:mmA')}
 										</span>
 									</td>
 									<td>

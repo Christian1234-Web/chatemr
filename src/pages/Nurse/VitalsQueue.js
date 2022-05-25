@@ -3,10 +3,14 @@ import React, { useEffect, useState, useCallback } from 'react';
 import Tooltip from 'antd/lib/tooltip';
 import { useDispatch } from 'react-redux';
 import truncate from 'lodash.truncate';
-import moment from 'moment';
 
 import { toggleProfile } from '../../actions/user';
-import { getAge, staffname, patientname } from '../../services/utilities';
+import {
+	getAge,
+	staffname,
+	patientname,
+	formatDate,
+} from '../../services/utilities';
 import { notifySuccess, notifyError } from '../../services/notify';
 import { request } from '../../services/utilities';
 import { startBlock, stopBlock } from '../../actions/redux-block';
@@ -119,7 +123,7 @@ const VitalsQueue = () => {
 												})}
 											</td>
 											<td>
-												{moment(queue.createdAt).format('DD-MM-YYYY h:mmA')}
+												{formatDate(queue.createdAt, 'DD-MMM-YYYY h:mma')}
 											</td>
 											<td nowrap="nowrap">
 												<Tooltip title="View Profile">

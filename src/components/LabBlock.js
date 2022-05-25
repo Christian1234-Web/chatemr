@@ -208,7 +208,7 @@ class LabBlock extends Component {
 								<tr key={i} className={lab.urgent ? 'urgent' : ''}>
 									<td>
 										<span>
-											{moment(lab.createdAt).format('DD-MM-YYYY h:mmA')}
+											{moment(lab.createdAt).format('DD-MMM-YYYY h:mmA')}
 										</span>
 									</td>
 									<td>

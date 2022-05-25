@@ -5,7 +5,12 @@ import moment from 'moment';
 import { searchAPI } from '../../services/constants';
 import waiting from '../../assets/images/waiting.gif';
 import DatePicker from 'antd/lib/date-picker';
-import { request, staffname, patientname } from '../../services/utilities';
+import {
+	request,
+	staffname,
+	patientname,
+	formatDate,
+} from '../../services/utilities';
 
 import { notifyError } from '../../services/notify';
 import searchingGIF from '../../assets/images/searching.gif';
@@ -309,7 +314,7 @@ class Transactions extends Component {
 									return (
 										<tr data-index="0" key={i}>
 											<td>
-												{moment(request.createdAt).format('DD-MM-YYYY h:mm a')}
+												{formatDate(request.createdAt, 'DD-MMM-YYYY h:mm a')}
 											</td>
 											<td>
 												{request.staff ? staffname(request.staff) : patient}
