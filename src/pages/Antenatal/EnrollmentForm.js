@@ -97,7 +97,7 @@ class EnrollmentForm extends Component {
 				doctors: doctors,
 				lmp: lmp !== '' ? moment(lmp).format('YYYY-MM-DD') : '',
 				lmpSource: data.lmpSource,
-				edd: lmp !== '' ? moment(lmp).add(9, 'M').format('YYYY-MM-DD') : '',
+				edd: lmp !== '' ? moment(lmp).add(40, 'w').format('YYYY-MM-DD') : '',
 				father: {
 					name: data.name || '',
 					phone: data.phone || '',

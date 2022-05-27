@@ -160,7 +160,7 @@ class LabDetail extends Component {
 											<td className="labmgtTd">
 												<div className="labmgtKey">
 													{moment(labourDetail.lmp)
-														.add(9, 'M')
+														.add(40, 'w')
 														.format('DD/MM/YYYY')}
 												</div>
 												<div className="labmgtValue">EDD</div>

@@ -65,7 +65,7 @@ const AncBlock = ({ patient, enrollmentId }) => {
 			const url = `patient/antenatal/${enrollmentId}/lmp`;
 
 			const lmp = moment(date).format('YYYY-MM-DD');
-			const edd = moment(date).add(9, 'M').format('YYYY-MM-DD');
+			const edd = moment(date).add(40, 'w').format('YYYY-MM-DD');
 
 			const rs = await request(url, 'POST', true, { lmp, edd });
 			dispatch(stopBlock());
