@@ -61,23 +61,6 @@ const Documents = () => {
 		setUploadVisible(visible);
 	};
 
-	const handleDownload = data => {
-		try {
-			dispatch(startBlock());
-			const url = `${API_URI}/documents/${data.document_name}`;
-			setTimeout(() => {
-				dispatch(stopBlock());
-				window.open(url, '_blank').focus();
-			}, 1000);
-		} catch (e) {
-			dispatch(stopBlock());
-			console.log(e);
-			setLoading(false);
-			notifyError(e.message || 'could not download data');
-		}
-		console.log(data);
-	};
-
 	const onUpload = async (e, files, documentID) => {
 		e.preventDefault();
 		const file = files[0];
@@ -87,16 +70,10 @@ const Documents = () => {
 				let formData = new FormData();
 				formData.append('file', file);
 				formData.append('document_type', documentID);
-				for (var key of formData.entries()) {
-					console.log(key[0] + ', ' + key[1]);
-				}
 				const url = `${API_URI}/${patientAPI}/${patient.id}/upload-document`;
 				const rs = await upload(url, 'POST', formData);
-				setDocumentList([...documentList, rs.document]);
-				const doc = documentType.find(d => d.id === documentID);
-				notifySuccess(
-					`Patient Data Uploaded for ${doc ? doc.name : ''} Document`
-				);
+				setDocumentList([rs.document, ...documentList]);
+				notifySuccess(`Patient ${rs.document.document_type} Uploaded`);
 				setUploading(false);
 				setUploadVisible(false);
 			} catch (error) {
@@ -111,6 +88,28 @@ const Documents = () => {
 		dispatch(startBlock());
 		await fetchDocuments(nextPage);
 		dispatch(stopBlock());
+	};
+
+	const handleDownload = async id => {
+		try {
+			dispatch(startBlock());
+			const url = `${patientAPI}/${patient.id}/documents/${id}`;
+			const rs = await request(url, 'GET', true);
+			if (rs.success) {
+				setTimeout(() => {
+					dispatch(stopBlock());
+					window.open(rs.url, '_blank').focus();
+				}, 1000);
+			} else {
+				dispatch(stopBlock());
+				notifyError(rs.message || 'could not download document');
+			}
+		} catch (e) {
+			dispatch(stopBlock());
+			console.log(e);
+			setLoading(false);
+			notifyError(e.message || 'could not download document');
+		}
 	};
 
 	return (
@@ -168,7 +167,7 @@ const Documents = () => {
 													</td>
 													<td className="row-actions">
 														<Tooltip title="Download File">
-															<a onClick={() => handleDownload(item)}>
+															<a onClick={() => handleDownload(item.id)}>
 																<i className="os-icon os-icon-download-cloud" />
 															</a>
 														</Tooltip>
