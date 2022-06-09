@@ -7,6 +7,7 @@ import { renderTextInput, request } from '../../services/utilities';
 import waiting from '../../assets/images/waiting.gif';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import { notifyError, notifySuccess } from '../../services/notify';
+import ModalHeader from '../ModalHeader';
 
 const validate = values => {
 	const errors = {};
@@ -106,16 +107,8 @@ const ModalUpdateQty = ({
 				style={{ maxWidth: '320px' }}
 			>
 				<div className="modal-content text-center">
-					<button
-						aria-label="Close"
-						className="close"
-						type="button"
-						onClick={closeModal}
-					>
-						<span className="os-icon os-icon-close" />
-					</button>
+					<ModalHeader title="Update Quantity" closeModal={closeModal} />
 					<div className="onboarding-content with-gradient">
-						<h4 className="onboarding-title">Update Quantity</h4>
 						<div className="onboarding-text alert-custom mb-3">
 							<div className="text-center">{`Available quantity: ${item.quantity}`}</div>
 						</div>

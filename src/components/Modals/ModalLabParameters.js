@@ -7,6 +7,7 @@ import { request } from '../../services/utilities';
 import { updateLabTest } from '../../actions/settings';
 import { notifySuccess, notifyError } from '../../services/notify';
 import waiting from '../../assets/images/waiting.gif';
+import ModalHeader from '../ModalHeader';
 
 const ModalLabParameters = ({ closeModal, labTest }) => {
 	const [loaded, setLoaded] = useState(false);
@@ -144,16 +145,8 @@ const ModalLabParameters = ({ closeModal, labTest }) => {
 		>
 			<div className="modal-dialog modal-md modal-centered">
 				<div className="modal-content text-center">
-					<button
-						aria-label="Close"
-						className="close"
-						type="button"
-						onClick={closeModal}
-					>
-						<span className="os-icon os-icon-close" />
-					</button>
+					<ModalHeader title="Lab Test Parameters" closeModal={closeModal} />
 					<div className="onboarding-content with-gradient">
-						<h4 className="onboarding-title">Lab Test Parameters</h4>
 						<div className="onboarding-text alert-custom mb-3">
 							{labTest.name}
 						</div>

@@ -7,6 +7,7 @@ import { request, updateImmutable } from '../../services/utilities';
 import { notifySuccess, notifyError } from '../../services/notify';
 import waiting from '../../assets/images/waiting.gif';
 import { startBlock, stopBlock } from '../../actions/redux-block';
+import ModalHeader from '../ModalHeader';
 
 const allOptions = [
 	{ label: 'N/A', value: 'N/A' },
@@ -106,16 +107,8 @@ const ModalFillLabResult = ({ closeModal, lab, labs, updateLab }) => {
 				style={{ maxWidth: item.labTest?.hasParameters ? '1024px' : '640px' }}
 			>
 				<div className="modal-content text-center">
-					<button
-						aria-label="Close"
-						className="close"
-						type="button"
-						onClick={closeModal}
-					>
-						<span className="os-icon os-icon-close" />
-					</button>
+					<ModalHeader title="Fill Lab Result" closeModal={closeModal} />
 					<div className="onboarding-content with-gradient">
-						<h4 className="onboarding-title">Fill Lab Result</h4>
 						<div className="onboarding-text alert-custom mb-3">
 							<div>{item.labTest?.name || '--'}</div>
 							<div>

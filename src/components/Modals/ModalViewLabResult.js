@@ -6,9 +6,11 @@ import {
 	request,
 	updateImmutable,
 	patientname,
+	formatDate,
 } from '../../services/utilities';
 import { notifySuccess, notifyError } from '../../services/notify';
 import { startBlock, stopBlock } from '../../actions/redux-block';
+import ModalHeader from '../ModalHeader';
 
 const ModalViewLabResult = ({ closeModal, lab, labs, updateLab, role }) => {
 	const item = lab.item;
@@ -69,27 +71,72 @@ const ModalViewLabResult = ({ closeModal, lab, labs, updateLab, role }) => {
 				style={{ maxWidth: item.labTest.hasParameters ? '1024px' : '640px' }}
 			>
 				<div className="modal-content text-center">
-					<button
-						aria-label="Close"
-						className="close"
-						type="button"
-						onClick={closeModal}
-					>
-						<span className="os-icon os-icon-close" />
-					</button>
+					<ModalHeader
+						title={`Lab Result: ${patientname(lab.patient, true)}`}
+						closeModal={closeModal}
+					/>
 					<div className="onboarding-content with-gradient">
-						<h4 className="onboarding-title">{`Lab Result: ${patientname(
-							lab.patient,
-							true
-						)}`}</h4>
 						<div className="onboarding-text alert-custom mb-3">
-							<div>{item.labTest.name}</div>
 							<div>
+								{item.labTest.name} -{' '}
 								{item.labTest.specimens?.map((s, i) => (
 									<span key={i} className="badge badge-info text-white mr-2">
 										{s.label}
 									</span>
 								))}
+							</div>
+							<div className="row mt-4">
+								<div className="col-md-4 text-left">
+									<div
+										dangerouslySetInnerHTML={{
+											__html: `Specimen Received By: <strong>${
+												lab.item.receivedBy || '--'
+											}</strong>`,
+										}}
+									></div>
+									<div
+										dangerouslySetInnerHTML={{
+											__html: `Specimen Received At: <strong>${formatDate(
+												lab.item.receivedAt,
+												'DD-MMM-YYYY h:mm A'
+											)}</strong>`,
+										}}
+									></div>
+								</div>
+								<div className="col-md-4 text-left">
+									<div
+										dangerouslySetInnerHTML={{
+											__html: `Test Filled By: <strong>${
+												lab.item.filled_by || '--'
+											}</strong>`,
+										}}
+									></div>
+									<div
+										dangerouslySetInnerHTML={{
+											__html: `Test Filled At: <strong>${formatDate(
+												lab.item.filled_at,
+												'DD-MMM-YYYY h:mm A'
+											)}</strong>`,
+										}}
+									></div>
+								</div>
+								<div className="col-md-4 text-left">
+									<div
+										dangerouslySetInnerHTML={{
+											__html: `Result Approved By: <strong>${
+												lab.item.approvedBy || '--'
+											}</strong>`,
+										}}
+									></div>
+									<div
+										dangerouslySetInnerHTML={{
+											__html: `Result Approved At: <strong>${formatDate(
+												lab.item.approvedAt,
+												'DD-MMM-YYYY h:mm A'
+											)}</strong>`,
+										}}
+									></div>
+								</div>
 							</div>
 						</div>
 						<div className="element-box p-2">
