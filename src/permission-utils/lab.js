@@ -26,6 +26,6 @@ export function hasCancelLabPermission(permissions) {
 	return permissions.find(p => p === 'cancel-lab');
 }
 
-export function hasEditLabPermission(permissions) {
-	return permissions.find(p => p === 'edit-lab');
+export function hasEditLabResultPermission(permissions) {
+	return permissions.find(p => p === 'edit-lab-result');
 }

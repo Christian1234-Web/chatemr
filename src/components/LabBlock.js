@@ -28,7 +28,7 @@ import {
 	hasPrintResultPermission,
 	hasReceiveSpecimenPermission,
 	hasViewResultPermission,
-	hasEditLabPermission,
+	hasEditLabResultPermission,
 } from '../permission-utils/lab';
 
 class LabBlock extends Component {
@@ -352,7 +352,7 @@ class LabBlock extends Component {
 														)}
 													{lab.item.received === 1 &&
 														lab.item.approved === 1 &&
-														hasEditLabPermission(user.permissions) && (
+														hasEditLabResultPermission(user.permissions) && (
 															<Tooltip title="Edit Result">
 																<a
 																	className="primary"
