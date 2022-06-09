@@ -28,6 +28,7 @@ import {
 	hasPrintResultPermission,
 	hasReceiveSpecimenPermission,
 	hasViewResultPermission,
+	hasEditLabPermission,
 } from '../permission-utils/lab';
 
 class LabBlock extends Component {
@@ -288,9 +289,18 @@ class LabBlock extends Component {
 											(lab.item.transaction.status === 1 ||
 												lab.item.transaction.status === -1) &&
 											lab.item.filled === 0 && (
-												<span className="badge badge-info text-white">
-													Pending
-												</span>
+												<>
+													{lab.item.received === 0 && lab.item.filled === 0 && (
+														<span className="badge badge-info text-white">
+															Awaiting Specimen
+														</span>
+													)}
+													{lab.item.received === 1 && lab.item.filled === 0 && (
+														<span className="badge badge-info text-white">
+															Awaiting Result
+														</span>
+													)}
+												</>
 											)}
 										{lab.item.cancelled === 0 &&
 											lab.item.transaction &&
@@ -329,8 +339,21 @@ class LabBlock extends Component {
 															</Tooltip>
 														)}
 													{lab.item.received === 1 &&
+														lab.item.approved === 0 &&
 														hasFillResultPermission(user.permissions) && (
 															<Tooltip title="Fill Result">
+																<a
+																	className="primary"
+																	onClick={() => this.fillResult(lab)}
+																>
+																	<i className="os-icon os-icon-edit" />
+																</a>
+															</Tooltip>
+														)}
+													{lab.item.received === 1 &&
+														lab.item.approved === 1 &&
+														hasEditLabPermission(user.permissions) && (
+															<Tooltip title="Edit Result">
 																<a
 																	className="primary"
 																	onClick={() => this.fillResult(lab)}
