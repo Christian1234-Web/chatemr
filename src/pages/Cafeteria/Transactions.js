@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
 import moment from 'moment';
-
+import Pagination from 'antd/lib/pagination';
 import { searchAPI } from '../../services/constants';
 import waiting from '../../assets/images/waiting.gif';
 import DatePicker from 'antd/lib/date-picker';
@@ -10,6 +10,7 @@ import {
 	staffname,
 	patientname,
 	formatDate,
+	itemRender,
 } from '../../services/utilities';
 
 import { notifyError } from '../../services/notify';
@@ -42,6 +43,7 @@ class Transactions extends Component {
 		transactions: [],
 		hmoQuery: '',
 		hmo_id: '',
+		meta: null,
 	};
 	patient = React.createRef();
 	hmo = React.createRef();
@@ -50,19 +52,23 @@ class Transactions extends Component {
 		this.fetchTransactions();
 	}
 
-	fetchTransactions = async () => {
-		const { startDate, endDate } = this.state;
+	fetchTransactions = async page => {
+		const { startDate, endDate, searching } = this.state;
 		try {
 			this.setState({ loading: true });
-			const url = `transactions?patient_id=&startDate=${startDate}&endDate=${endDate}&status=&service_id=cafeteria&payment_method&page=1&limit=10`;
+			const p = page || 1;
+			const url = `transactions/search?page=${p}&limit=10&term=&startDate=${startDate}&endDate=${endDate}&bill_source=cafeteria&filter=${searching}`;
+			// const url = `transactions?patient_id=&startDate=${startDate}&endDate=${endDate}&status=&service_id=cafeteria&payment_method&page=1&limit=10`;
 			const rs = await request(url, 'GET', true);
+			const { result, ...meta } = rs;
 
 			this.setState({
 				loading: false,
 				filtering: false,
 				startDate: '',
 				endDate: '',
-				transactions: rs.result,
+				transactions: result,
+				meta,
 			});
 		} catch (error) {
 			console.log(error);
@@ -174,6 +180,18 @@ class Transactions extends Component {
 		}
 	};
 
+	handlePatientChange = e => {
+		this.setState({
+			...this.state,
+			searching: e.target.value,
+			filtering: false,
+		});
+	};
+
+	onNavigatePage = nextPage => {
+		this.fetchTransactions(nextPage);
+	};
+
 	render() {
 		const {
 			filtering,
@@ -183,6 +201,7 @@ class Transactions extends Component {
 			patients,
 			// searchHmo,
 			transactions,
+			meta,
 		} = this.state;
 
 		return (
@@ -199,14 +218,14 @@ class Transactions extends Component {
 							defaultValue=""
 							ref={this.patient}
 							id="patient"
-							onChange={this.handlePatientChange}
+							onChange={e => this.handlePatientChange(e)}
 							autoComplete="off"
 							required
 							style={{ height: '32px' }}
 						/>
 						{searching && (
 							<div className="searching text-center">
-								<img alt="searching" src={searchingGIF} />
+								{/* <img alt="searching" src={searchingGIF} /> */}
 							</div>
 						)}
 
@@ -242,7 +261,8 @@ class Transactions extends Component {
 							type="text"
 							name="patient"
 							defaultValue=""
-							onChange={this.handlePatientChange}
+							// onChange={e => this.setState({ searching: e.target.value })}
+							onChange={e => this.handlePatientChange(e)}
 							autoComplete="off"
 							required
 							style={{ height: '32px' }}
@@ -294,58 +314,73 @@ class Transactions extends Component {
 				{loading ? (
 					<TableLoading />
 				) : (
-					<div className="table table-responsive">
-						<table className="table table-theme v-middle table-hover">
-							<thead>
-								<tr>
-									<th>Date</th>
-									<th>Customer</th>
-									<th>Item Sold</th>
-									<th>Payment Method</th>
-									<th>Amount</th>
-									<th>Paid</th>
-								</tr>
-							</thead>
-							<tbody>
-								{transactions.map((request, i) => {
-									const patient = request.patient
-										? patientname(request.patient, true)
-										: 'walk-in';
-									return (
-										<tr data-index="0" key={i}>
-											<td>
-												{formatDate(request.createdAt, 'DD-MMM-YYYY h:mm a')}
-											</td>
-											<td>
-												{request.staff ? staffname(request.staff) : patient}
-											</td>
-											<td>
-												{request?.transaction_details
-													?.map(t => `${t.name} (${t?.qty || 1})`)
-													.join(', ') || '-'}
-											</td>
-											<td>{request.payment_method}</td>
-											<td>{formatCurrency(request.amount, true)}</td>
-											<td>
-												{request.status === 1 ? (
-													<span className="badge badge-success">paid</span>
-												) : (
-													<span className="badge badge-secondary">
-														pending payment
-													</span>
-												)}
-											</td>
-										</tr>
-									);
-								})}
-								{!loading && transactions.length === 0 && (
+					<>
+						<div className="table table-responsive">
+							<table className="table table-theme v-middle table-hover">
+								<thead>
 									<tr>
-										<td colSpan="6">No transactions</td>
+										<th>Date</th>
+										<th>Customer</th>
+										<th>Item Sold</th>
+										<th>Payment Method</th>
+										<th>Amount</th>
+										<th>Paid</th>
 									</tr>
-								)}
-							</tbody>
-						</table>
-					</div>
+								</thead>
+								<tbody>
+									{transactions.map((request, i) => {
+										const patient = request.patient
+											? patientname(request.patient, true)
+											: 'walk-in';
+										return (
+											<tr data-index="0" key={i}>
+												<td>
+													{formatDate(request.createdAt, 'DD-MMM-YYYY h:mm a')}
+												</td>
+												<td>
+													{request.staff ? staffname(request.staff) : patient}
+												</td>
+												<td>
+													{request?.transaction_details
+														?.map(t => `${t.name} (${t?.qty || 1})`)
+														.join(', ') || '-'}
+												</td>
+												<td>{request.payment_method}</td>
+												<td>{formatCurrency(request.amount, true)}</td>
+												<td>
+													{request.status === 1 ? (
+														<span className="badge badge-success">paid</span>
+													) : (
+														<span className="badge badge-secondary">
+															pending payment
+														</span>
+													)}
+												</td>
+											</tr>
+										);
+									})}
+									{!loading && transactions.length === 0 && (
+										<tr>
+											<td colSpan="6">No transactions</td>
+										</tr>
+									)}
+								</tbody>
+							</table>
+						</div>
+						{meta && (
+							<div className="pagination pagination-center mt-4">
+								<Pagination
+									current={parseInt(meta.currentPage, 10)}
+									pageSize={parseInt(meta.itemsPerPage, 10)}
+									total={parseInt(meta.totalItems, 10)}
+									showTotal={total => `Total ${total} transactions`}
+									itemRender={itemRender}
+									onChange={current => this.onNavigatePage(current)}
+									showSizeChanger={false}
+								/>
+							</div>
+						)}
+					</>
 				)}
 			</div>
 		);
