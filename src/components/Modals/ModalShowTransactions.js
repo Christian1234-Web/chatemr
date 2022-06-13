@@ -176,7 +176,6 @@ const ModalShowTransactions = ({ patient, closeModal }) => {
 			dispatch(startBlock());
 			const uri = `transactions/print?patient_id=${patient.id}&status=pending&transId=${transId}`;
 			const rs = await request(uri, 'GET', true);
-			console.log('ans', rs);
 			dispatch(stopBlock());
 			if (rs.success) {
 				setTimeout(() => {
