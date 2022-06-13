@@ -40,7 +40,6 @@ class Lab extends Component {
 			// const url = `requests/list/labs?page=${p}&limit=10&startDate=${startDate}&endDate=${endDate}&status=${status}&patient_id=${patient_id}`;
 			const rs = await request(url, 'GET', true);
 			const { result, ...meta } = rs;
-			console.log('malik', rs);
 			this.setState({ labs: result, loading: false, filtering: false, meta });
 			window.scrollTo({ top: 0, behavior: 'smooth' });
 		} catch (error) {

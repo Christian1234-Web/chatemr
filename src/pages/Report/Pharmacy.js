@@ -53,7 +53,6 @@ const Pharmacy = () => {
 			setLoading(true);
 			const url = `transactions/search?bill_source=drugs&page=${p}&limit=10&term=${searchValue}&startDate=${startDate}&endDate=${endDate}`;
 			const rs = await request(url, 'GET', true);
-			console.log('malik', rs);
 			const { result, ...meta } = rs;
 			setDrugTransactions(result);
 			setMeta(meta);
