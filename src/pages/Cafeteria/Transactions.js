@@ -57,7 +57,7 @@ class Transactions extends Component {
 		try {
 			this.setState({ loading: true });
 			const p = page || 1;
-			const url = `transactions/search?page=${p}&limit=10&term=&startDate=${startDate}&endDate=${endDate}&bill_source=cafeteria&filter=${searching}`;
+			const url = `transactions/search?page=${p}&limit=10&term=${searching}&startDate=${startDate}&endDate=${endDate}&bill_source=cafeteria&filter=`;
 			// const url = `transactions?patient_id=&startDate=${startDate}&endDate=${endDate}&status=&service_id=cafeteria&payment_method&page=1&limit=10`;
 			const rs = await request(url, 'GET', true);
 			const { result, ...meta } = rs;
