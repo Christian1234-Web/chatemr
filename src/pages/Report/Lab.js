@@ -145,7 +145,7 @@ class Lab extends Component {
 						</form>
 					</div>
 					<div className="row">
-						<div className="col-sm-8 col-lg-9 col-xl-6 col-xxl-12">
+						<div className="col-sm-12 col-lg-12 col-xl-12 col-xxl-12">
 							<div className="element-box">
 								<div className="element-box-tp">
 									<div className="element-box-tp">
