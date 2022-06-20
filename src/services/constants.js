@@ -183,6 +183,8 @@ export const documentType = [
 	{ id: 'Procedures', name: 'Procedures' },
 	{ id: 'Antenatal', name: 'Antenatal' },
 	{ id: 'Prescription', name: 'Prescription' },
+	{ id: 'Consent Form', name: 'Consent Form' },
+	{ id: 'Medical Report', name: 'Medical Report' },
 ];
 
 export const paymentTypeExtra = [

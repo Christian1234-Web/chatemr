@@ -40,7 +40,6 @@ class Lab extends Component {
 			// const url = `requests/list/labs?page=${p}&limit=10&startDate=${startDate}&endDate=${endDate}&status=${status}&patient_id=${patient_id}`;
 			const rs = await request(url, 'GET', true);
 			const { result, ...meta } = rs;
-			console.log('malik', rs);
 			this.setState({ labs: result, loading: false, filtering: false, meta });
 			window.scrollTo({ top: 0, behavior: 'smooth' });
 		} catch (error) {
@@ -146,7 +145,7 @@ class Lab extends Component {
 						</form>
 					</div>
 					<div className="row">
-						<div className="col-sm-8 col-lg-9 col-xl-6 col-xxl-12">
+						<div className="col-sm-12 col-lg-12 col-xl-12 col-xxl-12">
 							<div className="element-box">
 								<div className="element-box-tp">
 									<div className="element-box-tp">
