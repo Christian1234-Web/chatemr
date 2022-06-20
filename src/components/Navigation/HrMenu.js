@@ -37,6 +37,15 @@ const HrMenu = () => {
 					<span>Duty Roster</span>
 				</Link>
 			</li>
+
+			<li>
+				<Link to="/hr/attendance">
+					<div className="icon-w">
+						<div className="os-icon os-icon-layers" />
+					</div>
+					<span>Attendance</span>
+				</Link>
+			</li>
 		</>
 	);
 };
