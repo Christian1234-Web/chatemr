@@ -171,9 +171,10 @@ const ModalShowTransactions = ({ patient, closeModal }) => {
 	};
 
 	const printModal = async () => {
+		const transId = checked.map(check => check.id).join('-');
 		try {
 			dispatch(startBlock());
-			const uri = `transactions/print?patient_id=${patient.id}&status=pending`;
+			const uri = `transactions/print?patient_id=${patient.id}&status=pending&transId=${transId}`;
 			const rs = await request(uri, 'GET', true);
 			dispatch(stopBlock());
 			if (rs.success) {
