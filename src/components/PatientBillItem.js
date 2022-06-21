@@ -55,6 +55,13 @@ const PatientBillItem = ({
 										}) at ${formatCurrency(reqItem.drugBatch.unitPrice)} each`}
 									</>
 								)}
+								{item?.bill_source === 'cafeteria' ? (
+									<>{`: ${item?.transaction_details
+										?.map(t => `${t.name} (${t?.qty || 1})`)
+										.join(', ')}`}</>
+								) : (
+									''
+								)}
 							</span>
 						</td>
 						<td>{formatCurrency(item.amount || 0, true)}</td>

@@ -1,9 +1,14 @@
 import React from 'react';
 
 import ModalHeader from '../ModalHeader';
-import { formatCurrency, formatDate } from '../../services/utilities';
+import {
+	formatCurrency,
+	formatDate,
+	patientname,
+	staffname,
+} from '../../services/utilities';
 
-const CafeteriaReceipt = ({ cafeteriaCart, closeModal }) => {
+const CafeteriaReceipt = ({ transaction, closeModal }) => {
 	return (
 		<div
 			className="onboarding-modal modal fade animated show"
@@ -12,23 +17,25 @@ const CafeteriaReceipt = ({ cafeteriaCart, closeModal }) => {
 		>
 			<div
 				className="modal-dialog modal-centered"
-				style={{ maxWidth: '380px' }}
+				style={{ maxWidth: '420px' }}
 			>
 				<div className="modal-content text-center">
-					<ModalHeader title="Cafeteria Receipt" closeModal={closeModal} />
+					<ModalHeader
+						title="Cafeteria Receipt"
+						closeModal={() => closeModal()}
+					/>
 					<div className="onboarding-content with-gradient">
 						<center className="reciept-header">
 							<div className="">
 								<img
-									width="30%"
-									height="20%"
+									width="45%"
 									src={require('../../assets/images/logo.png')}
 									alt="logo"
 								/>
 							</div>
 						</center>
 						<div className="reciept-address mt-4">
-							<p style={{ fontSize: '9px' }}>
+							<p style={{ fontSize: '13px' }}>
 								Plot 1847, Cadastral Zone B07, Katampe Road, Abuja.
 								dedahospital.com.ng <br /> 0818 422 7707, 0818 755 7344, 0808
 								233 7758
@@ -40,26 +47,30 @@ const CafeteriaReceipt = ({ cafeteriaCart, closeModal }) => {
 									<td className="text-left">Date</td>
 									<td className="text-right">
 										<span>
-											{formatDate(cafeteriaCart.createdAt, 'DD-MMM-YYYY')}
+											{formatDate(transaction.createdAt, 'DD-MMM-YYYY h:mm a')}
 										</span>
 									</td>
 								</tr>
 								<tr>
 									<td className="text-left">Sold To</td>
 									<td className="text-right">
-										<span>Chukwemeka Ihedoro</span>
+										<span>
+											{transaction.dedastaff
+												? staffname(transaction.dedastaff)
+												: ''}
+											{transaction.patient
+												? patientname(transaction.patient)
+												: ''}
+											{!transaction.staff && !transaction.patient
+												? 'Guest'
+												: ''}
+										</span>
 									</td>
 								</tr>
 								<tr>
 									<td className="text-left">Payment Method</td>
 									<td className="text-right">
-										<span>Cash</span>
-									</td>
-								</tr>
-								<tr>
-									<td className="text-left">Cashier</td>
-									<td className="text-right">
-										<span>Cash</span>
+										<span>{transaction.payment_method}</span>
 									</td>
 								</tr>
 							</tbody>
@@ -69,42 +80,44 @@ const CafeteriaReceipt = ({ cafeteriaCart, closeModal }) => {
 								<thead>
 									<tr>
 										<th>Item</th>
-										<th className="text-center">Qty</th>
-										<th className="text-center">Sub Total(&#x20A6;)</th>
+										<th>Qty</th>
+										<th>Amount(&#x20A6;)</th>
+										<th className="text-right">Total(&#x20A6;)</th>
 									</tr>
 								</thead>
 								<tbody>
-									{cafeteriaCart.transaction_details?.map((item, i) => (
+									{transaction.transaction_details?.map((item, i) => (
 										<tr key={i}>
 											<td>{item.name}</td>
-											<td className="text-center">{item.qty}</td>
-											<td className="text-center">
-												{formatCurrency(item.amount)}
+											<td>{item.qty}</td>
+											<td>{formatCurrency(item.price)}</td>
+											<td className="text-right">
+												{formatCurrency(Number(item.price) * Number(item.qty))}
 											</td>
 										</tr>
 									))}
 									<tr>
-										<td colSpan="2" className="text-right">
+										<td colSpan="3" className="text-right">
 											Total:
 										</td>
-										<td className="text-center text-bold">
-											{formatCurrency(cafeteriaCart.amount)}
+										<td className="text-right text-bold">
+											{formatCurrency(transaction.amount, true)}
 										</td>
 									</tr>
 									<tr>
-										<td colSpan="2" className="text-right">
+										<td colSpan="3" className="text-right">
 											Amount Paid:
 										</td>
-										<td className="text-center text-bold">
-											{formatCurrency(cafeteriaCart.amount_paid)}
+										<td className="text-right text-bold">
+											{formatCurrency(transaction.amount_paid)}
 										</td>
 									</tr>
 									<tr>
-										<td colSpan="2" className="text-right">
+										<td colSpan="3" className="text-right">
 											Change:
 										</td>
-										<td className="text-center text-bold">
-											{formatCurrency(cafeteriaCart.change)}
+										<td className="text-right text-bold">
+											{formatCurrency(transaction.change)}
 										</td>
 									</tr>
 								</tbody>

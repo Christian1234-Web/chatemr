@@ -115,8 +115,7 @@ const AllPatients = () => {
 		await fetchPatients(nextPage, searchValue);
 	};
 
-	const doFilter = e => {
-		if (e) e.preventDefault();
+	const doFilter = () => {
 		setFiltering(true);
 		fetchPatients(1, searchValue);
 	};

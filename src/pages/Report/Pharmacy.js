@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import React, { useCallback, useEffect, useState } from 'react';
 import { itemRender, request } from '../../services/utilities';
 import moment from 'moment';
 import Pagination from 'antd/lib/pagination';
@@ -10,12 +11,14 @@ import waiting from '../../assets/images/waiting.gif';
 const { RangePicker } = DatePicker;
 
 const Pharmacy = () => {
+	const [loading, setLoading] = useState(true);
+
 	const [drugTransactions, setDrugTransactions] = useState([]);
 	const [drugDispensation, setDrugDispensation] = useState([]);
-	const [meta, setMeta] = useState({ ...paginate });
 	const [metaDispense, setMetaDispense] = useState({ ...paginate });
+	const [meta, setMeta] = useState({ ...paginate });
 
-	const [loading, setLoading] = useState(false);
+	// eslint-disable-next-line no-unused-vars
 	const [pharmSales, setPharmSales] = useState(null);
 
 	const [linkPharm, setLinkPharm] = useState(true);
@@ -35,43 +38,27 @@ const Pharmacy = () => {
 		setEndDate(date[1]);
 	};
 
-	const doFilter = e => {
-		if (e) e.preventDefault();
-		setFiltering(true);
-		fetchDrugTransactions();
-		setFiltering(false);
-	};
+	const fetchDrugTransactions = useCallback(
+		async page => {
+			try {
+				const p = page || 1;
+				setLoading(true);
+				const url = `transactions/search?bill_source=drugs&page=${p}&limit=10&term=${searchValue}&startDate=${startDate}&endDate=${endDate}`;
+				const rs = await request(url, 'GET', true);
+				const { result, ...meta } = rs;
+				setDrugTransactions(result);
+				setMeta(meta);
+				setLoading(false);
+				window.scrollTo({ top: 0, behavior: 'smooth' });
+			} catch (err) {
+				console.log('fetch drug err', err);
+				setLoading(false);
+			}
+		},
+		[endDate, searchValue, startDate]
+	);
 
-	const fetchDrugTransactions = async page => {
-		try {
-			let p = page || 1;
-			// let pid = '';
-			// let startDate = startDate || '';
-			// let endDate = endDate || '';
-			// let service_id = '2';
-			// let status = '';
-			setLoading(true);
-			const url = `transactions/search?bill_source=drugs&page=${p}&limit=10&term=${searchValue}&startDate=${startDate}&endDate=${endDate}`;
-			const rs = await request(url, 'GET', true);
-			const { result, ...meta } = rs;
-			setDrugTransactions(result);
-			setMeta(meta);
-			setLoading(false);
-		} catch (err) {
-			console.log('fetch drug err', err);
-			setLoading(false);
-		}
-	};
-
-	useEffect(() => {
-		fetchDrugTransactions();
-	}, [drugTransactions.length]);
-
-	useEffect(() => {
-		fetchDrugDispensations();
-	}, [drugDispensation.length]);
-
-	const fetchDrugDispensations = async page => {
+	const fetchDrugDispensations = useCallback(async page => {
 		try {
 			let p = page || 1;
 			const url = `inventory/drugs/drug-records?page=${p}&limit=15`;
@@ -79,16 +66,13 @@ const Pharmacy = () => {
 			const { result, ...meta } = rs;
 			setDrugDispensation(result);
 			setMetaDispense(meta);
+			window.scrollTo({ top: 0, behavior: 'smooth' });
 		} catch (err) {
 			console.log('fetch drug dispensation err', err);
 		}
-	};
+	}, []);
 
-	useEffect(() => {
-		fetchPharmSales();
-	}, [drugTransactions.length]);
-
-	const fetchPharmSales = async () => {
+	const fetchPharmSales = useCallback(async () => {
 		try {
 			const url = `transactions/bill-source?bill_source=drugs`;
 			const rs = await request(url, 'GET', true);
@@ -96,6 +80,20 @@ const Pharmacy = () => {
 		} catch (err) {
 			console.log('Pharm Sales Err', err);
 		}
+	}, []);
+
+	useEffect(() => {
+		if (loading) {
+			fetchDrugTransactions();
+			fetchDrugDispensations();
+			fetchPharmSales();
+		}
+	}, [fetchDrugDispensations, fetchDrugTransactions, fetchPharmSales, loading]);
+
+	const doFilter = async () => {
+		setFiltering(true);
+		await fetchDrugTransactions();
+		setFiltering(false);
 	};
 
 	const handleLinkPharm = () => {
@@ -110,11 +108,9 @@ const Pharmacy = () => {
 
 	const onNavigatePage = pageNumber => {
 		fetchDrugTransactions(pageNumber);
-		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
 	const onNavigatePageDispense = pageNumber => {
 		fetchDrugDispensations(pageNumber);
-		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
 
 	return (

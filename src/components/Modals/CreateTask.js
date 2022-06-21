@@ -155,8 +155,8 @@ const CreateTask = ({ closeModal, refreshTasks }) => {
 	};
 
 	const closeCreateRegimen = () => {
-		document.body.classList.remove('modal-open');
 		setShowModal(false);
+		document.body.classList.remove('modal-open');
 	};
 
 	return (

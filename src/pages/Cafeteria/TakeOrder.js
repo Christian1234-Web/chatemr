@@ -1,18 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, {
-	useState,
-	useEffect,
-	useCallback,
-	useMemo,
-	useRef,
-} from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Pagination from 'antd/lib/pagination';
 import pluralize from 'pluralize';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Form, Field } from 'react-final-form';
 import { FORM_ERROR } from 'final-form';
-import createDecorator from 'final-form-calculate';
 import AsyncSelect from 'react-select/async/dist/react-select.esm';
+import { withRouter } from 'react-router-dom';
 
 import { cafeteriaAPI, paginate, searchAPI } from '../../services/constants';
 import {
@@ -29,12 +23,11 @@ import {
 	confirmAction,
 } from '../../services/utilities';
 import { notifyError, notifySuccess } from '../../services/notify';
-import CafeteriaReceipt from '../../components/Modals/CafeteriaReceipt';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 
 const pageLimit = 12;
 
-const Dashboard = () => {
+const TakeOrder = ({ history }) => {
 	const [loaded, setLoaded] = useState(false);
 	const [meta, setMeta] = useState({ ...paginate });
 	const [foodItems, setFoodItems] = useState([]);
@@ -42,14 +35,10 @@ const Dashboard = () => {
 	const [cartItems, setCartItems] = useState([]);
 	const [staff, setStaff] = useState(null);
 	const [patient, setPatient] = useState(null);
-	const [showReceipt, setShowReceipt] = useState(false);
-	const [cafeteriaCart, setCafeteriaCart] = useState(null);
 
 	const formRef = useRef();
 
 	const dispatch = useDispatch();
-
-	const paymentMethods = useSelector(state => state.utility.methods);
 
 	const fetchInventories = useCallback(async () => {
 		try {
@@ -64,15 +53,17 @@ const Dashboard = () => {
 				currentPage: 1,
 			});
 			setItems(items);
+			setLoaded(true);
 		} catch (error) {
 			console.log(error);
+			setLoaded(true);
+			notifyError(error.message || 'could not fetch items');
 		}
 	}, [meta]);
 
 	useEffect(() => {
 		if (!loaded) {
 			fetchInventories();
-			setLoaded(true);
 		}
 	}, [fetchInventories, loaded]);
 
@@ -80,13 +71,9 @@ const Dashboard = () => {
 		formRef.current.getFieldState();
 
 		const total = items.reduce((total, item) => total + item.price, 0);
-		formRef.current.change('total', total);
 
-		const staffTotal = items.reduce(
-			(total, item) => total + item.staff_price,
-			0
-		);
-		formRef.current.change('staff_total', staffTotal);
+		formRef.current.change('total', total);
+		formRef.current.change('staff_total', total);
 	};
 
 	const selectItem = item => {
@@ -104,7 +91,6 @@ const Dashboard = () => {
 					name: item.foodItem.name,
 					qty: 1,
 					price: parseFloat(item.foodItem.price),
-					staff_price: parseFloat(item.foodItem.staff_price),
 				},
 			];
 			setCartItems(list);
@@ -115,7 +101,6 @@ const Dashboard = () => {
 				...cartItem,
 				qty: quantity,
 				price: parseFloat(item.foodItem.price) * quantity,
-				staff_price: parseFloat(item.foodItem.staff_price) * quantity,
 			});
 			setCartItems(list);
 			calculatePrice(list);
@@ -156,7 +141,6 @@ const Dashboard = () => {
 				...cart,
 				qty: quantity,
 				price: parseFloat(item.foodItem.price) * quantity,
-				staff_price: parseFloat(item.foodItem.staff_price) * quantity,
 			});
 			setCartItems(list);
 			calculatePrice(list);
@@ -166,25 +150,6 @@ const Dashboard = () => {
 			setItems(itemsList);
 		}
 	};
-
-	const calculateAmount = useMemo(
-		() =>
-			createDecorator({
-				field: 'paid',
-				updates: {
-					balance: (paid, values) => {
-						const totalAmount =
-							values?.customer === 'staff'
-								? parseFloat(values.staff_total || 0)
-								: parseFloat(values.total || 0);
-						return totalAmount > 0
-							? Math.abs(totalAmount - parseFloat(paid || 0))
-							: 0;
-					},
-				},
-			}),
-		[]
-	);
 
 	const onNavigatePage = pageNumber => {
 		const items = getPageList(foodItems, pageLimit, pageNumber);
@@ -217,7 +182,7 @@ const Dashboard = () => {
 		confirmAction(
 			doMakeSale,
 			values,
-			'Do you want to make payment?',
+			'Do you want to place order?',
 			'Are you sure?'
 		);
 	};
@@ -236,33 +201,20 @@ const Dashboard = () => {
 				staff_id: values.staff?.id,
 			};
 			dispatch(startBlock());
-			const rs = await request('cafeteria/sale', 'POST', true, data);
+			const rs = await request('cafeteria/take-order', 'POST', true, data);
 			dispatch(stopBlock());
 			if (rs.success) {
-				notifySuccess('payment accepted!');
-				console.log(rs.transaction);
-				showReceiptModal(rs.transaction);
+				notifySuccess('order created!');
+				history.push('/cafeteria/orders');
 			} else {
 				return {
-					[FORM_ERROR]: rs.message || 'could not make sale',
+					[FORM_ERROR]: rs.message || 'could not take order',
 				};
 			}
 		} catch (e) {
 			dispatch(stopBlock());
-			return { [FORM_ERROR]: 'could not make sale' };
+			return { [FORM_ERROR]: 'could not take order' };
 		}
-	};
-
-	const showReceiptModal = cart => {
-		document.body.classList.add('modal-open');
-		setCafeteriaCart(cart);
-		setShowReceipt(true);
-	};
-
-	const closeModal = () => {
-		setShowReceipt(false);
-		setCafeteriaCart(null);
-		document.body.classList.remove('modal-open');
 	};
 
 	return (
@@ -348,20 +300,14 @@ const Dashboard = () => {
 			<div className="col-lg-4 b-l-lg">
 				<div className="padded-lg px-3">
 					<div className="element-wrapper">
-						<h6 className="element-header">Make Payment</h6>
+						<h6 className="element-header">Create Order</h6>
 						<Form
 							onSubmit={makeSale}
-							initialValues={{ total: 0, staff_total: 0, balance: 0 }}
+							initialValues={{ total: 0, staff_total: 0 }}
 							validate={values => {
 								const errors = {};
 								if (!values.customer) {
 									errors.customer = 'Select customer';
-								}
-								if (!values.paid) {
-									errors.paid = 'Enter paid amount';
-								}
-								if (!values.payment_method) {
-									errors.payment_method = 'Select payment method';
 								}
 								if (
 									!values.staff &&
@@ -379,7 +325,6 @@ const Dashboard = () => {
 								}
 								return errors;
 							}}
-							decorators={[calculateAmount]}
 							render={({
 								handleSubmit,
 								submitting,
@@ -407,8 +352,6 @@ const Dashboard = () => {
 														className="form-control"
 														onChange={e => {
 															form.change('customer', e.target.value);
-															form.change('paid', 0);
-															form.change('balance', 0);
 														}}
 													>
 														<option value="">Choose Customer</option>
@@ -523,9 +466,7 @@ const Dashboard = () => {
 																	</div>
 																</td>
 																<td className="text-right text-bright">
-																	{values?.customer === 'staff'
-																		? formatCurrency(cart.staff_price)
-																		: formatCurrency(cart.price)}
+																	{formatCurrency(cart.price)}
 																</td>
 																<td className="text-center">
 																	<a
@@ -580,64 +521,6 @@ const Dashboard = () => {
 														</div>
 													</div>
 												</div>
-												<div className="col-md-12">
-													<div className="form-group text-right">
-														VAT Inclusive
-													</div>
-												</div>
-												<div className="col-md-12">
-													<div className="form-group">
-														<div className="input-group">
-															<div className="input-group-prepend">
-																<div className="input-group-text">PAID (₦)</div>
-															</div>
-															<Field
-																name="paid"
-																className="form-control no-arrows"
-																component="input"
-																type="number"
-																placeholder="Paid"
-															/>
-														</div>
-														<ErrorBlock name="paid" />
-													</div>
-												</div>
-												<div className="col-md-12">
-													<div className="form-group">
-														<div className="input-group">
-															<div className="input-group-prepend">
-																<div className="input-group-text">
-																	BALANCE (₦)
-																</div>
-															</div>
-															<Field
-																name="balance"
-																className="form-control no-arrows"
-																component="input"
-																type="number"
-																placeholder="Balance"
-																readOnly
-															/>
-														</div>
-													</div>
-												</div>
-												<div className="col-md-12">
-													<div className="form-group">
-														<Field
-															name="payment_method"
-															component="select"
-															className="form-control"
-														>
-															<option value="">Payment Method</option>
-															{paymentMethods.map((pm, i) => (
-																<option key={i} value={pm.id}>
-																	{pm.name}
-																</option>
-															))}
-														</Field>
-														<ErrorBlock name="payment_method" />
-													</div>
-												</div>
 											</div>
 											<div className="row mt-2">
 												<div className="col-md-12 text-right">
@@ -646,7 +529,7 @@ const Dashboard = () => {
 														disabled={submitting}
 														type="submit"
 													>
-														Process
+														Place Order
 													</button>
 													<button
 														className="btn btn-warning ml-1"
@@ -668,14 +551,8 @@ const Dashboard = () => {
 					</div>
 				</div>
 			</div>
-			{showReceipt && cafeteriaCart && (
-				<CafeteriaReceipt
-					cafeteriaCart={cafeteriaCart}
-					closeModal={closeModal}
-				/>
-			)}
 		</div>
 	);
 };
 
-export default Dashboard;
+export default withRouter(TakeOrder);

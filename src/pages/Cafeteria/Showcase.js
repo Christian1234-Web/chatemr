@@ -42,6 +42,7 @@ const Showcase = () => {
 			const { result, ...paginattion } = rs;
 			setMeta(paginattion);
 			setItems(result);
+			window.scrollTo({ top: 0, behavior: 'smooth' });
 		} catch (error) {
 			console.log(error);
 		}
@@ -132,7 +133,6 @@ const Showcase = () => {
 
 	const onNavigatePage = async pageNumber => {
 		await fetchItems(pageNumber);
-		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
 
 	const onApprove = async item => {

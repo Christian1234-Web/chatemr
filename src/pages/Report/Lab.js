@@ -7,12 +7,9 @@ import Pagination from 'antd/lib/pagination';
 import waiting from '../../assets/images/waiting.gif';
 import { request, itemRender } from '../../services/utilities';
 import { notifyError } from '../../services/notify';
-import LabBlock from '../../components/LabBlock';
 import TableLoading from '../../components/TableLoading';
 
 const { RangePicker } = DatePicker;
-
-const status = [{ label: 'All' }, { label: 'Filled' }, { label: 'Completed' }];
 
 class Lab extends Component {
 	state = {
@@ -33,7 +30,7 @@ class Lab extends Component {
 
 	fetchLabs = async page => {
 		try {
-			const { startDate, endDate, status, patient_id, search } = this.state;
+			const { startDate, endDate, search } = this.state;
 			this.setState({ loading: true });
 			const p = page || 1;
 			const url = `transactions/search?bill_source=labs&page=${p}&limit=10&term=${search}&startDate=${startDate}&endDate=${endDate}`;
@@ -87,7 +84,7 @@ class Lab extends Component {
 	};
 
 	render() {
-		const { filtering, loading, labs, meta, search } = this.state;
+		const { filtering, loading, labs, meta } = this.state;
 		return (
 			<div className="content-i">
 				<div className="content-box">

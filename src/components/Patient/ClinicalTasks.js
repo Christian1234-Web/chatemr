@@ -103,7 +103,6 @@ const ClinicalTasks = ({ itemId, type, can_request = true }) => {
 	};
 
 	const recordFluid = item => {
-		console.log(item);
 		document.body.classList.add('modal-open');
 		setShowChartModal(true);
 		setTaskItem(item);

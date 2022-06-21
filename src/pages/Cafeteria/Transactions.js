@@ -2,6 +2,8 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import Pagination from 'antd/lib/pagination';
+import startCase from 'lodash.startcase';
+
 import { searchAPI } from '../../services/constants';
 import waiting from '../../assets/images/waiting.gif';
 import DatePicker from 'antd/lib/date-picker';
@@ -12,9 +14,7 @@ import {
 	formatDate,
 	itemRender,
 } from '../../services/utilities';
-
 import { notifyError } from '../../services/notify';
-import searchingGIF from '../../assets/images/searching.gif';
 import TableLoading from '../../components/TableLoading';
 import { formatCurrency } from '../../services/utilities';
 
@@ -58,7 +58,6 @@ class Transactions extends Component {
 			this.setState({ loading: true });
 			const p = page || 1;
 			const url = `transactions/search?page=${p}&limit=10&term=${searching}&startDate=${startDate}&endDate=${endDate}&bill_source=cafeteria&filter=`;
-			// const url = `transactions?patient_id=&startDate=${startDate}&endDate=${endDate}&status=&service_id=cafeteria&payment_method&page=1&limit=10`;
 			const rs = await request(url, 'GET', true);
 			const { result, ...meta } = rs;
 
@@ -109,7 +108,6 @@ class Transactions extends Component {
 		if (type === 'patient') {
 			let name = patientname(pat);
 			document.getElementById('patient').value = name;
-			// setPatients([]);
 			this.setState({ ...this.state, patient_id: pat.id, patients: [] });
 		} else {
 			document.getElementById('hmo').value = pat.name;
@@ -121,11 +119,8 @@ class Transactions extends Component {
 		if (this.state.query.length > 2) {
 			try {
 				this.setState({ ...this.state, searching: true });
-				const rs = await request(
-					`${searchAPI}?q=${this.state.query}`,
-					'GET',
-					true
-				);
+				const uri = `${searchAPI}?q=${this.state.query}`;
+				const rs = await request(uri, 'GET', true);
 
 				this.setState({
 					...this.state,
@@ -193,17 +188,8 @@ class Transactions extends Component {
 	};
 
 	render() {
-		const {
-			filtering,
-			loading,
-			searching,
-			// hmos,
-			patients,
-			// searchHmo,
-			transactions,
-			meta,
-		} = this.state;
-
+		const { filtering, loading, searching, patients, transactions, meta } =
+			this.state;
 		return (
 			<div className="element-box">
 				<form className="row">
@@ -229,28 +215,27 @@ class Transactions extends Component {
 							</div>
 						)}
 
-						{patients &&
-							patients.map(pat => {
-								return (
-									<div
-										style={{ display: 'flex' }}
-										key={pat.id}
-										className="element-box"
+						{patients?.map(pat => {
+							return (
+								<div
+									style={{ display: 'flex' }}
+									key={pat.id}
+									className="element-box"
+								>
+									<a
+										onClick={() => this.patientSet(pat, 'patient')}
+										className="ssg-item cursor"
 									>
-										<a
-											onClick={() => this.patientSet(pat, 'patient')}
-											className="ssg-item cursor"
-										>
-											<div
-												className="item-name"
-												dangerouslySetInnerHTML={{
-													__html: patientname(pat),
-												}}
-											/>
-										</a>
-									</div>
-								);
-							})}
+										<div
+											className="item-name"
+											dangerouslySetInnerHTML={{
+												__html: patientname(pat),
+											}}
+										/>
+									</a>
+								</div>
+							);
+						})}
 					</div>
 					<div className="form-group col-md-3">
 						<label>Payment method</label>
@@ -260,36 +245,33 @@ class Transactions extends Component {
 							placeholder="Search for payment method"
 							type="text"
 							name="patient"
-							defaultValue=""
-							// onChange={e => this.setState({ searching: e.target.value })}
 							onChange={e => this.handlePatientChange(e)}
 							autoComplete="off"
 							required
 							style={{ height: '32px' }}
 						/>
 
-						{patients &&
-							patients.map(pat => {
-								return (
-									<div
-										style={{ display: 'flex' }}
-										key={pat.id}
-										className="element-box"
+						{patients?.map(pat => {
+							return (
+								<div
+									style={{ display: 'flex' }}
+									key={pat.id}
+									className="element-box"
+								>
+									<a
+										onClick={() => this.patientSet(pat, 'patient')}
+										className="ssg-item cursor"
 									>
-										<a
-											onClick={() => this.patientSet(pat, 'patient')}
-											className="ssg-item cursor"
-										>
-											<div
-												className="item-name"
-												dangerouslySetInnerHTML={{
-													__html: patientname(pat),
-												}}
-											/>
-										</a>
-									</div>
-								);
-							})}
+										<div
+											className="item-name"
+											dangerouslySetInnerHTML={{
+												__html: patientname(pat),
+											}}
+										/>
+									</a>
+								</div>
+							);
+						})}
 					</div>
 					<div className="form-group col-md-3 pr-0">
 						<label>From - To</label>
@@ -322,33 +304,37 @@ class Transactions extends Component {
 										<th>Date</th>
 										<th>Customer</th>
 										<th>Item Sold</th>
-										<th>Payment Method</th>
+										<th>Method</th>
+										<th>Type</th>
 										<th>Amount</th>
 										<th>Paid</th>
 									</tr>
 								</thead>
 								<tbody>
-									{transactions.map((request, i) => {
-										const patient = request.patient
-											? patientname(request.patient, true)
-											: 'walk-in';
+									{transactions.map((item, i) => {
+										const patient = item.patient
+											? patientname(item.patient, true)
+											: 'Guest';
 										return (
-											<tr data-index="0" key={i}>
+											<tr key={i}>
 												<td>
-													{formatDate(request.createdAt, 'DD-MMM-YYYY h:mm a')}
+													{formatDate(item.createdAt, 'DD-MMM-YYYY h:mm a')}
 												</td>
+												<td>{item.staff ? staffname(item.staff) : patient}</td>
 												<td>
-													{request.staff ? staffname(request.staff) : patient}
-												</td>
-												<td>
-													{request?.transaction_details
+													{item?.transaction_details
 														?.map(t => `${t.name} (${t?.qty || 1})`)
 														.join(', ') || '-'}
 												</td>
-												<td>{request.payment_method}</td>
-												<td>{formatCurrency(request.amount, true)}</td>
+												<td>{item.payment_method}</td>
+												<td>{startCase(item.transaction_type)}</td>
 												<td>
-													{request.status === 1 ? (
+													{item.transaction_type === 'credit'
+														? formatCurrency(item.amount_paid)
+														: formatCurrency(item.amount)}
+												</td>
+												<td>
+													{item.status === 1 ? (
 														<span className="badge badge-success">paid</span>
 													) : (
 														<span className="badge badge-secondary">

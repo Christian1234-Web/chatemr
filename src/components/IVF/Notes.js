@@ -60,8 +60,8 @@ const Notes = () => {
 	};
 
 	const closeModal = () => {
-		document.body.classList.remove('modal-open');
 		setShowModal(false);
+		document.body.classList.remove('modal-open');
 	};
 
 	const updateNote = item => {

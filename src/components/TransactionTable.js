@@ -144,23 +144,35 @@ const TransactionTable = ({
 									{moment(transaction.createdAt).format('DD-MM-YYYY h:mm a')}
 								</td>
 								<td>
-									<a onClick={() => showList(transaction.patient)}>
-										{patientname(transaction.patient, true)}
-										{transaction.admission && (
-											<Tooltip
-												title={<Admitted room={transaction?.admission?.room} />}
-											>
-												<i className="fa fa-hospital-o text-danger" />
-											</Tooltip>
-										)}
-										{transaction.patient?.nicu_id && (
-											<Tooltip
-												title={<NicuAdmitted room={transaction?.nicu?.room} />}
-											>
-												<i className="fa fa-hospital-o text-danger" />
-											</Tooltip>
-										)}
-									</a>
+									{transaction.patient && (
+										<a onClick={() => showList(transaction.patient)}>
+											{patientname(transaction.patient, true)}
+											{transaction.admission && (
+												<Tooltip
+													title={
+														<Admitted room={transaction?.admission?.room} />
+													}
+												>
+													<i className="fa fa-hospital-o text-danger" />
+												</Tooltip>
+											)}
+											{transaction.patient?.nicu_id && (
+												<Tooltip
+													title={
+														<NicuAdmitted room={transaction?.nicu?.room} />
+													}
+												>
+													<i className="fa fa-hospital-o text-danger" />
+												</Tooltip>
+											)}
+										</a>
+									)}
+									{transaction.dedastaff
+										? staffname(transaction.dedastaff)
+										: ''}
+									{!transaction.patient && !transaction.dedastaff
+										? 'Guest'
+										: ''}
 								</td>
 								<td>
 									<div className="flex">
@@ -188,6 +200,13 @@ const TransactionTable = ({
 															reqItem.drugBatch.unitPrice
 														)} each`}
 													</>
+												)}
+												{transaction?.bill_source === 'cafeteria' ? (
+													<>{`: ${transaction?.transaction_details
+														?.map(t => `${t.name} (${t?.qty || 1})`)
+														.join(', ')}`}</>
+												) : (
+													''
 												)}
 											</span>
 										</span>

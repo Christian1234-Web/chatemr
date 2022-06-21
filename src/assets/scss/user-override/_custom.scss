@@ -832,6 +832,19 @@ div[class$='-ValueContainer'] {
 	line-height: 0.69;
 }
 
+.btn.filter-btn {
+	.count {
+		display: inline-block;
+		margin-left: 6px;
+		background: #fff;
+		border-radius: 50%;
+		color: #e65252;
+		padding: 0.28rem;
+		font-weight: 700;
+		font-size: 9px;
+	}
+}
+
 .react-datepicker {
 	width: max-content;
 }
@@ -1040,11 +1053,11 @@ h4.onboarding-title {
 	h4 {
 		font-weight: 500;
 		font-size: 0.81rem;
-		color: #3E4B5B !important;
+		color: #3e4b5b !important;
 	}
 }
 
 .col-block {
 	flex: 0 0 20%;
-    max-width: 20%;
+	max-width: 20%;
 }
