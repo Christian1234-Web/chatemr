@@ -126,7 +126,8 @@ class MainMenu extends Component {
 							{(role === 'doctor' || role === 'nurse') && <ProcedureMenu />}
 							{role === 'hr-manager' && <HrMenu />}
 							{role === 'store' && <StoreMenu />}
-							{(role === 'cafeteria' ||
+							{(role === 'cafeteria-waiter' ||
+								role === 'cafeteria-kitchen' ||
 								role === 'cafeteria-manager' ||
 								role === 'cafeteria-sales') && <CafeteriaMenu />}
 							{hasViewHmoPermission(profile.permissions) && (

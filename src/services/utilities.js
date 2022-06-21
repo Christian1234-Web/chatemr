@@ -481,7 +481,8 @@ export const redirectToPage = (role, history, permissions) => {
 			case 'inventory':
 				uri = '/inventory/categories';
 				break;
-			case 'cafeteria':
+			case 'cafeteria-waiter':
+			case 'cafeteria-kitchen':
 			case 'cafeteria-manager':
 			case 'cafeteria-sales':
 				uri = '/cafeteria';
