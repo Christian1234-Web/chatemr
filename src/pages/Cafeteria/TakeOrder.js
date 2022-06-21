@@ -204,8 +204,9 @@ const TakeOrder = ({ history }) => {
 			const rs = await request('cafeteria/take-order', 'POST', true, data);
 			dispatch(stopBlock());
 			if (rs.success) {
+				formRef.current.reset();
+				setCartItems([]);
 				notifySuccess('order created!');
-				history.push('/cafeteria/orders');
 			} else {
 				return {
 					[FORM_ERROR]: rs.message || 'could not take order',
@@ -325,13 +326,7 @@ const TakeOrder = ({ history }) => {
 								}
 								return errors;
 							}}
-							render={({
-								handleSubmit,
-								submitting,
-								submitError,
-								form,
-								values,
-							}) => {
+							render={({ handleSubmit, submitting, submitError, form }) => {
 								formRef.current = form;
 								return (
 									<form onSubmit={handleSubmit}>

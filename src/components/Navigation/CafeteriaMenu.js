@@ -14,10 +14,19 @@ const CafeteriaMenu = () => {
 
 	return (
 		<>
-			{(hasViewTakeOrderPermission(user.permissions) ||
-				hasViewOrdersPermission(user.permissions) ||
+			{(hasViewOrdersPermission(user.permissions) ||
 				hasViewShowcasePermission(user.permissions) ||
 				hasViewTransactionsPermission(user.permissions)) && (
+				<li>
+					<Link to="/cafeteria/orders">
+						<div className="icon-w">
+							<div className="os-icon os-icon-layers" />
+						</div>
+						<span>Dashboard</span>
+					</Link>
+				</li>
+			)}
+			{hasViewTakeOrderPermission(user.permissions) && (
 				<li>
 					<Link to="/cafeteria">
 						<div className="icon-w">
