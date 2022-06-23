@@ -3,6 +3,9 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import {
+	hasViewCafeteriaInventoryPermission,
+	hasViewCafeteriaRequisitionsPermission,
+	hasViewCafeteriaVendorsPermission,
 	hasViewOrdersPermission,
 	hasViewShowcasePermission,
 	hasViewTakeOrderPermission,
@@ -36,30 +39,36 @@ const CafeteriaMenu = () => {
 					</Link>
 				</li>
 			)}
-			<li>
-				<Link to="/cafeteria/inventory">
-					<div className="icon-w">
-						<div className="os-icon os-icon-layers" />
-					</div>
-					<span>Inventory</span>
-				</Link>
-			</li>
-			<li>
-				<Link to="/cafeteria/vendors">
-					<div className="icon-w">
-						<div className="os-icon os-icon-layers" />
-					</div>
-					<span>Vendors</span>
-				</Link>
-			</li>
-			<li>
-				<Link to="/cafeteria/requisitions">
-					<div className="icon-w">
-						<div className="os-icon os-icon-layers" />
-					</div>
-					<span>Requisitions</span>
-				</Link>
-			</li>
+			{hasViewCafeteriaInventoryPermission(user.permissions) && (
+				<li>
+					<Link to="/cafeteria/inventory">
+						<div className="icon-w">
+							<div className="os-icon os-icon-layers" />
+						</div>
+						<span>Inventory</span>
+					</Link>
+				</li>
+			)}
+			{hasViewCafeteriaVendorsPermission(user.permissions) && (
+				<li>
+					<Link to="/cafeteria/vendors">
+						<div className="icon-w">
+							<div className="os-icon os-icon-layers" />
+						</div>
+						<span>Vendors</span>
+					</Link>
+				</li>
+			)}
+			{hasViewCafeteriaRequisitionsPermission(user.permissions) && (
+				<li>
+					<Link to="/cafeteria/requisitions">
+						<div className="icon-w">
+							<div className="os-icon os-icon-layers" />
+						</div>
+						<span>Requisitions</span>
+					</Link>
+				</li>
+			)}
 		</>
 	);
 };

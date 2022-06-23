@@ -129,6 +129,7 @@ class MainMenu extends Component {
 							{(role === 'cafeteria-waiter' ||
 								role === 'cafeteria-kitchen' ||
 								role === 'cafeteria-manager' ||
+								role === 'cafeteria-store' ||
 								role === 'cafeteria-sales') && <CafeteriaMenu />}
 							{hasViewHmoPermission(profile.permissions) && (
 								<li className="sub-header">
