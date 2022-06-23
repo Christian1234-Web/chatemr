@@ -21,6 +21,10 @@ import { startBlock, stopBlock } from '../../actions/redux-block';
 import waiting from '../../assets/images/waiting.gif';
 import OrderPayment from '../../components/Modals/OrderPayment';
 import CafeteriaReceipt from '../../components/Modals/CafeteriaReceipt';
+import {
+	hasCanDoCafeteriaPaymentPermission,
+	hasConfirmOrderReadyPermission,
+} from '../../permission-utils/cafeteria';
 
 const Orders = () => {
 	const [loaded, setLoaded] = useState(false);
@@ -203,18 +207,19 @@ const Orders = () => {
 									</span>
 								</div>
 							</div>
-							{checked.length > 0 && (
-								<div className="form-group col mb-0">
-									<div
-										className="btn btn-sm btn-danger btn-upper text-white filter-btn"
-										onClick={makePayment}
-									>
-										<i className="os-icon os-icon-finance-28" />
-										<span>Cart</span>
-										<span className="count">{checked.length}</span>
+							{checked.length > 0 &&
+								hasCanDoCafeteriaPaymentPermission(user.permissions) && (
+									<div className="form-group col mb-0">
+										<div
+											className="btn btn-sm btn-danger btn-upper text-white filter-btn"
+											onClick={makePayment}
+										>
+											<i className="os-icon os-icon-finance-28" />
+											<span>Cart</span>
+											<span className="count">{checked.length}</span>
+										</div>
 									</div>
-								</div>
-							)}
+								)}
 						</form>
 					</div>
 					<div className="element-box p-3 m-0">
@@ -309,16 +314,19 @@ const Orders = () => {
 														<td className="row-actions">
 															{!item.transaction && (
 																<>
-																	{item.status === 0 && (
-																		<Tooltip title="Is ready">
-																			<a
-																				className="info"
-																				onClick={() => confirmReady(item)}
-																			>
-																				<i className="os-icon os-icon-check-square" />
-																			</a>
-																		</Tooltip>
-																	)}
+																	{item.status === 0 &&
+																		hasConfirmOrderReadyPermission(
+																			user.permissions
+																		) && (
+																			<Tooltip title="Is ready">
+																				<a
+																					className="info"
+																					onClick={() => confirmReady(item)}
+																				>
+																					<i className="os-icon os-icon-check-square" />
+																				</a>
+																			</Tooltip>
+																		)}
 																	{item.status === 0 && (
 																		<Tooltip title="Cancel Order">
 																			<a

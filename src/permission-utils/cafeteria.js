@@ -25,3 +25,11 @@ export function hasViewCafeteriaVendorsPermission(permissions) {
 export function hasViewCafeteriaRequisitionsPermission(permissions) {
 	return permissions.find(p => p === 'view-cafeteria-requisitions');
 }
+
+export function hasConfirmOrderReadyPermission(permissions) {
+	return permissions.find(p => p === 'can-confirm-order-ready');
+}
+
+export function hasCanDoCafeteriaPaymentPermission(permissions) {
+	return permissions.find(p => p === 'can-take-cafeteria-payments');
+}
