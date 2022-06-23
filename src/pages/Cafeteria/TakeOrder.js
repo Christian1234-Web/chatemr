@@ -6,7 +6,6 @@ import { useDispatch } from 'react-redux';
 import { Form, Field } from 'react-final-form';
 import { FORM_ERROR } from 'final-form';
 import AsyncSelect from 'react-select/async/dist/react-select.esm';
-import { withRouter } from 'react-router-dom';
 
 import { cafeteriaAPI, paginate, searchAPI } from '../../services/constants';
 import {
@@ -27,7 +26,7 @@ import { startBlock, stopBlock } from '../../actions/redux-block';
 
 const pageLimit = 12;
 
-const TakeOrder = ({ history }) => {
+const TakeOrder = () => {
 	const [loaded, setLoaded] = useState(false);
 	const [meta, setMeta] = useState({ ...paginate });
 	const [foodItems, setFoodItems] = useState([]);
@@ -35,31 +34,39 @@ const TakeOrder = ({ history }) => {
 	const [cartItems, setCartItems] = useState([]);
 	const [staff, setStaff] = useState(null);
 	const [patient, setPatient] = useState(null);
+	const [searchItem, setSearchItem] = useState('');
 
 	const formRef = useRef();
 
 	const dispatch = useDispatch();
 
-	const fetchInventories = useCallback(async () => {
-		try {
-			const url = `${cafeteriaAPI}/showcase-items`;
-			const rs = await request(url, 'GET', true);
-			setFoodItems(rs);
-			const items = getPageList(rs, pageLimit, 1);
-			setMeta({
-				...meta,
-				itemsPerPage: pageLimit,
-				totalPages: rs.length,
-				currentPage: 1,
-			});
-			setItems(items);
-			setLoaded(true);
-		} catch (error) {
-			console.log(error);
-			setLoaded(true);
-			notifyError(error.message || 'could not fetch items');
-		}
-	}, [meta]);
+	const fetchInventories = useCallback(
+		async search => {
+			try {
+				dispatch(startBlock());
+				const item = search || '';
+				const url = `${cafeteriaAPI}/showcase-items?q=${item}`;
+				const rs = await request(url, 'GET', true);
+				setFoodItems(rs);
+				const items = getPageList(rs, pageLimit, 1);
+				setMeta({
+					...meta,
+					itemsPerPage: pageLimit,
+					totalPages: rs.length,
+					currentPage: 1,
+				});
+				setItems(items);
+				setLoaded(true);
+				dispatch(stopBlock());
+			} catch (error) {
+				console.log(error);
+				dispatch(stopBlock());
+				setLoaded(true);
+				notifyError(error.message || 'could not fetch items');
+			}
+		},
+		[dispatch, meta]
+	);
 
 	useEffect(() => {
 		if (!loaded) {
@@ -77,7 +84,7 @@ const TakeOrder = ({ history }) => {
 	};
 
 	const selectItem = item => {
-		if (item.quantity <= 0) {
+		if (item.quantity <= 0 && item.foodItem.category_slug === 'show-case') {
 			notifyError(`${item.foodItem.name} has finished`);
 			return;
 		}
@@ -218,6 +225,10 @@ const TakeOrder = ({ history }) => {
 		}
 	};
 
+	const search = async () => {
+		await fetchInventories(searchItem);
+	};
+
 	return (
 		<div className="row">
 			<div className="col-lg-8">
@@ -231,9 +242,14 @@ const TakeOrder = ({ history }) => {
 											type="text"
 											className="form-control"
 											placeholder="search"
+											onChange={e => setSearchItem(e.target.value)}
 										/>
 										<div className="input-group-append">
-											<button className="btn btn-primary" type="button">
+											<button
+												className="btn btn-primary"
+												type="button"
+												onClick={() => search()}
+											>
 												Button
 											</button>
 										</div>
@@ -269,11 +285,13 @@ const TakeOrder = ({ history }) => {
 														)}
 														<a className="extra-info">
 															<span>
-																{pluralize(
-																	item.foodItem.unit,
-																	item.quantity,
-																	true
-																)}
+																{item.foodItem.category_slug !== 'show-case'
+																	? 'À la carte'
+																	: pluralize(
+																			item.foodItem.unit,
+																			item.quantity,
+																			true
+																	  )}
 															</span>
 														</a>
 													</div>
@@ -550,4 +568,4 @@ const TakeOrder = ({ history }) => {
 	);
 };
 
-export default withRouter(TakeOrder);
+export default TakeOrder;

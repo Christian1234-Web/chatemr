@@ -2,7 +2,6 @@ import React from 'react';
 import { Form, Field } from 'react-final-form';
 import { FORM_ERROR } from 'final-form';
 import { useDispatch } from 'react-redux';
-import Select from 'react-select';
 
 import { Compulsory, ErrorBlock, request } from '../../services/utilities';
 import waiting from '../../assets/images/waiting.gif';
@@ -10,16 +9,6 @@ import { startBlock, stopBlock } from '../../actions/redux-block';
 import { notifySuccess } from '../../services/notify';
 import ModalHeader from '../ModalHeader';
 import { cafeteriaAPI } from '../../services/constants';
-
-const ReactSelectAdapter = ({ input, ...rest }) => (
-	<Select
-		getOptionValue={option => option.id}
-		getOptionLabel={option => option.name}
-		{...input}
-		{...rest}
-		searchable
-	/>
-);
 
 const ModalEditFoodItem = ({ closeModal, foodItem, updateFoodItem }) => {
 	const dispatch = useDispatch();
@@ -54,17 +43,11 @@ const ModalEditFoodItem = ({ closeModal, foodItem, updateFoodItem }) => {
 						<div className="form-block">
 							<Form
 								onSubmit={onSubmit}
-								initialValues={{
-									...foodItem,
-									category: { id: foodItem.category, name: foodItem.category },
-								}}
+								initialValues={{ ...foodItem }}
 								validate={values => {
 									const errors = {};
 									if (!values.name) {
 										errors.name = 'enter name';
-									}
-									if (!values.category) {
-										errors.category = 'select category';
 									}
 									if (!values.price) {
 										errors.price = 'enter price';
@@ -105,20 +88,7 @@ const ModalEditFoodItem = ({ closeModal, foodItem, updateFoodItem }) => {
 												</div>
 											</div>
 											<div className="col-sm-6">
-												<div className="form-group">
-													<label>
-														Category <Compulsory />
-													</label>
-													<Field
-														name="category"
-														component={ReactSelectAdapter}
-														options={[
-															{ id: 'À la Carte', name: 'À la Carte' },
-															{ id: 'Show Case', name: 'Show Case' },
-														]}
-													/>
-													<ErrorBlock name="category" />
-												</div>
+												<div className="form-group"></div>
 											</div>
 										</div>
 										<div className="row">

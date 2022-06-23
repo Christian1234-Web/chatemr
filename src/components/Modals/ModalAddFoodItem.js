@@ -109,7 +109,7 @@ const ModalAddFoodItem = ({ closeModal, addFoodItem }) => {
 														name="category"
 														component={ReactSelectAdapter}
 														options={[
-															{ id: 'À la Carte', name: 'À la Carte' },
+															{ id: 'A la Carte', name: 'A la Carte' },
 															{ id: 'Show Case', name: 'Show Case' },
 														]}
 													/>

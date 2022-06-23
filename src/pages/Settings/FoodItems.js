@@ -48,24 +48,6 @@ const FoodItems = () => {
 		}
 	}, [fetchItems, loaded]);
 
-	// const onClickEdit = data => {
-	// 	setSubmitButton({ edit: true, create: false });
-	// 	setState(prevState => ({
-	// 		...prevState,
-	// 		name: data.name,
-	// 		description: data.description || '',
-	// 		price: data.price,
-	// 		staff_price: data.staff_price,
-	// 		unit: data.unit || '',
-	// 	}));
-	// 	getDataToEdit(data);
-	// };
-
-	// const cancelEditButton = () => {
-	// 	setSubmitButton({ ...initialState });
-	// 	setState({ ...initialState });
-	// };
-
 	const onDeleteItem = async data => {
 		try {
 			dispatch(startBlock());
@@ -107,6 +89,26 @@ const FoodItems = () => {
 		setShowAddModal(false);
 		setFoodItem(null);
 		document.body.classList.remove('modal-open');
+	};
+
+	const convert = item => {
+		confirmAction(doConvert, item, 'Convert Food Item to A La Carte');
+	};
+
+	const doConvert = async item => {
+		try {
+			dispatch(startBlock());
+			const url = `${cafeteriaAPI}/food-items/${item.id}/a-la-carte`;
+			const rs = await request(url, 'PATCH', true, {});
+			dispatch(stopBlock());
+			setItems(updateImmutable(items, rs));
+			notifySuccess('food item saved');
+			closeModal();
+		} catch (e) {
+			console.log(e.message);
+			dispatch(stopBlock());
+			notifyError('could not save food item');
+		}
 	};
 
 	return (
@@ -175,12 +177,22 @@ const FoodItems = () => {
 																			<td>
 																				<Tooltip title="Edit Item">
 																					<a
-																						className="secondary"
+																						className="text-secondary"
 																						onClick={() => editFoodItem(item)}
 																					>
 																						<i className="os-icon os-icon-edit-32" />
 																					</a>
 																				</Tooltip>
+																				{item.category_slug === 'show-case' && (
+																					<Tooltip title="Convert to A la Carte">
+																						<a
+																							className="ml-4"
+																							onClick={() => convert(item)}
+																						>
+																							<i className="os-icon os-icon-refresh-cw" />
+																						</a>
+																					</Tooltip>
+																				)}
 																			</td>
 																		</tr>
 																	);

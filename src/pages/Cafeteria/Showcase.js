@@ -155,7 +155,7 @@ const Showcase = () => {
 			return [];
 		}
 
-		const url = `cafeteria/food-items?q=${q}`;
+		const url = `cafeteria/food-items?q=${q}&category=show-case`;
 		const res = await request(url, 'GET', true);
 		return res?.result || [];
 	};
@@ -186,7 +186,9 @@ const Showcase = () => {
 											return (
 												<tr key={i}>
 													<td>{item.foodItem.name}</td>
-													<td>{item.quantity}</td>
+													<td>
+														{item.quantity < 0 ? 'À la carte' : item.quantity}
+													</td>
 													<td>
 														{formatDate(item.createdAt, 'DD-MMM-YYYY h:mm a')}
 													</td>
