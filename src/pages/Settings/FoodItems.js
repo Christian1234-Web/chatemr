@@ -15,24 +15,16 @@ import {
 } from '../../services/utilities';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import { notifySuccess, notifyError } from '../../services/notify';
+import ModalAddFoodItem from '../../components/Modals/ModalAddFoodItem';
+import ModalEditFoodItem from '../../components/Modals/ModalEditFoodItem';
 
 const FoodItems = () => {
-	const initialState = {
-		name: '',
-		description: '',
-		price: '',
-		staff_price: '',
-		unit: '',
-		edit: false,
-		create: true,
-	};
-	const [{ name, description, price, staff_price, unit }, setState] =
-		useState(initialState);
-	const [{ edit, create }, setSubmitButton] = useState(initialState);
-	const [data, getDataToEdit] = useState(null);
 	const [loaded, setLoaded] = useState(false);
 	const [items, setItems] = useState([]);
 	const [meta, setMeta] = useState({ ...paginate });
+	const [showAddModal, setShowAddModal] = useState(false);
+	const [showEditModal, setShowEditModal] = useState(false);
+	const [foodItem, setFoodItem] = useState(null);
 
 	const dispatch = useDispatch();
 
@@ -56,63 +48,23 @@ const FoodItems = () => {
 		}
 	}, [fetchItems, loaded]);
 
-	const handleInputChange = e => {
-		const { name, value } = e.target;
-		setState(prevState => ({ ...prevState, [name]: value }));
-	};
+	// const onClickEdit = data => {
+	// 	setSubmitButton({ edit: true, create: false });
+	// 	setState(prevState => ({
+	// 		...prevState,
+	// 		name: data.name,
+	// 		description: data.description || '',
+	// 		price: data.price,
+	// 		staff_price: data.staff_price,
+	// 		unit: data.unit || '',
+	// 	}));
+	// 	getDataToEdit(data);
+	// };
 
-	const onCreateItem = async e => {
-		try {
-			e.preventDefault();
-			dispatch(startBlock());
-			const info = { name, description, price, staff_price, unit };
-			const url = `${cafeteriaAPI}/food-items`;
-			const rs = await request(url, 'POST', true, info);
-			setItems([rs, ...items]);
-			dispatch(stopBlock());
-			setState({ ...initialState });
-			notifySuccess('Food item added');
-		} catch (error) {
-			dispatch(stopBlock());
-			notifyError('Error creating food item');
-		}
-	};
-
-	const onEditItem = async e => {
-		try {
-			e.preventDefault();
-			dispatch(startBlock());
-			const info = { name, description, price, staff_price, unit };
-			const url = `${cafeteriaAPI}/food-items/${data.id}`;
-			const rs = await request(url, 'PUT', true, info);
-			setItems([...updateImmutable(items, rs)]);
-			setState({ ...initialState });
-			setSubmitButton({ create: true, edit: false });
-			dispatch(stopBlock());
-			notifySuccess('Food item updated');
-		} catch (error) {
-			dispatch(stopBlock());
-			notifyError('Error updating food item');
-		}
-	};
-
-	const onClickEdit = data => {
-		setSubmitButton({ edit: true, create: false });
-		setState(prevState => ({
-			...prevState,
-			name: data.name,
-			description: data.description || '',
-			price: data.price,
-			staff_price: data.staff_price,
-			unit: data.unit || '',
-		}));
-		getDataToEdit(data);
-	};
-
-	const cancelEditButton = () => {
-		setSubmitButton({ ...initialState });
-		setState({ ...initialState });
-	};
+	// const cancelEditButton = () => {
+	// 	setSubmitButton({ ...initialState });
+	// 	setState({ ...initialState });
+	// };
 
 	const onDeleteItem = async data => {
 		try {
@@ -139,173 +91,144 @@ const FoodItems = () => {
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
 
+	const addFoodItem = () => {
+		document.body.classList.add('modal-open');
+		setShowAddModal(true);
+	};
+
+	const editFoodItem = item => {
+		document.body.classList.add('modal-open');
+		setFoodItem(item);
+		setShowEditModal(true);
+	};
+
+	const closeModal = () => {
+		setShowEditModal(false);
+		setShowAddModal(false);
+		setFoodItem(null);
+		document.body.classList.remove('modal-open');
+	};
+
 	return (
 		<div className="content-i">
 			<div className="content-box">
-				<div className="element-wrapper">
-					<div className="os-tabs-w mx-1">
-						<div className="os-tabs-controls os-tabs-complex">
-							<ul className="nav nav-tabs upper">
-								<li className="nav-item">
-									<a className="nav-link active">Cafeteria Food Items</a>
-								</li>
-							</ul>
-						</div>
-					</div>
-					{!loaded ? (
-						<TableLoading />
-					) : (
-						<div className="row">
-							<div className="col-lg-9">
-								<div className="element-box p-3 m-0">
-									{!loaded ? (
-										<TableLoading />
-									) : (
-										<>
-											<div className="table-responsive">
-												<table className="table table-theme v-middle table-hover">
-													<thead>
-														<tr>
-															<th>ID</th>
-															<th>Name</th>
-															<th>Price</th>
-															<th>Staff Price</th>
-															<th>Description</th>
-															<th>Unit</th>
-															<th></th>
-														</tr>
-													</thead>
-													<tbody>
-														{items.map((item, i) => {
-															return (
-																<tr key={i}>
-																	<td>{item.id}</td>
-																	<td>{item.name}</td>
-																	<td>{formatCurrency(item.price)}</td>
-																	<td>{formatCurrency(item.staff_price)}</td>
-																	<td>{item.description || '--'}</td>
-																	<td>{item.unit || '--'}</td>
-																	<td>
-																		<Tooltip title="Edit Item">
-																			<a
-																				className="secondary"
-																				onClick={() => onClickEdit(item)}
-																			>
-																				<i className="os-icon os-icon-edit-32" />
-																			</a>
-																		</Tooltip>
-																	</td>
-																</tr>
-															);
-														})}
-														{loaded && items.length === 0 && (
-															<tr>
-																<td colSpan="6" className="text-center">
-																	No Items
-																</td>
-															</tr>
-														)}
-													</tbody>
-												</table>
-											</div>
-											<div className="pagination pagination-center mt-4">
-												<Pagination
-													current={parseInt(meta.currentPage, 10)}
-													pageSize={parseInt(meta.itemsPerPage, 10)}
-													total={parseInt(meta.totalPages, 10)}
-													showTotal={total => `Total ${total} items`}
-													itemRender={itemRender}
-													onChange={onNavigatePage}
-													showSizeChanger={false}
-												/>
-											</div>
-										</>
-									)}
+				<div className="row">
+					<div className="col-sm-12">
+						<div className="element-wrapper">
+							<div className="os-tabs-w mx-1">
+								<div className="os-tabs-controls os-tabs-complex">
+									<ul className="nav nav-tabs upper">
+										<li className="nav-item">
+											<a aria-expanded="false" className="nav-link active">
+												Cafeteria Food Items
+											</a>
+										</li>
+										<li className="nav-item nav-actions d-sm-block">
+											<a
+												className="btn btn-primary btn-sm text-white"
+												onClick={() => addFoodItem()}
+											>
+												<i className="os-icon os-icon-plus-circle"></i>
+												<span>Add Food Item</span>
+											</a>
+										</li>
+									</ul>
 								</div>
 							</div>
-							<div className="col-lg-3">
-								<div className="pipeline white lined-warning">
-									<form onSubmit={edit ? onEditItem : onCreateItem}>
-										<h6 className="form-header">
-											{edit ? 'Edit Food Item' : 'Add Food Item'}
-										</h6>
-										<div className="form-group mt-2">
-											<input
-												className="form-control"
-												placeholder="Item name"
-												type="text"
-												name="name"
-												onChange={handleInputChange}
-												value={name}
-											/>
-										</div>
-										<div className="form-group">
-											<input
-												className="form-control"
-												placeholder="Item price"
-												type="text"
-												name="price"
-												onChange={handleInputChange}
-												value={price}
-											/>
-										</div>
-										<div className="form-group">
-											<input
-												className="form-control"
-												placeholder="Staff price"
-												type="text"
-												name="staff_price"
-												onChange={handleInputChange}
-												value={staff_price}
-											/>
-										</div>
-										<div className="form-group">
-											<input
-												className="form-control"
-												placeholder="Item description"
-												type="text"
-												name="description"
-												onChange={handleInputChange}
-												value={description}
-											/>
-										</div>
-										<div className="form-group">
-											<input
-												className="form-control"
-												placeholder="Item unit"
-												type="text"
-												name="unit"
-												onChange={handleInputChange}
-												value={unit}
-											/>
-										</div>
-										<div className="form-buttons-w">
-											{create && (
-												<button className="btn btn-primary">
-													<span>save</span>
-												</button>
-											)}
-											{edit && (
+							{!loaded ? (
+								<TableLoading />
+							) : (
+								<div className="row">
+									<div className="col-lg-12">
+										<div className="element-box p-3 m-0">
+											{!loaded ? (
+												<TableLoading />
+											) : (
 												<>
-													<button
-														className="btn btn-secondary ml-3"
-														onClick={cancelEditButton}
-													>
-														<span>cancel</span>
-													</button>
-													<button className="btn btn-primary">
-														<span>save</span>
-													</button>
+													<div className="table-responsive">
+														<table className="table table-theme v-middle table-hover">
+															<thead>
+																<tr>
+																	<th>ID</th>
+																	<th>Name</th>
+																	<th>Category</th>
+																	<th>Price</th>
+																	<th>Staff Price</th>
+																	<th>Description</th>
+																	<th>Unit</th>
+																	<th></th>
+																</tr>
+															</thead>
+															<tbody>
+																{items.map((item, i) => {
+																	return (
+																		<tr key={i}>
+																			<td>{item.id}</td>
+																			<td>{item.name}</td>
+																			<td>{item.category}</td>
+																			<td>{formatCurrency(item.price)}</td>
+																			<td>
+																				{formatCurrency(item.staff_price)}
+																			</td>
+																			<td>{item.description || '--'}</td>
+																			<td>{item.unit || '--'}</td>
+																			<td>
+																				<Tooltip title="Edit Item">
+																					<a
+																						className="secondary"
+																						onClick={() => editFoodItem(item)}
+																					>
+																						<i className="os-icon os-icon-edit-32" />
+																					</a>
+																				</Tooltip>
+																			</td>
+																		</tr>
+																	);
+																})}
+																{loaded && items.length === 0 && (
+																	<tr>
+																		<td colSpan="6" className="text-center">
+																			No Items
+																		</td>
+																	</tr>
+																)}
+															</tbody>
+														</table>
+													</div>
+													<div className="pagination pagination-center mt-4">
+														<Pagination
+															current={parseInt(meta.currentPage, 10)}
+															pageSize={parseInt(meta.itemsPerPage, 10)}
+															total={parseInt(meta.totalPages, 10)}
+															showTotal={total => `Total ${total} items`}
+															itemRender={itemRender}
+															onChange={onNavigatePage}
+															showSizeChanger={false}
+														/>
+													</div>
 												</>
 											)}
 										</div>
-									</form>
+									</div>
 								</div>
-							</div>
+							)}
 						</div>
-					)}
+					</div>
 				</div>
 			</div>
+			{showAddModal && (
+				<ModalAddFoodItem
+					closeModal={() => closeModal()}
+					addFoodItem={item => setItems([item, ...items])}
+				/>
+			)}
+			{showEditModal && (
+				<ModalEditFoodItem
+					foodItem={foodItem}
+					closeModal={() => closeModal()}
+					updateFoodItem={item => setItems(updateImmutable(items, item))}
+				/>
+			)}
 		</div>
 	);
 };
