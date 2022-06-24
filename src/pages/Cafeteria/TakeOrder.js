@@ -288,7 +288,7 @@ const TakeOrder = () => {
 																{item.foodItem.category_slug !== 'show-case'
 																	? 'À la carte'
 																	: pluralize(
-																			item.foodItem.unit,
+																			item.foodItem?.unit || '',
 																			item.quantity,
 																			true
 																	  )}
