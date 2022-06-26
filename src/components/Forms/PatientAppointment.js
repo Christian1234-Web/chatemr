@@ -185,7 +185,7 @@ const PatientAppointment = ({ addAppointment, closeModal }) => {
 									<div className="row">
 										<div className="col-sm-12">
 											<span className="badge badge-info text-white">
-												{patient.hmo.name}
+												{patient.hmo.hmoType.name}
 											</span>
 										</div>
 									</div>
