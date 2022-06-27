@@ -229,6 +229,11 @@ const TakeOrder = () => {
 		await fetchInventories(searchItem);
 	};
 
+	const clear = async () => {
+		setSearchItem('');
+		await fetchInventories('');
+	};
+
 	return (
 		<div className="row">
 			<div className="col-lg-8">
@@ -242,6 +247,7 @@ const TakeOrder = () => {
 											type="text"
 											className="form-control"
 											placeholder="search"
+											value={searchItem}
 											onChange={e => setSearchItem(e.target.value)}
 										/>
 										<div className="input-group-append">
@@ -252,6 +258,15 @@ const TakeOrder = () => {
 											>
 												Button
 											</button>
+											{searchItem !== '' && (
+												<button
+													className="btn btn-secondary ml-0"
+													type="button"
+													onClick={() => clear()}
+												>
+													Clear Search
+												</button>
+											)}
 										</div>
 									</div>
 								</div>
