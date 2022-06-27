@@ -256,7 +256,7 @@ const TakeOrder = () => {
 												type="button"
 												onClick={() => search()}
 											>
-												Button
+												Search
 											</button>
 											{searchItem !== '' && (
 												<button
@@ -264,7 +264,7 @@ const TakeOrder = () => {
 													type="button"
 													onClick={() => clear()}
 												>
-													Clear Search
+													Clear
 												</button>
 											)}
 										</div>
