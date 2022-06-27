@@ -80,7 +80,7 @@ const ProformaInvoice = ({ history }) => {
 
 	const fetchServicesCategory = useCallback(async () => {
 		try {
-			const rs = await request('service-categories?paypoint=1', 'GET', true);
+			const rs = await request('service-categories?paypoint=', 'GET', true);
 			setCategories(rs);
 			setLoaded(true);
 		} catch (error) {
@@ -119,12 +119,32 @@ const ProformaInvoice = ({ history }) => {
 		setAmount(total);
 	};
 
+	const handlePrint = async () => {
+		const serviceId = requests.map(service => service.id).join('-');
+		try {
+			dispatch(startBlock());
+			const uri = `services/cost/print?patientId=${patient.id}&services=${serviceId}`;
+			const rs = await request(uri, 'GET', true);
+			dispatch(stopBlock());
+			if (rs.success) {
+				setTimeout(() => {
+					window.open(rs.url, '_blank').focus();
+				}, 200);
+			} else {
+				notifyError(rs.message || 'could not print transactions');
+			}
+		} catch (e) {
+			dispatch(stopBlock());
+			notifyError(e.message || 'could not print transactions');
+		}
+	};
+
 	return (
 		<div className="element-box m-0 p-3">
 			<div className="form-block w-100 p-4">
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<div className="row">
-						<div className="form-group col-sm-6">
+						<div className="form-group col-sm-4">
 							<label>Patient</label>
 							<AsyncSelect
 								isClearable
@@ -142,9 +162,7 @@ const ProformaInvoice = ({ history }) => {
 								placeholder="Search patients"
 							/>
 						</div>
-					</div>
-					<div className="row">
-						<div className="form-group col-sm-6">
+						<div className="form-group col-sm-4">
 							<label>Category</label>
 							<Select
 								name="category"
@@ -171,7 +189,7 @@ const ProformaInvoice = ({ history }) => {
 								placeholder="Select category"
 							/>
 						</div>
-						<div className="form-group col-sm-6">
+						<div className="form-group col-sm-4">
 							<label>Service to request</label>
 							<Select
 								name="service_id"
@@ -246,6 +264,9 @@ const ProformaInvoice = ({ history }) => {
 								) : (
 									'Create Request'
 								)}
+							</button>
+							<button class="btn btn-success ml-3">
+								<i class="fa fa-print" onClick={handlePrint}></i>
 							</button>
 						</div>
 					</div>

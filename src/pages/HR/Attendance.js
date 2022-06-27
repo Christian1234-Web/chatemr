@@ -25,7 +25,7 @@ const Attendance = () => {
 		try {
 			let p = page || 1;
 			setLoading(true);
-			const url = `attendance?page=${p}&limit=10&date=${date}&term=${search}`;
+			const url = `hr/attendance?page=${p}&limit=10&date=${date}&term=${search}`;
 			const rs = await request(url, 'GET', true);
 			const { result, ...meta } = rs;
 			setAttendance(result);
@@ -45,6 +45,8 @@ const Attendance = () => {
 		fetchAttendance(pageNumber);
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
+
+	console.log('Malik', attendance);
 
 	return (
 		<div className="content-i">
@@ -124,11 +126,8 @@ const Attendance = () => {
 															<tbody>
 																{attendance?.map((staff, index) => (
 																	<tr key={index}>
-																		<td>{staff.staff.id}</td>
-																		<td>
-																			{staff.staff.first_name}{' '}
-																			{staff.staff.last_name}
-																		</td>
+																		<td>{staff.staff.staffNum}</td>
+																		<td>{staff.staff.name}</td>
 																		<td className="text-center">
 																			{staff.staff.department.name}{' '}
 																		</td>
