@@ -104,64 +104,60 @@ const Attendance = () => {
 				<div className="row">
 					<div className="col-sm-12 col-lg-12 col-xl-12 col-xxl-12">
 						<div className="element-box">
-							<div className="element-box-tp">
-								<div className="element-box-tp">
-									{loading ? (
-										<TableLoading />
-									) : (
-										<>
+							{loading ? (
+								<TableLoading />
+							) : (
+								<>
+									<>
+										{
 											<>
-												{
-													<>
-														<table className="table table-striped table-bordered">
-															<thead>
-																<tr>
-																	<th>Staff ID</th>
-																	<th>Staff Name</th>
-																	<th className="text-center">Department</th>
-																	<th className="text-center">Login Time</th>
-																	<th className="text-center">Date</th>
-																</tr>
-															</thead>
-															<tbody>
-																{attendance?.map((staff, index) => (
-																	<tr key={index}>
-																		<td>{staff.staff.staffNum}</td>
-																		<td>{staff.staff.name}</td>
-																		<td className="text-center">
-																			{staff.staff.department.name}{' '}
-																		</td>
-																		<td className="text-center">
-																			{moment(staff.date).format('h:mm a')}
-																		</td>
-																		<td className="text-center">
-																			{moment(staff.date).format('DD-MM-YYYY')}
-																		</td>
-																	</tr>
-																))}
-															</tbody>
-														</table>
-														<div className="controls-below-table">
-															<div className="table-records-pages"></div>
-														</div>
-														<div className="pagination pagination-center mt-4">
-															<Pagination
-																current={parseInt(meta.currentPage, 10)}
-																pageSize={parseInt(meta.itemsPerPage, 10)}
-																total={parseInt(meta.totalItems, 10)}
-																showTotal={total => `Total ${total} items`}
-																itemRender={itemRender}
-																onChange={onNavigatePage}
-																showSizeChanger={false}
-															/>
-														</div>
-													</>
-												}
+												<table className="table table-striped table-bordered">
+													<thead>
+														<tr>
+															<th>Staff ID</th>
+															<th>Staff Name</th>
+															<th className="text-center">Department</th>
+															<th className="text-center">Login Time</th>
+															<th className="text-center">Date</th>
+														</tr>
+													</thead>
+													<tbody>
+														{attendance?.map((staff, index) => (
+															<tr key={index}>
+																<td>{staff.staff.staffNum}</td>
+																<td>{staff.staff.name}</td>
+																<td className="text-center">
+																	{staff.staff.department.name}{' '}
+																</td>
+																<td className="text-center">
+																	{moment(staff.date).format('h:mm a')}
+																</td>
+																<td className="text-center">
+																	{moment(staff.date).format('DD-MM-YYYY')}
+																</td>
+															</tr>
+														))}
+													</tbody>
+												</table>
+												<div className="controls-below-table">
+													<div className="table-records-pages"></div>
+												</div>
+												<div className="pagination pagination-center mt-4">
+													<Pagination
+														current={parseInt(meta.currentPage, 10)}
+														pageSize={parseInt(meta.itemsPerPage, 10)}
+														total={parseInt(meta.totalItems, 10)}
+														showTotal={total => `Total ${total} items`}
+														itemRender={itemRender}
+														onChange={onNavigatePage}
+														showSizeChanger={false}
+													/>
+												</div>
 											</>
-										</>
-									)}
-								</div>
-							</div>
+										}
+									</>
+								</>
+							)}
 						</div>
 					</div>
 				</div>
