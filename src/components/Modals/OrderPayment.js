@@ -8,6 +8,7 @@ import ModalHeader from '../ModalHeader';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import { ErrorBlock, formatCurrency, request } from '../../services/utilities';
 import { notifySuccess } from '../../services/notify';
+import { VAT } from '../../services/constants';
 
 const OrderPayment = ({ orders, total, closeModal, showReceiptModal }) => {
 	const dispatch = useDispatch();
@@ -57,11 +58,6 @@ const OrderPayment = ({ orders, total, closeModal, showReceiptModal }) => {
 		[]
 	);
 
-	console.log(
-		'orders',
-		orders.map(order => order.amount)?.reduce((a, b) => a + b, 0) * 0.075
-	);
-
 	return (
 		<div
 			className="onboarding-modal modal fade animated show"
@@ -99,7 +95,7 @@ const OrderPayment = ({ orders, total, closeModal, showReceiptModal }) => {
 								return errors;
 							}}
 							decorators={[calculateAmount]}
-							render={({ handleSubmit, submitting, submitError }) => {
+							render={({ handleSubmit, submitting, submitError, values }) => {
 								return (
 									<form onSubmit={handleSubmit}>
 										{submitError && (
@@ -189,10 +185,9 @@ const OrderPayment = ({ orders, total, closeModal, showReceiptModal }) => {
 												</div>
 												<div className="col-md-12">
 													<div className="form-group text-right">
-														VAT Inclusive: ₦
-														{orders
-															.map(order => order.amount)
-															?.reduce((a, b) => a + b, 0) * 0.075}
+														{`VAT Inclusive: ₦${
+															Number(values.total) * Number(VAT)
+														}`}
 													</div>
 												</div>
 												<div className="col-md-12">

@@ -161,7 +161,7 @@ const ModalApplyCredit = ({ closeModal, patient, refresh, depositBalance }) => {
 				className="modal-dialog modal-centered"
 				style={{ maxWidth: '720px' }}
 			>
-				<div className="modal-content text-center">
+				<div className="modal-content modal-scroll text-center">
 					<button
 						aria-label="Close"
 						className="close"
