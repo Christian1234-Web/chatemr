@@ -57,6 +57,11 @@ const OrderPayment = ({ orders, total, closeModal, showReceiptModal }) => {
 		[]
 	);
 
+	console.log(
+		'orders',
+		orders.map(order => order.amount)?.reduce((a, b) => a + b, 0) * 0.075
+	);
+
 	return (
 		<div
 			className="onboarding-modal modal fade animated show"
@@ -184,7 +189,10 @@ const OrderPayment = ({ orders, total, closeModal, showReceiptModal }) => {
 												</div>
 												<div className="col-md-12">
 													<div className="form-group text-right">
-														VAT Inclusive
+														VAT Inclusive: ₦
+														{orders
+															.map(order => order.amount)
+															?.reduce((a, b) => a + b, 0) * 0.075}
 													</div>
 												</div>
 												<div className="col-md-12">
