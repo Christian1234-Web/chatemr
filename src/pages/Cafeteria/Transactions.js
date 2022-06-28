@@ -54,11 +54,13 @@ class Transactions extends Component {
 
 	fetchTransactions = async page => {
 		const { startDate, endDate, searching } = this.state;
+		console.log('SEARCH', searching);
 		try {
 			this.setState({ loading: true });
 			const p = page || 1;
 			const url = `transactions/search?page=${p}&limit=10&term=${searching}&startDate=${startDate}&endDate=${endDate}&bill_source=cafeteria&filter=`;
 			const rs = await request(url, 'GET', true);
+			console.log('REASULT', rs);
 			const { result, ...meta } = rs;
 
 			this.setState({
@@ -273,6 +275,22 @@ class Transactions extends Component {
 							);
 						})}
 					</div>
+					<div className="form-group col-md-3">
+						<label>Category</label>
+						<select
+							id="status"
+							className="form-control"
+							name="status"
+							// value={}
+							// onChange={e => setStatus(e.target.value)}
+						>
+							<option value="">Select Category</option>
+							<option value="staff">Staff</option>
+							<option value="patient">Patient</option>
+							<option value="walk-in">Walk-in</option>
+						</select>
+					</div>
+
 					<div className="form-group col-md-3 pr-0">
 						<label>From - To</label>
 						<RangePicker
