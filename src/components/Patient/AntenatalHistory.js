@@ -10,7 +10,7 @@ import Pagination from 'antd/lib/pagination';
 import { notifyError } from '../../services/notify';
 import waiting from '../../assets/images/waiting.gif';
 import { startBlock, stopBlock } from '../../actions/redux-block';
-import { request, itemRender } from '../../services/utilities';
+import { request, itemRender, formatDate } from '../../services/utilities';
 import TableLoading from '../TableLoading';
 import { staffname } from '../../services/utilities';
 import { toggleProfile } from '../../actions/user';
@@ -121,8 +121,10 @@ class AntenatalHistory extends Component {
 										<thead>
 											<tr>
 												<th>ID</th>
-												<th>Date of Enrollment</th>
+												<th>Date Enrolled</th>
 												<th>Enrolled By</th>
+												<th>Date Closed</th>
+												<th>Closed By</th>
 												<th>Status</th>
 												<th></th>
 											</tr>
@@ -133,11 +135,16 @@ class AntenatalHistory extends Component {
 													<tr key={i}>
 														<td>{item.serial_code}</td>
 														<td>
-															{moment(item.createdAt).format(
+															{formatDate(item.createdAt, 'DD-MMM-YYYY h:mm A')}
+														</td>
+														<td>{staffname(item.staff)}</td>
+														<td>
+															{formatDate(
+																item.date_closed,
 																'DD-MMM-YYYY h:mm A'
 															)}
 														</td>
-														<td>{staffname(item.staff)}</td>
+														<td>{staffname(item.closedBy)}</td>
 														<td>
 															{item.status === 0 ? (
 																<span className="badge badge-secondary">
