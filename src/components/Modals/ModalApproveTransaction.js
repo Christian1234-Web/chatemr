@@ -45,7 +45,7 @@ class ModalApproveTransaction extends Component {
 			const datum = {
 				...others,
 				voucher_id: voucherId,
-				patient_id: transaction.patient.id,
+				patient_id: transaction?.patient?.id,
 			};
 
 			this.setState({ submitting: true });

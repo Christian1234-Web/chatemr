@@ -1,288 +1,137 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { Component } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import moment from 'moment';
 import Pagination from 'antd/lib/pagination';
 import startCase from 'lodash.startcase';
-
-import { searchAPI } from '../../services/constants';
-import waiting from '../../assets/images/waiting.gif';
+import { useDispatch, useSelector } from 'react-redux';
 import DatePicker from 'antd/lib/date-picker';
+
+import waiting from '../../assets/images/waiting.gif';
+import TableLoading from '../../components/TableLoading';
+import { startBlock, stopBlock } from '../../actions/redux-block';
 import {
-	request,
-	staffname,
-	patientname,
+	formatCurrency,
 	formatDate,
 	itemRender,
+	patientname,
+	request,
+	staffname,
 } from '../../services/utilities';
 import { notifyError } from '../../services/notify';
-import TableLoading from '../../components/TableLoading';
-import { formatCurrency } from '../../services/utilities';
 
 const { RangePicker } = DatePicker;
 
-// const status = [
-// 	{ value: 0, label: 'Open' },
-// 	{ value: 1, label: 'Closed' },
-// 	{ value: 2, label: 'Approved' },
-// ];
+const Transactions = () => {
+	const [loading, setLoading] = useState(true);
+	const [patientData, setPatientData] = useState('');
+	const [startDate, setStartDate] = useState('');
+	const [endDate, setEndDate] = useState('');
+	const [paymentMethod, setPaymentMethod] = useState('');
+	const [filtering, setFiltering] = useState(false);
+	const [transactions, setTransactions] = useState([]);
+	const [category, setCategory] = useState('');
+	const [meta, setMeta] = useState(null);
 
-class Transactions extends Component {
-	state = {
-		filtering: false,
-		loading: false,
-		id: null,
-		startDate: '',
-		endDate: '',
-		status: '',
-		searching: '',
-		searchHmo: false,
-		hmos: [],
-		query: '',
-		paymentType: '',
-		patients: [],
-		transactions: [],
-		hmoQuery: '',
-		hmo_id: '',
-		meta: null,
-	};
-	patient = React.createRef();
-	hmo = React.createRef();
+	const paymentMethods = useSelector(state => state.utility.methods);
 
-	componentDidMount() {
-		this.fetchTransactions();
-	}
+	const dispatch = useDispatch();
 
-	fetchTransactions = async page => {
-		const { startDate, endDate, searching } = this.state;
-		console.log('SEARCH', searching);
-		try {
-			this.setState({ loading: true });
-			const p = page || 1;
-			const url = `transactions/search?page=${p}&limit=10&term=${searching}&startDate=${startDate}&endDate=${endDate}&bill_source=cafeteria&filter=`;
-			const rs = await request(url, 'GET', true);
-			console.log('REASULT', rs);
-			const { result, ...meta } = rs;
+	const fetchTransactions = useCallback(
+		async (page, q) => {
+			try {
+				dispatch(startBlock());
+				const p = page || 1;
+				const url = `transactions/search?page=${p}&limit=10&startDate=${startDate}&endDate=${endDate}&bill_source=cafeteria&filter=`;
+				const rs = await request(url, 'GET', true);
+				const { result, ...meta } = rs;
+				setMeta(meta);
+				window.scrollTo({ top: 0, behavior: 'smooth' });
+				setTransactions(result);
+				setLoading(false);
+				setFiltering(false);
+				dispatch(stopBlock());
+			} catch (error) {
+				notifyError('error fetching patients');
+				setLoading(false);
+				dispatch(stopBlock());
+				setFiltering(false);
+			}
+		},
+		[dispatch, endDate, startDate]
+	);
 
-			this.setState({
-				loading: false,
-				filtering: false,
-				startDate: '',
-				endDate: '',
-				transactions: result,
-				meta,
-			});
-		} catch (error) {
-			console.log(error);
-			notifyError('Error fetching today cafeteria transactions request');
-			this.setState({ loading: false, filtering: false, patient_id: '' });
+	useEffect(() => {
+		if (loading) {
+			fetchTransactions();
 		}
+	}, [fetchTransactions, loading]);
+
+	const onNavigatePage = async nextPage => {
+		await fetchTransactions(nextPage);
 	};
 
-	doFilter = e => {
-		e.preventDefault();
-		// this.setState({ filtering: true });
-		this.setState({ ...this.state, filtering: true });
-		console.log(this.state.patient_id);
-		// if (this.state.query < 1) {
-		// 	this.setState({ ...this.state, patient_id: '' });
-		// 	console.log(this.state.patient_id);
-		// }
-		this.fetchTransactions();
+	const doFilter = () => {
+		setFiltering(true);
+		fetchTransactions(1);
 	};
 
-	change = e => {
-		this.setState({ [e.target.name]: e.target.value });
-	};
-
-	dateChange = e => {
-		let date = e.map(d => {
+	const dateChange = e => {
+		const date = e.map(d => {
 			return moment(d._d).format('YYYY-MM-DD');
 		});
 
-		this.setState({
-			...this.state,
-			startDate: date[0] ? date[0] : '',
-			endDate: date[1] ? date[1] : '',
-		});
+		setStartDate(date[0]);
+		setEndDate(date[1]);
 	};
 
-	patientSet = (pat, type) => {
-		if (type === 'patient') {
-			let name = patientname(pat);
-			document.getElementById('patient').value = name;
-			this.setState({ ...this.state, patient_id: pat.id, patients: [] });
-		} else {
-			document.getElementById('hmo').value = pat.name;
-			this.setState({ ...this.state, hmo_id: pat.id, hmos: [] });
-		}
-	};
-
-	searchPatient = async () => {
-		if (this.state.query.length > 2) {
-			try {
-				this.setState({ ...this.state, searching: true });
-				const uri = `${searchAPI}?q=${this.state.query}`;
-				const rs = await request(uri, 'GET', true);
-
-				this.setState({
-					...this.state,
-					patients: rs,
-					searching: false,
-					query: '',
-				});
-			} catch (e) {
-				notifyError('Error Occurred');
-				this.setState({ ...this.state, searching: false });
-			}
-		}
-	};
-
-	searchHmo = async () => {
-		if (this.state.hmoQuery.length > 2) {
-			try {
-				this.setState({ ...this.state, searchHmo: true });
-				const url = `hmos/schemes?name=${this.state.hmoQuery}`;
-				const rs = await request(url, 'GET', true);
-				this.setState({
-					...this.state,
-					hmos: rs,
-					searchHmo: false,
-					hmoQuery: '',
-				});
-			} catch (e) {
-				notifyError('Error searching hmo ');
-				this.setState({ ...this.state, searchHmo: false });
-			}
-		}
-	};
-	handleInputChange = e => {
-		const { name, value } = e.target;
-
-		if (name === 'patient') {
-			if (this.patient.current.value.length < 4) {
-				this.setState({ patients: [], patient_id: '' });
-				return;
-			}
-			this.setState({ ...this.state, query: value });
-			this.searchPatient();
-		} else if (name === 'hmo') {
-			if (this.hmo.current.value.length < 4) {
-				this.setState({ hmo_id: '', hmos: [] });
-				return;
-			}
-			this.setState({ ...this.state, hmoQuery: value });
-			this.searchHmo();
-		} else {
-			return;
-		}
-	};
-
-	handlePatientChange = e => {
-		this.setState({
-			...this.state,
-			searching: e.target.value,
-			filtering: false,
-		});
-	};
-
-	onNavigatePage = nextPage => {
-		this.fetchTransactions(nextPage);
-	};
-
-	render() {
-		const { filtering, loading, searching, patients, transactions, meta } =
-			this.state;
-		return (
-			<div className="element-box">
+	return (
+		<>
+			<div className="element-box m-0 mb-4 p-3">
 				<form className="row">
-					<div className="form-group col-sm-2.5">
-						<label>Name</label>
-
-						<input
-							className="form-control"
-							placeholder="Search for name"
-							type="text"
-							name="patient"
-							defaultValue=""
-							ref={this.patient}
-							id="patient"
-							onChange={e => this.handlePatientChange(e)}
-							autoComplete="off"
-							required
-							style={{ height: '32px' }}
-						/>
-						{searching && (
-							<div className="searching text-center">
-								{/* <img alt="searching" src={searchingGIF} /> */}
-							</div>
-						)}
-
-						{patients?.map(pat => {
-							return (
-								<div
-									style={{ display: 'flex' }}
-									key={pat.id}
-									className="element-box"
-								>
-									<a
-										onClick={() => this.patientSet(pat, 'patient')}
-										className="ssg-item cursor"
-									>
-										<div
-											className="item-name"
-											dangerouslySetInnerHTML={{
-												__html: patientname(pat),
-											}}
-										/>
-									</a>
-								</div>
-							);
-						})}
+					<div className="form-group col-md-3">
+						<label>From - To</label>
+						<RangePicker onChange={e => dateChange(e)} />
 					</div>
 					<div className="form-group col-md-3">
+						<label>Search</label>
+						<input
+							style={{ height: '32px' }}
+							id="search"
+							className="form-control"
+							name="search"
+							value={patientData}
+							onChange={e => setPatientData(e.target.value)}
+							placeholder="search for patient: emr id, name, phone number, email"
+						/>
+					</div>
+					<div className="form-group col-md-2">
 						<label>Payment method</label>
-
-						<input
-							className="form-control"
-							placeholder="Search for payment method"
-							type="text"
-							name="patient"
-							onChange={e => this.handlePatientChange(e)}
-							autoComplete="off"
-							required
-							style={{ height: '32px' }}
-						/>
-
-						{patients?.map(pat => {
-							return (
-								<div
-									style={{ display: 'flex' }}
-									key={pat.id}
-									className="element-box"
-								>
-									<a
-										onClick={() => this.patientSet(pat, 'patient')}
-										className="ssg-item cursor"
-									>
-										<div
-											className="item-name"
-											dangerouslySetInnerHTML={{
-												__html: patientname(pat),
-											}}
-										/>
-									</a>
-								</div>
-							);
-						})}
-					</div>
-					<div className="form-group col-md-3">
-						<label>Category</label>
 						<select
+							style={{ height: '32px' }}
 							id="status"
 							className="form-control"
 							name="status"
-							// value={}
-							// onChange={e => setStatus(e.target.value)}
+							value={paymentMethod}
+							onChange={e => setPaymentMethod(e.target.value)}
+						>
+							<option value="">Select Method</option>
+							{paymentMethods.map((item, i) => {
+								return (
+									<option key={i} value={item.id}>
+										{item.name}
+									</option>
+								);
+							})}
+						</select>
+					</div>
+					<div className="form-group col-md-2">
+						<label>Category</label>
+						<select
+							style={{ height: '32px' }}
+							id="category"
+							className="form-control"
+							name="category"
+							value={category}
+							onChange={e => setCategory(e.target.value)}
 						>
 							<option value="">Select Category</option>
 							<option value="staff">Staff</option>
@@ -290,18 +139,10 @@ class Transactions extends Component {
 							<option value="walk-in">Walk-in</option>
 						</select>
 					</div>
-
-					<div className="form-group col-md-3 pr-0">
-						<label>From - To</label>
-						<RangePicker
-							onChange={e => this.dateChange(e)}
-							defaultValue={[this.state.startDate, this.state.endDate]}
-						/>
-					</div>
-					<div className="form-group col-md-1 pr-0 mt-4">
+					<div className="form-group col-md-2 mt-4">
 						<div
 							className="btn btn-sm btn-primary btn-upper text-white filter-btn"
-							onClick={this.doFilter}
+							onClick={doFilter}
 						>
 							<i className="os-icon os-icon-ui-37" />
 							<span>
@@ -310,13 +151,14 @@ class Transactions extends Component {
 						</div>
 					</div>
 				</form>
-
-				{loading ? (
-					<TableLoading />
-				) : (
-					<>
-						<div className="table table-responsive">
-							<table className="table table-theme v-middle table-hover">
+			</div>
+			<div className="element-box p-3 m-0">
+				<div className="table table-responsive">
+					{loading ? (
+						<TableLoading />
+					) : (
+						<>
+							<table className="table table-striped">
 								<thead>
 									<tr>
 										<th>Date</th>
@@ -344,7 +186,7 @@ class Transactions extends Component {
 														?.map(t => `${t.name} (${t?.qty || 1})`)
 														.join(', ') || '-'}
 												</td>
-												<td>{item.payment_method}</td>
+												<td>{item.payment_method || '--'}</td>
 												<td>{startCase(item.transaction_type)}</td>
 												<td>
 													{item.transaction_type === 'credit'
@@ -354,41 +196,43 @@ class Transactions extends Component {
 												<td>
 													{item.status === 1 ? (
 														<span className="badge badge-success">paid</span>
-													) : (
+													) : item.status === 0 ? (
 														<span className="badge badge-secondary">
 															pending payment
 														</span>
+													) : (
+														<span className="badge badge-secondary">owing</span>
 													)}
 												</td>
 											</tr>
 										);
 									})}
-									{!loading && transactions.length === 0 && (
+									{transactions.length === 0 && (
 										<tr>
-											<td colSpan="6">No transactions</td>
+											<td colSpan="7">No transactions</td>
 										</tr>
 									)}
 								</tbody>
 							</table>
-						</div>
-						{meta && (
-							<div className="pagination pagination-center mt-4">
-								<Pagination
-									current={parseInt(meta.currentPage, 10)}
-									pageSize={parseInt(meta.itemsPerPage, 10)}
-									total={parseInt(meta.totalItems, 10)}
-									showTotal={total => `Total ${total} transactions`}
-									itemRender={itemRender}
-									onChange={current => this.onNavigatePage(current)}
-									showSizeChanger={false}
-								/>
-							</div>
-						)}
-					</>
-				)}
+							{meta && (
+								<div className="pagination pagination-center mt-4">
+									<Pagination
+										current={parseInt(meta.currentPage, 10)}
+										pageSize={parseInt(meta.itemsPerPage, 10)}
+										total={parseInt(meta.totalItems, 10)}
+										showTotal={total => `Total ${total} transactions`}
+										itemRender={itemRender}
+										onChange={current => onNavigatePage(current)}
+										showSizeChanger={false}
+									/>
+								</div>
+							)}
+						</>
+					)}
+				</div>
 			</div>
-		);
-	}
-}
+		</>
+	);
+};
 
 export default Transactions;

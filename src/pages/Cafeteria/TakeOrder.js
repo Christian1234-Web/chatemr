@@ -78,9 +78,13 @@ const TakeOrder = () => {
 		formRef.current.getFieldState();
 
 		const total = items.reduce((total, item) => total + item.price, 0);
-
 		formRef.current.change('total', total);
-		formRef.current.change('staff_total', total);
+
+		const staffTotal = items.reduce(
+			(total, item) => total + item.staff_price,
+			0
+		);
+		formRef.current.change('staff_total', staffTotal);
 	};
 
 	const selectItem = item => {
@@ -98,6 +102,7 @@ const TakeOrder = () => {
 					name: item.foodItem.name,
 					qty: 1,
 					price: parseFloat(item.foodItem.price),
+					staff_price: parseFloat(item.foodItem.staff_price),
 				},
 			];
 			setCartItems(list);
@@ -108,6 +113,7 @@ const TakeOrder = () => {
 				...cartItem,
 				qty: quantity,
 				price: parseFloat(item.foodItem.price) * quantity,
+				staff_price: parseFloat(item.foodItem.staff_price) * quantity,
 			});
 			setCartItems(list);
 			calculatePrice(list);
@@ -148,6 +154,7 @@ const TakeOrder = () => {
 				...cart,
 				qty: quantity,
 				price: parseFloat(item.foodItem.price) * quantity,
+				staff_price: parseFloat(item.foodItem.staff_price) * quantity,
 			});
 			setCartItems(list);
 			calculatePrice(list);
@@ -359,7 +366,13 @@ const TakeOrder = () => {
 								}
 								return errors;
 							}}
-							render={({ handleSubmit, submitting, submitError, form }) => {
+							render={({
+								handleSubmit,
+								submitting,
+								submitError,
+								form,
+								values,
+							}) => {
 								formRef.current = form;
 								return (
 									<form onSubmit={handleSubmit}>
@@ -477,7 +490,7 @@ const TakeOrder = () => {
 																			style={{ fontSize: '14px' }}
 																			onClick={() => minus(cart)}
 																		>
-																			<i className="os-icon os-icon-minus-circle"></i>
+																			<i className="os-icon os-icon-minus-circle" />
 																		</a>
 																		<input
 																			type="number"
@@ -494,7 +507,9 @@ const TakeOrder = () => {
 																	</div>
 																</td>
 																<td className="text-right text-bright">
-																	{formatCurrency(cart.price)}
+																	{values?.customer === 'staff'
+																		? formatCurrency(cart.staff_price)
+																		: formatCurrency(cart.price)}
 																</td>
 																<td className="text-center">
 																	<a
@@ -502,7 +517,7 @@ const TakeOrder = () => {
 																		style={{ fontSize: '14px' }}
 																		onClick={() => removeItem(cart)}
 																	>
-																		<i className="os-icon os-icon-x-circle"></i>
+																		<i className="os-icon os-icon-x-circle" />
 																	</a>
 																</td>
 															</tr>

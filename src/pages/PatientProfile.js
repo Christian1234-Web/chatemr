@@ -158,6 +158,7 @@ class PatientProfile extends Component {
 												hasButtons={true}
 												canAdmit={true}
 												canDischarge={true}
+												canNewNote={true}
 											/>
 											{patient.antenatal_id && (
 												<AncBlock

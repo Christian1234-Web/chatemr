@@ -19,6 +19,7 @@ const OrderPayment = ({ orders, total, closeModal, showReceiptModal }) => {
 		try {
 			const data = {
 				...values,
+				pay_later: values.pay_later ? 1 : 0,
 				cartItems: orders.map(o => ({
 					id: o.id,
 					name: o.foodItem.name,
@@ -31,8 +32,14 @@ const OrderPayment = ({ orders, total, closeModal, showReceiptModal }) => {
 			const rs = await request('cafeteria/orders/sale', 'POST', true, data);
 			dispatch(stopBlock());
 			if (rs.success) {
-				notifySuccess('payment accepted!');
-				showReceiptModal(rs.data);
+				if (!values.pay_later) {
+					notifySuccess('payment accepted!');
+					showReceiptModal(rs.data, true);
+				} else {
+					showReceiptModal(rs.data, false);
+					notifySuccess('transaction saved!');
+					closeModal();
+				}
 			} else {
 				return {
 					[FORM_ERROR]: rs.message || 'could not make sale',
@@ -86,7 +93,7 @@ const OrderPayment = ({ orders, total, closeModal, showReceiptModal }) => {
 								if (!values.paid) {
 									errors.paid = 'Enter paid amount';
 								}
-								if (!values.payment_method) {
+								if (!values.payment_method && !values.pay_later) {
 									errors.payment_method = 'Select payment method';
 								}
 								if (Number(values.balance) < 0) {
@@ -241,6 +248,25 @@ const OrderPayment = ({ orders, total, closeModal, showReceiptModal }) => {
 															))}
 														</Field>
 														<ErrorBlock name="payment_method" />
+													</div>
+												</div>
+												<div className="col-sm-6 d-flex align-items-center">
+													<div className="d-flex relative mt-3">
+														<div>
+															<Field
+																name="pay_later"
+																id="pay_later"
+																component="input"
+																type="checkbox"
+															/>
+														</div>
+														<label
+															htmlFor="pay_later"
+															className="ml-1"
+															style={{ marginTop: '-2px' }}
+														>
+															Pay Later
+														</label>
 													</div>
 												</div>
 											</div>

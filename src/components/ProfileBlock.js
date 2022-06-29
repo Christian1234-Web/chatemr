@@ -70,6 +70,7 @@ const ProfileBlock = ({
 	hasButtons,
 	canAdmit,
 	canDischarge,
+	canNewNote,
 }) => {
 	const [alerts, setAlerts] = useState([]);
 	const [showModal, setShowModal] = useState(false);
@@ -542,19 +543,20 @@ const ProfileBlock = ({
 													</a>
 												</Tooltip>
 											</div>
-											{(user.role.slug === 'it-admin' ||
-												user.role.slug === 'doctor') && (
-												<div className="mt-1">
-													<button
-														type="button"
-														onClick={() => addNote()}
-														className="btn btn-sm btn-info text-white"
-													>
-														<i className="os-icon os-icon-ui-22" />
-														<span>New Note</span>
-													</button>
-												</div>
-											)}
+											{canNewNote &&
+												(user.role.slug === 'it-admin' ||
+													user.role.slug === 'doctor') && (
+													<div className="mt-1">
+														<button
+															type="button"
+															onClick={() => addNote()}
+															className="btn btn-sm btn-info text-white"
+														>
+															<i className="os-icon os-icon-ui-22" />
+															<span>New Note</span>
+														</button>
+													</div>
+												)}
 										</div>
 									</div>
 									{hasButtons && (

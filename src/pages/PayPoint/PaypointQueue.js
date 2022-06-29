@@ -152,7 +152,7 @@ const PaypointQueue = () => {
 							name="service"
 							onChange={e => setService(e.target.value)}
 						>
-							<option value="">Service</option>
+							<option value="">Select Service</option>
 							<option value="credit">Credit Deposit</option>
 							<option value="transfer">Credit Transfer</option>
 							{services.map((status, i) => {
@@ -184,14 +184,12 @@ const PaypointQueue = () => {
 						<TableLoading />
 					) : (
 						<>
-							{transactions && (
-								<TransactionTable
-									transactions={transactions}
-									showActionBtns={true}
-									queue={true}
-									showPrint={true}
-								/>
-							)}
+							<TransactionTable
+								transactions={transactions}
+								showActionBtns={true}
+								queue={true}
+								showPrint={true}
+							/>
 							{meta && (
 								<div className="pagination pagination-center mt-4">
 									<Pagination

@@ -310,6 +310,11 @@ const Orders = () => {
 																	cancelled
 																</span>
 															)}
+															{item.status === -2 && (
+																<span className="badge badge-info text-white">
+																	pay later
+																</span>
+															)}
 														</td>
 														<td className="row-actions">
 															{!item.transaction && (
@@ -377,20 +382,22 @@ const Orders = () => {
 						return total + product;
 					}, 0)}
 					closeModal={() => closeModal()}
-					showReceiptModal={item => {
+					showReceiptModal={(item, status) => {
 						let list = items;
 						for (const single of item.transaction_details) {
 							list = updateImmutable(list, {
 								id: single.id,
-								status: 2,
+								status: item.status === 1 ? 2 : -2,
 								transaction: item,
 							});
 						}
 						setItems(list);
-						setPaymentItem(item);
-						closeModal();
-						setShowReceipt(true);
-						document.body.classList.add('modal-open');
+						if (status) {
+							setPaymentItem(item);
+							closeModal();
+							setShowReceipt(true);
+							document.body.classList.add('modal-open');
+						}
 					}}
 				/>
 			)}
