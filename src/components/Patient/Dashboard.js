@@ -1,29 +1,50 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from 'react';
 import { withRouter } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import VisitNotesTable from './VisitNotesTable';
 import VisitSummary from './VisitSummary';
 import PatientBills from './PatientBills';
 import AppointmentHistory from './AppointmentHistory';
-import CreateNote from '../Modals/CreateNote';
+import OpenEncounter from './Modals/OpenEncounter';
+import NewAssessment from '../Antenatal/NewAssessment';
+import { USER_RECORD } from '../../services/constants';
+import SSRStorage from '../../services/storage';
+import { toggleProfile } from '../../actions/user';
+
+const storage = new SSRStorage();
 
 const Dashboard = () => {
 	const [tab, setTab] = useState('visitNotes');
-	const [showModal, setShowModal] = useState(false);
+	const [encounterModal, setEncounterModal] = useState(false);
+	const [assessmentModal, setAssessmentModal] = useState(false);
 
-	const addNote = () => {
+	const dispatch = useDispatch();
+
+	const patient = useSelector(state => state.user.patient);
+	const appointmentId = useSelector(state => state.user.appointmentId);
+	const antenatal = useSelector(state => state.user.antenatal);
+
+	const startEncounter = () => {
 		document.body.classList.add('modal-open');
-		setShowModal(true);
+		setEncounterModal(true);
 	};
 
-	const closeModal = () => {
+	const startAssessment = () => {
+		document.body.classList.add('modal-open');
+		setAssessmentModal(true);
+	};
+
+	const closeModal = status => {
 		document.body.classList.remove('modal-open');
-		setShowModal(false);
+		setEncounterModal(false);
+		setAssessmentModal(false);
+		if (status) {
+			storage.removeItem(USER_RECORD);
+			dispatch(toggleProfile(false));
+		}
 	};
-
-	const user = useSelector(state => state.user.profile);
 
 	return (
 		<div className="col-lg-12 col-md-12">
@@ -69,18 +90,29 @@ const Dashboard = () => {
 									Billing
 								</a>
 							</li>
-							{(user.role.slug === 'it-admin' || user.role.slug === 'doctor') &&
-								tab === 'visitNotes' && (
-									<li className="nav-item nav-actions d-sm-block">
-										<a
-											className="btn btn-primary btn-sm text-white"
-											onClick={() => addNote()}
-										>
-											<i className="os-icon os-icon-ui-22"></i>
-											<span>New Note</span>
-										</a>
-									</li>
-								)}
+							{appointmentId && appointmentId !== '' && (
+								<>
+									{antenatal ? (
+										<li className="nav-item nav-actions d-sm-block">
+											<a
+												onClick={() => startAssessment()}
+												className="btn btn-sm btn-primary"
+											>
+												Start Assessment
+											</a>
+										</li>
+									) : (
+										<li className="nav-item nav-actions d-sm-block">
+											<a
+												onClick={() => startEncounter()}
+												className="btn btn-sm btn-primary"
+											>
+												Start Encounter
+											</a>
+										</li>
+									)}
+								</>
+							)}
 						</ul>
 					</div>
 					<div className="tab-content">
@@ -91,11 +123,19 @@ const Dashboard = () => {
 					</div>
 				</div>
 			</div>
-			{showModal && (
-				<CreateNote
-					closeModal={closeModal}
-					updateNote={() => {}}
-					type="consultation"
+			{encounterModal && (
+				<OpenEncounter
+					patient={patient}
+					appointment_id={appointmentId}
+					closeModal={status => closeModal(status)}
+				/>
+			)}
+			{assessmentModal && (
+				<NewAssessment
+					closeModal={status => closeModal(status)}
+					appointment_id={appointmentId}
+					patient={patient}
+					antenatal={antenatal}
 				/>
 			)}
 		</div>

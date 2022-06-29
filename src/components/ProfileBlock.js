@@ -30,9 +30,8 @@ import PatientForm from './Modals/PatientForm';
 import DischargeBlock from './DischargeBlock';
 import { setPatientRecord, toggleProfile } from '../actions/user';
 import SSRStorage from '../services/storage';
-import OpenEncounter from './Patient/Modals/OpenEncounter';
-import NewAssessment from './Antenatal/NewAssessment';
 import { hasCloseAncPermission } from '../permission-utils/antenatal';
+import CreateNote from './Modals/CreateNote';
 
 const storage = new SSRStorage();
 
@@ -85,15 +84,12 @@ const ProfileBlock = ({
 		useState(false);
 	const [nicuFinishDischarge, setNicuFinishDischarge] = useState(false);
 	const [admission, setAdmission] = useState(null);
-	const [encounterModal, setEncounterModal] = useState(false);
-	const [assessmentModal, setAssessmentModal] = useState(false);
 	const [alertShown, setAlertShown] = useState(false);
+	const [showNoteModal, setShowNoteModal] = useState(false);
 
 	const dispatch = useDispatch();
 
 	const user = useSelector(state => state.user.profile);
-	const appointmentId = useSelector(state => state.user.appointmentId);
-	const antenatal = useSelector(state => state.user.antenatal);
 
 	const getAlerts = useCallback(async () => {
 		try {
@@ -199,26 +195,11 @@ const ProfileBlock = ({
 		setEditModal(true);
 	};
 
-	const closeModal = status => {
-		document.body.classList.remove('modal-open');
+	const closeModal = () => {
 		setShowModal(false);
 		setEditModal(false);
-		setEncounterModal(false);
-		setAssessmentModal(false);
-		if (status) {
-			storage.removeItem(USER_RECORD);
-			dispatch(toggleProfile(false));
-		}
-	};
-
-	const startEncounter = () => {
-		document.body.classList.add('modal-open');
-		setEncounterModal(true);
-	};
-
-	const startAssessment = () => {
-		document.body.classList.add('modal-open');
-		setAssessmentModal(true);
+		setShowNoteModal(false);
+		document.body.classList.remove('modal-open');
 	};
 
 	const startDischarge = id => {
@@ -476,6 +457,11 @@ const ProfileBlock = ({
 		);
 	};
 
+	const addNote = () => {
+		document.body.classList.add('modal-open');
+		setShowNoteModal(true);
+	};
+
 	return (
 		<>
 			<div className="row profile-block">
@@ -556,25 +542,17 @@ const ProfileBlock = ({
 													</a>
 												</Tooltip>
 											</div>
-											{appointmentId && appointmentId !== '' && (
+											{(user.role.slug === 'it-admin' ||
+												user.role.slug === 'doctor') && (
 												<div className="mt-1">
-													{antenatal ? (
-														<button
-															type="button"
-															onClick={() => startAssessment()}
-															className="btn btn-sm btn-info text-white"
-														>
-															Start Assessment
-														</button>
-													) : (
-														<button
-															type="button"
-															onClick={() => startEncounter()}
-															className="btn btn-sm btn-info text-white"
-														>
-															Start Encounter
-														</button>
-													)}
+													<button
+														type="button"
+														onClick={() => addNote()}
+														className="btn btn-sm btn-info text-white"
+													>
+														<i className="os-icon os-icon-ui-22" />
+														<span>New Note</span>
+													</button>
 												</div>
 											)}
 										</div>
@@ -584,7 +562,7 @@ const ProfileBlock = ({
 											<div className="d-flex align-items-center mr-2">
 												<span className="b-avatar badge-light-primary rounded">
 													<span className="b-avatar-custom">
-														<i className="icon-feather icon-feather-activity"></i>
+														<i className="icon-feather icon-feather-activity" />
 													</span>
 												</span>
 												<div className="ml-1">
@@ -595,7 +573,7 @@ const ProfileBlock = ({
 											<div className="d-flex align-items-center">
 												<span className="b-avatar badge-light-success rounded">
 													<span className="b-avatar-custom">
-														<i className="icon-feather icon-feather-credit-card"></i>
+														<i className="icon-feather icon-feather-credit-card" />
 													</span>
 												</span>
 												<div className="ml-1">
@@ -684,7 +662,7 @@ const ProfileBlock = ({
 											<span className="b-avatar badge-light-primary rounded shiftright post-box">
 												<li>
 													<a onClick={enrollImmunization}>
-														<i className="picons-thin-icon-thin-0811_medicine_health_injection_ill"></i>
+														<i className="picons-thin-icon-thin-0811_medicine_health_injection_ill" />
 														<span>immunization</span>
 													</a>
 												</li>
@@ -694,7 +672,7 @@ const ProfileBlock = ({
 											<span className="b-avatar badge-light-primary rounded shiftright post-box">
 												<li>
 													<Link to={`${location.pathname}#start-admission`}>
-														<i className="picons-thin-icon-thin-0821_blood_infusion"></i>
+														<i className="picons-thin-icon-thin-0821_blood_infusion" />
 														<span>admission</span>
 													</Link>
 												</li>
@@ -703,7 +681,7 @@ const ProfileBlock = ({
 										<span className="b-avatar badge-light-primary rounded shiftright post-box">
 											<li>
 												<Link to={`${location.pathname}#enroll-ivf`}>
-													<i className="picons-thin-icon-thin-0816_microscope_laboratory"></i>
+													<i className="picons-thin-icon-thin-0816_microscope_laboratory" />
 													<span>IVF</span>
 												</Link>
 											</li>
@@ -711,7 +689,7 @@ const ProfileBlock = ({
 										<span className="b-avatar badge-light-primary rounded shiftright post-box">
 											<li>
 												<Link to={`${location.pathname}#enroll-antenatal`}>
-													<i className="picons-thin-icon-thin-0813_heart_vitals_pulse_rate_health"></i>
+													<i className="picons-thin-icon-thin-0813_heart_vitals_pulse_rate_health" />
 													<span>Antenatal</span>
 												</Link>
 											</li>
@@ -793,19 +771,11 @@ const ProfileBlock = ({
 			{editModal && (
 				<PatientForm patient={patient} closeModal={() => closeModal()} />
 			)}
-			{encounterModal && (
-				<OpenEncounter
-					patient={patient}
-					appointment_id={appointmentId}
-					closeModal={status => closeModal(status)}
-				/>
-			)}
-			{assessmentModal && (
-				<NewAssessment
-					closeModal={status => closeModal(status)}
-					appointment_id={appointmentId}
-					patient={patient}
-					antenatal={antenatal}
+			{showNoteModal && (
+				<CreateNote
+					closeModal={closeModal}
+					updateNote={() => {}}
+					type="consultation"
 				/>
 			)}
 		</>

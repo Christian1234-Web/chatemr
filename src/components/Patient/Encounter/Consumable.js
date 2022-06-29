@@ -260,12 +260,12 @@ const Consumable = ({ previous, patient, closeModal, appointment_id }) => {
 				closeModal(true);
 			} else {
 				dispatch(stopBlock());
-				notifyError(rs.messge || 'Error, could not save consultation data');
+				notifyError(rs.message || 'Error, could not save consultation data');
 			}
 		} catch (error) {
 			console.log(error);
 			dispatch(stopBlock());
-			notifyError('Error, could not save consultation data');
+			notifyError(error.message || 'Error, could not save consultation data');
 		}
 	};
 
