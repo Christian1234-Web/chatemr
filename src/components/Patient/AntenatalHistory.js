@@ -90,27 +90,28 @@ class AntenatalHistory extends Component {
 			<div className="col-sm-12">
 				<div className="element-wrapper">
 					<h6 className="element-header">Antenatal History</h6>
-					<form className="row">
-						<div className="form-group col-md-10">
-							<RangePicker onChange={e => this.dateChange(e)} />
-						</div>
-
-						<div className="form-group col-md-2">
-							<div
-								className="btn btn-sm btn-primary btn-upper text-white filter-btn"
-								onClick={this.doFilter}
-							>
-								<i className="os-icon os-icon-ui-37" />
-								<span>
-									{filtering ? (
-										<img src={waiting} alt="submitting" />
-									) : (
-										'Filter'
-									)}
-								</span>
+					<div className="element-box p-3 m-0">
+						<form className="row">
+							<div className="form-group col-md-10 mb-0">
+								<RangePicker onChange={e => this.dateChange(e)} />
 							</div>
-						</div>
-					</form>
+							<div className="form-group mb-0 col-md-2 text-right">
+								<div
+									className="btn btn-sm btn-primary btn-upper text-white filter-btn"
+									onClick={this.doFilter}
+								>
+									<i className="os-icon os-icon-ui-37" />
+									<span>
+										{filtering ? (
+											<img src={waiting} alt="submitting" />
+										) : (
+											'Filter'
+										)}
+									</span>
+								</div>
+							</div>
+						</form>
+					</div>
 					<div className="element-box p-3 m-0 mt-3">
 						<div className="table-responsive">
 							{loading ? (

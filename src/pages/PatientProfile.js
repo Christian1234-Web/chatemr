@@ -49,6 +49,9 @@ const ImmunizationChart = lazy(() =>
 );
 const ProblemList = lazy(() => import('../components/Patient/ProblemList'));
 const Documents = lazy(() => import('../components/Patient/Documents'));
+const AdmissionHistory = lazy(() =>
+	import('../components/Patient/AdmissionHistory')
+);
 
 const storage = new SSRStorage();
 
@@ -97,6 +100,8 @@ const Page = ({ location }) => {
 			return <IVFHistory />;
 		case 'anc-history':
 			return <AntenatalHistory />;
+		case 'admission-history':
+			return <AdmissionHistory />;
 		default:
 			return <Dashboard />;
 	}

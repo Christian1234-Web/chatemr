@@ -110,6 +110,14 @@ const PatientMenu = ({ location }) => {
 					<span>History</span>
 				</li>
 				<li>
+					<Link to={`${location.pathname}#admission-history`}>
+						<div className="icon-w">
+							<div className="os-icon os-icon-layout" />
+						</div>
+						<span>Admission History</span>
+					</Link>
+				</li>
+				<li>
 					<Link to={`${location.pathname}#anc-history`}>
 						<div className="icon-w">
 							<div className="os-icon os-icon-layout" />

@@ -149,7 +149,7 @@ const Patients = ({ location, filter }) => {
 	};
 
 	const dateChange = e => {
-		let date = e.map(d => {
+		const date = e.map(d => {
 			return moment(d._d).format('YYYY-MM-DD');
 		});
 
