@@ -10,9 +10,9 @@ import {
 } from 'recharts';
 import kebabCase from 'lodash.kebabcase';
 import { connect } from 'react-redux';
-import moment from 'moment';
 
 import Reading from '../Patient/Reading';
+import { formatDate } from '../../services/utilities';
 
 const unit = 'mmHg';
 
@@ -37,7 +37,7 @@ const BloodPressure = ({ vitals, task }) => {
 			cloneVitals
 				.sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1))
 				.forEach((item, index) => {
-					const date = moment(item.createdAt).format('DD-MM-YY');
+					const date = formatDate(item.createdAt, 'DD-MMM-YYYY h:mma');
 					const items = item.reading.blood_pressure.split('/');
 					const res = {
 						name: date,

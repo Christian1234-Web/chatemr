@@ -9,10 +9,10 @@ import {
 	Legend,
 } from 'recharts';
 import kebabCase from 'lodash.kebabcase';
-import moment from 'moment';
 import { connect } from 'react-redux';
 
 import Reading from '../Patient/Reading';
+import { formatDate } from '../../services/utilities';
 
 const unit = 'cm';
 
@@ -36,7 +36,7 @@ const HeadCircumference = ({ vitals, task }) => {
 			cloneVitals
 				.sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1))
 				.forEach((item, index) => {
-					const date = moment(item.createdAt).format('DD-MM-YY');
+					const date = formatDate(item.createdAt, 'DD-MMM-YYYY h:mma');
 					const res = { name: date, item: item.reading.head_circumference };
 					data = [...data, res];
 				});
