@@ -305,8 +305,8 @@ export const soap = [
 ];
 
 export const assessmentMenu = [
-	'Assessment Note',
-	'General Assessment',
+	'Note',
+	'Assessment',
 	'Lab',
 	'Radiology',
 	'Prescription',
