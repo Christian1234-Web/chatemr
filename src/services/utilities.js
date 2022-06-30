@@ -487,6 +487,10 @@ export const redirectToPage = (role, history, permissions) => {
 			case 'cafeteria-kitchen':
 			case 'cafeteria-manager':
 			case 'cafeteria-sales':
+			case 'cook':
+			case 'executive-chef':
+			case 'sue-chef':
+			case 'steward':
 				uri = '/cafeteria/orders';
 				break;
 			case 'cafeteria-store':
