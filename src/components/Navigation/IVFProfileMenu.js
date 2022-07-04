@@ -43,6 +43,11 @@ const IVFProfileMenu = ({ location }) => {
 						Embryology
 					</Link>
 				</li>
+				<li className={checkHash(hash, 'freezing') ? 'active' : ''}>
+					<Link to={`${location.pathname}#freezing`} className="pointer">
+						Freezing
+					</Link>
+				</li>
 			</ul>
 		</div>
 	);
