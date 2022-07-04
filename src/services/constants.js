@@ -186,6 +186,7 @@ export const documentType = [
 	{ id: 'Prescription', name: 'Prescription' },
 	{ id: 'Consent Form', name: 'Consent Form' },
 	{ id: 'Medical Report', name: 'Medical Report' },
+	{ id: 'Referral Form', name: 'Referral Form' },
 ];
 
 export const paymentTypeExtra = [
