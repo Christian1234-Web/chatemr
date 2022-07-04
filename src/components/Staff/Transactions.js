@@ -2,10 +2,14 @@ import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { notifyError } from '../../services/notify';
-import { request } from '../../services/utilities';
+import { itemRender, request } from '../../services/utilities';
+import Pagination from 'antd/lib/pagination';
+import { paginate } from '../../services/constants';
 
 const Transactions = () => {
 	const [transactions, setTransactions] = useState([]);
+	const [debt, setDebt] = useState(0);
+	const [meta, setMeta] = useState({ ...paginate });
 
 	const profile = useSelector(state => state.user.profile);
 
@@ -16,17 +20,21 @@ const Transactions = () => {
 	const fetchTransactions = async page => {
 		try {
 			const p = page || 1;
-			const url = `hr/staffs/transactions?staffid=${profile.id}`;
+			const url = `transactions/staff?staff_id=${profile.id}&page=${p}&limit=10`;
 			const rs = await request(url, 'GET', true);
-			// const { result, ...meta } = rs;
-			setTransactions(rs.transactions);
+			const { result, ...meta } = rs;
+			setTransactions(result);
+			setMeta(meta);
+			setDebt(Math.abs(rs.totalPurchase) - Math.abs(rs.totalAmountPaid));
 		} catch (error) {
 			console.log(error);
 			notifyError('Error fetching transaction request');
 		}
 	};
 
-	// console.log('result', transactions)
+	const onNavigatePage = async nextPage => {
+		await fetchTransactions(nextPage);
+	};
 
 	return (
 		<div className="col-sm-12">
@@ -47,18 +55,20 @@ const Transactions = () => {
 							<tbody>
 								{transactions.map(transaction => (
 									<tr>
-										<td>{transaction.billSource}</td>
+										<td>{transaction.bill_source}</td>
 										<td>
-											{transaction.details[0]?.name}
+											{transaction.transaction_details[0]?.name}
 											<span className="smaller lighter">
 												{' '}
 												₦
-												{transaction.details[0]?.staff_price
-													? transaction.details[0]?.staff_price
-													: transaction.details[0]?.price}
+												{transaction.transaction_details[0]?.staff_price
+													? transaction.transaction_details[0]?.staff_price
+													: transaction.transaction_details[0]?.price}
 											</span>
 										</td>
-										<td>{moment(transaction.dateTime).format('DD-MM-YYYY')}</td>
+										<td>
+											{moment(transaction.createdAt).format('DD-MM-YYYY')}
+										</td>
 
 										<td class="text-center">
 											<div
@@ -71,15 +81,29 @@ const Transactions = () => {
 												title=""
 											></div>
 										</td>
-										<td class="text-right"> {`${transaction.amountPaid}`}</td>
+										<td class="text-right"> {`${transaction.amount_paid}`}</td>
 										<td class="text-right">
 											{' '}
-											{`${transaction.amount + transaction.amountPaid}`}
+											{`${transaction.amount + transaction.amount_paid}`}
 										</td>
 									</tr>
 								))}
 							</tbody>
 						</table>
+						<div>Total Debt: ₦{debt}</div>
+						{meta && (
+							<div className="pagination pagination-center mt-4">
+								<Pagination
+									current={parseInt(meta.currentPage, 10)}
+									pageSize={parseInt(meta.itemsPerPage, 10)}
+									total={parseInt(meta.lastPage, 10)}
+									showTotal={total => `Total ${total} items`}
+									itemRender={itemRender}
+									onChange={current => onNavigatePage(current)}
+									showSizeChanger={false}
+								/>
+							</div>
+						)}
 					</div>
 				</div>
 			</div>
