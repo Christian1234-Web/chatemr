@@ -72,10 +72,14 @@ const Documents = () => {
 				formData.append('document_type', documentID);
 				const url = `${API_URI}/${patientAPI}/${patient.id}/upload-document`;
 				const rs = await upload(url, 'POST', formData);
-				setDocumentList([rs.document, ...documentList]);
-				notifySuccess(`Patient ${rs.document.document_type} Uploaded`);
 				setUploading(false);
-				setUploadVisible(false);
+				if (rs.success) {
+					setDocumentList([rs.document, ...documentList]);
+					notifySuccess(`Patient ${rs.document.document_type} Uploaded`);
+					setUploadVisible(false);
+				} else {
+					notifyError(rs.message || 'could not upload data');
+				}
 			} catch (error) {
 				console.log(error);
 				setUploading(false);
