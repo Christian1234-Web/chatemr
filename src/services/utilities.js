@@ -20,6 +20,13 @@ import axios from 'axios';
 import placeholder from '../assets/images/placeholder.jpg';
 import { hasViewAppointmentPermission } from '../permission-utils/appointment';
 
+export const formatCurrencyBare = (amount, abs) => {
+	if (!amount) {
+		return '0.00';
+	}
+	return `${numeral(abs ? Math.abs(amount) : amount).format('0,0.00')}`;
+};
+
 export const formatCurrency = (amount, abs) => {
 	if (!amount) {
 		return '₦0.0';
