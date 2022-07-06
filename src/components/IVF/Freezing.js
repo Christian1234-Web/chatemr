@@ -1,19 +1,14 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from 'react';
 
-import EmbryoTransfer from './EmbryoTransfer';
-import EmbryoAssessment from './EmbryoAssessment';
-import IcsiRecord from './IcsiRecord';
-import SpermPreparation from './SpermPreparation';
-import TreatmentChart from './TreatmentChart';
-import CreateEmbryology from '../Modals/CreateEmbryology';
+import Sperm from './Sperm';
+import Oocyte from './Oocyte';
+import CreateFreezing from '../Modals/CreateFreezing';
 
-const Embryology = () => {
-	const [tab, setTab] = useState('chart');
+const Freezing = () => {
 	const [showModal, setShowModal] = useState(false);
 
 	const newEntry = () => {
-		console.log('malik');
 		document.body.classList.add('modal-open');
 		setShowModal(true);
 	};
@@ -25,19 +20,19 @@ const Embryology = () => {
 
 	return (
 		<div className="col-sm-12">
-			<div className="element-wrapper embryology">
+			<div className="element-wrapper Freezing">
 				<div className="element-actions flex-action">
 					<a
 						className="btn btn-sm btn-secondary text-white ml-3"
 						onClick={() => newEntry()}
 					>
-						New Embryology
+						New Freezing
 					</a>
-					{showModal && <CreateEmbryology closeModal={closeModal} />}
 				</div>
 			</div>
+			{showModal && <CreateFreezing closeModal={closeModal} />}
 		</div>
 	);
 };
 
-export default Embryology;
+export default Freezing;

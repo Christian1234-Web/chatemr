@@ -14,6 +14,7 @@ import ExtraBlock from '../components/ExtraBlock';
 
 const Notes = lazy(() => import('../components/IVF/Notes'));
 const Embryology = lazy(() => import('../components/IVF/Embryology'));
+const Freezing = lazy(() => import('../components/IVF/Freezing'));
 const RegulationChart = lazy(() => import('../components/IVF/RegulationChart'));
 const HcgAdministration = lazy(() =>
 	import('../components/IVF/HcgAdministration')
@@ -29,6 +30,8 @@ const Page = ({ location }) => {
 	switch (hash[0]) {
 		case 'embryology':
 			return <Embryology />;
+		case 'freezing':
+			return <Freezing />;
 		case 'regulation-chart':
 			return <RegulationChart />;
 		case 'hcg':
