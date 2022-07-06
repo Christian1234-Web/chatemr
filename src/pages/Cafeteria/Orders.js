@@ -25,7 +25,6 @@ import {
 	hasCanDoCafeteriaPaymentPermission,
 	hasConfirmOrderReadyPermission,
 } from '../../permission-utils/cafeteria';
-import ModalPrintTransaction from '../../components/Modals/ModalPrintTransaction';
 
 const Orders = () => {
 	const [loaded, setLoaded] = useState(false);
@@ -37,8 +36,6 @@ const Orders = () => {
 	const [checked, setChecked] = useState([]);
 	const [showReceipt, setShowReceipt] = useState(false);
 	const [paymentItem, setPaymentItem] = useState(null);
-	const [showPrintModal, setShowPrintModal] = useState(null);
-	const [transaction, setTransaction] = useState(null);
 
 	const dispatch = useDispatch();
 
@@ -170,12 +167,6 @@ const Orders = () => {
 		setShowReceipt(false);
 		setChecked([]);
 		document.body.classList.remove('modal-open');
-		setShowPrintModal(false);
-	};
-
-	const handlePrint = item => {
-		setShowPrintModal(true);
-		setTransaction(item);
 	};
 
 	return (
@@ -353,16 +344,6 @@ const Orders = () => {
 																	)}
 																</>
 															)}
-															{
-																<Tooltip title="Print Receipt">
-																	<a
-																		className="success"
-																		onClick={() => handlePrint(item)}
-																	>
-																		<i className="os-icon os-icon-printer" />
-																	</a>
-																</Tooltip>
-															}
 														</td>
 													</tr>
 												);
@@ -427,12 +408,6 @@ const Orders = () => {
 						closeModal();
 						setPaymentItem(null);
 					}}
-				/>
-			)}
-			{showPrintModal && (
-				<ModalPrintTransaction
-					transaction={transaction}
-					closeModal={() => closeModal()}
 				/>
 			)}
 		</>
