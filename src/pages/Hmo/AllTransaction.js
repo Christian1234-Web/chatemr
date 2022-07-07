@@ -387,7 +387,9 @@ class AllTransactions extends Component {
 															<span className="text-capitalize">
 																<strong>{parseSource(item.bill_source)}</strong>
 																{(item?.bill_source === 'ward' ||
-																	item?.bill_source === 'nicu-accommodation') &&
+																	item?.bill_source === 'nicu-accommodation' ||
+																	item?.bill_source === 'credit-deposit' ||
+																	item?.bill_source === 'debit-charge') &&
 																	`: ${item.description}`}
 																{(item?.bill_source === 'consultancy' ||
 																	item?.bill_source === 'labs' ||

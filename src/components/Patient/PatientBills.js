@@ -25,6 +25,7 @@ import MakeDeposit from './Modals/MakeDeposit';
 import ModalApplyCredit from '../Modals/ModalApplyCredit';
 import { messageService } from '../../services/message';
 import TransferCredit from './Modals/TransferCredit';
+import ChargeDebit from './Modals/ChargeDebit';
 
 const { RangePicker } = DatePicker;
 
@@ -49,6 +50,7 @@ const PatientBills = () => {
 	const [filtering, setFiltering] = useState(false);
 	const [visible, setVisible] = useState(false);
 	const [depositVisible, setDepositVisible] = useState(false);
+	const [debitVisible, setDebitVisible] = useState(false);
 	const [filtered, setFiltered] = useState(false);
 	const [date, setDate] = useState([]);
 	const [depositBalance, setDepositBalance] = useState(0);
@@ -247,7 +249,7 @@ const PatientBills = () => {
 										visible={depositVisible}
 										onVisibleChange={() => setDepositVisible(!depositVisible)}
 									>
-										<button className="btn btn-info btn-sm text-white mr-4">
+										<button className="btn btn-info btn-sm text-white mr-2">
 											Make Deposit
 										</button>
 									</Popover>
@@ -277,16 +279,32 @@ const PatientBills = () => {
 										onVisibleChange={() => setTransferVisible(!transferVisible)}
 									>
 										<button className="btn btn-secondary mr-2">
-											<i className="fa fa-send"></i>
-											<span className="ml-2">Transfer Credit</span>
+											<span>Transfer Credit</span>
+										</button>
+									</Popover>
+									<Popover
+										content={
+											<ChargeDebit
+												onHide={() => setDebitVisible(false)}
+												patient={patient}
+												refresh={() => doRefresh()}
+											/>
+										}
+										overlayClassName="set-credit-limit"
+										trigger="click"
+										visible={debitVisible}
+										onVisibleChange={() => setDebitVisible(!debitVisible)}
+									>
+										<button className="btn btn-danger btn-sm mr-2">
+											Charge Debit
 										</button>
 									</Popover>
 									<button
 										className="btn btn-success"
 										onClick={() => doPrintBills()}
 									>
-										<i className="fa fa-print"></i>
-										<span className="ml-2">Print Bills</span>
+										<i className="fa fa-print mr-2" />
+										<span>Print Bills</span>
 									</button>
 								</div>
 							</div>
@@ -397,7 +415,9 @@ const PatientBills = () => {
 															<span className="text-capitalize">
 																<strong>{parseSource(item.bill_source)}</strong>
 																{(item?.bill_source === 'ward' ||
-																	item?.bill_source === 'nicu-accommodation') &&
+																	item?.bill_source === 'nicu-accommodation' ||
+																	item?.bill_source === 'credit-deposit' ||
+																	item?.bill_source === 'debit-charge') &&
 																	`: ${item.description}`}
 																{(item?.bill_source === 'consultancy' ||
 																	item?.bill_source === 'labs' ||

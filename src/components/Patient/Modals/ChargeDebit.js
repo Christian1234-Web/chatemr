@@ -1,25 +1,18 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { notifyError, notifySuccess } from '../../../services/notify';
 import { request } from '../../../services/utilities';
 import { startBlock, stopBlock } from '../../../actions/redux-block';
 
-const MakeDeposit = ({ patient, onHide, updateBalance }) => {
+const ChargeDebit = ({ patient, onHide, refresh }) => {
 	const [amount, setAmount] = useState('');
-	const [paymentMethod, setPaymentMethod] = useState('');
 	const [description, setDescription] = useState('');
 
 	const dispatch = useDispatch();
-	const paymentMethods = useSelector(state => state.utility.methods);
 
 	const save = async () => {
 		try {
-			if (paymentMethod === '') {
-				notifyError('Select payment method');
-				return;
-			}
-
 			if (amount === '') {
 				notifyError('Enter amount');
 				return;
@@ -34,18 +27,18 @@ const MakeDeposit = ({ patient, onHide, updateBalance }) => {
 			const data = {
 				amount,
 				patient_id: patient.id,
-				payment_method: paymentMethod,
+				type: 'debit-charge',
 				description,
 			};
-			const url = 'transactions/credit-account';
-			const rs = await request(url, 'POST', true, data);
-			updateBalance(rs.balance);
-			notifySuccess('Account Credited!');
+			const url = 'transactions/debit-account';
+			await request(url, 'POST', true, data);
+			refresh();
+			notifySuccess('Account Debited!');
 			onHide();
 			dispatch(stopBlock());
 		} catch (error) {
 			console.log(error);
-			notifyError(error.message || 'Could not credit account');
+			notifyError(error.message || 'Could not debit account');
 			dispatch(stopBlock());
 		}
 	};
@@ -68,23 +61,6 @@ const MakeDeposit = ({ patient, onHide, updateBalance }) => {
 					</button>
 					<div className="onboarding-content with-gradient">
 						<div className="form-block">
-							<div className="form-group col-sm-12">
-								<label>Payment Method</label>
-								<select
-									name="payment_method"
-									className="form-control"
-									onChange={e => setPaymentMethod(e.target.value)}
-								>
-									<option value="">Select method</option>
-									{paymentMethods.map((p, i) => {
-										return (
-											<option key={i} value={p.name}>
-												{p.name}
-											</option>
-										);
-									})}
-								</select>
-							</div>
 							<div className="form-group col-sm-12">
 								<label>Amount</label>
 								<input
@@ -120,4 +96,4 @@ const MakeDeposit = ({ patient, onHide, updateBalance }) => {
 	);
 };
 
-export default MakeDeposit;
+export default ChargeDebit;
