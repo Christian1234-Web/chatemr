@@ -17,7 +17,6 @@ export const CK_COMPLAINTS = 'E:COMPLAINTS';
 export const CK_REVIEW_OF_SYSTEMS = 'E:REVIEW_OF_SYSTEMS';
 export const CK_HX_FORMS = 'E:HX_FORMS';
 export const CK_DIAGNOSIS = 'E:DIAGNOSIS';
-export const CK_PAST_DIAGNOSIS = 'E:PAST_DIAGNOSIS';
 export const CK_PAST_HISTORY = 'E:PAST_HISTORY';
 export const CK_TREATMENT_PLAN = 'E:TREATMENT_PLAN';
 

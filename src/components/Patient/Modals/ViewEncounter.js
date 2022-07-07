@@ -11,7 +11,10 @@ const ViewEncounter = ({ closeModal, encounter }) => {
 			role="dialog"
 			style={{ display: 'block' }}
 		>
-			<div className="modal-dialog modal-centered modal-lg">
+			<div
+				className="modal-dialog modal-centered"
+				style={{ maxWidth: '1024px' }}
+			>
 				<div className="modal-content modal-scroll">
 					<button
 						aria-label="Close"

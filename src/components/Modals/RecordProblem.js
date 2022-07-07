@@ -47,7 +47,7 @@ const RecordProblem = ({ closeModal, update }) => {
 			const rs = await request(uri, 'POST', true, data);
 			dispatch(stopBlock());
 			if (rs.success) {
-				update([...rs.diagonsis]);
+				update([...rs.diagnosis]);
 				notifySuccess('problem diagnosis added!');
 				closeModal();
 			} else {

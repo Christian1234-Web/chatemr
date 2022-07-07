@@ -36,7 +36,7 @@ const Diagnosis = ({ previous, next, patient }) => {
 
 	const fetchDiagnoses = useCallback(async () => {
 		try {
-			const url = `${patientAPI}/${patient.id}/diagnoses?status=Active`;
+			const url = `${patientAPI}/${patient.id}/diagnoses?status=Active&group_by=code`;
 			const rs = await request(url, 'GET', true);
 			setExistingDiagnoses(rs);
 		} catch (error) {
@@ -88,10 +88,7 @@ const Diagnosis = ({ previous, next, patient }) => {
 	const onNext = () => {
 		dispatch(
 			updateEncounterData(
-				{
-					...encounter,
-					diagnosis: [...diagnoses],
-				},
+				{ ...encounter, diagnosis: [...diagnoses] },
 				patient.id
 			)
 		);

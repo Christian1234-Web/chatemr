@@ -12,7 +12,6 @@ import {
 	diagnosisAPI,
 	diagnosisType,
 	CK_DIAGNOSIS,
-	CK_PAST_DIAGNOSIS,
 } from '../../services/constants';
 import { request } from '../../services/utilities';
 import { notifyError } from '../../services/notify';
@@ -25,12 +24,10 @@ const Diagnosis = ({ previous, next, patient }) => {
 	const { register, reset } = useForm();
 	const [loaded, setLoaded] = useState(false);
 	const [diagnoses, setDiagnoses] = useState([]);
-	const [pastDiagnoses, setPastDiagnoses] = useState([]);
-	const [selectedPastDiagnoses, setSelectedPastDiagnoses] = useState([]);
+	const [existingDiagnoses, setExistingDiagnoses] = useState([]);
 	const [diagnosis, setDiagnosis] = useState('');
 	const [type, setType] = useState('');
 	const [comment, setComment] = useState('');
-	const [existing, setExisting] = useState(false);
 
 	const encounter = useSelector(state => state.patient.soapData);
 
@@ -38,9 +35,9 @@ const Diagnosis = ({ previous, next, patient }) => {
 
 	const fetchDiagnoses = useCallback(async () => {
 		try {
-			const url = `${patientAPI}/${patient.id}/diagnoses?status=Active`;
+			const url = `${patientAPI}/${patient.id}/diagnoses?status=Active&group_by=code`;
 			const rs = await request(url, 'GET', true);
-			setPastDiagnoses(rs);
+			setExistingDiagnoses(rs);
 		} catch (error) {
 			console.log(error);
 			notifyError('Could not fetch diagnoses for the patient');
@@ -52,12 +49,7 @@ const Diagnosis = ({ previous, next, patient }) => {
 			setDiagnoses(data);
 			storage.setLocalStorage(CK_DIAGNOSIS, data);
 
-			dispatch(
-				updateSoapData({
-					...encounter,
-					diagnosis: data,
-				})
-			);
+			dispatch(updateSoapData({ ...encounter, diagnosis: data }));
 		},
 		[dispatch, encounter]
 	);
@@ -65,9 +57,6 @@ const Diagnosis = ({ previous, next, patient }) => {
 	const retrieveData = useCallback(async () => {
 		const data = await storage.getItem(CK_DIAGNOSIS);
 		saveDiagnoses(data || encounter.diagnosis);
-
-		const past = await storage.getItem(CK_PAST_DIAGNOSIS);
-		setSelectedPastDiagnoses(past || encounter.pastDiagnosis);
 	}, [encounter, saveDiagnoses]);
 
 	useEffect(() => {
@@ -83,21 +72,11 @@ const Diagnosis = ({ previous, next, patient }) => {
 		saveDiagnoses(newItems);
 	};
 
-	const onNext = () => {
-		dispatch(
-			updateSoapData({
-				...encounter,
-				diagnosis: [...diagnoses],
-				pastDiagnosis: [...selectedPastDiagnoses],
-			})
-		);
-		dispatch(next);
-	};
-
 	const onSubmit = () => {
 		if (diagnosis !== '' && type !== '') {
-			const items = [...diagnoses, { comment, diagnosis, type }];
+			const items = [...diagnoses, { id: null, comment, diagnosis, type }];
 			saveDiagnoses(items);
+
 			setDiagnosis('');
 			setComment('');
 			setType('');
@@ -123,15 +102,16 @@ const Diagnosis = ({ previous, next, patient }) => {
 	};
 
 	const onSelect = (e, diagnosis) => {
-		const selected = selectedPastDiagnoses.find(o => o.id === diagnosis.id);
+		const selected = diagnoses.find(o => o.id && o.id === diagnosis.id);
 		if (selected) {
-			const filtered = selectedPastDiagnoses.filter(o => o.id !== diagnosis.id);
-			setSelectedPastDiagnoses(filtered);
-			storage.setLocalStorage(CK_PAST_DIAGNOSIS, filtered);
+			const filtered = diagnoses.filter(o => o.id && o.id !== diagnosis.id);
+			saveDiagnoses(filtered);
 		} else {
-			const items = [...selectedPastDiagnoses, diagnosis];
-			setSelectedPastDiagnoses(items);
-			storage.setLocalStorage(CK_PAST_DIAGNOSIS, items);
+			const items = [
+				...diagnoses,
+				{ ...diagnosis, type: { value: diagnosis.diagnosis_type } },
+			];
+			saveDiagnoses(items);
 		}
 	};
 
@@ -139,6 +119,11 @@ const Diagnosis = ({ previous, next, patient }) => {
 		if (event.key === 'Enter') {
 			onSubmit();
 		}
+	};
+
+	const onNext = () => {
+		dispatch(updateSoapData({ ...encounter, diagnosis: [...diagnoses] }));
+		dispatch(next);
 	};
 
 	return (
@@ -194,14 +179,15 @@ const Diagnosis = ({ previous, next, patient }) => {
 									/>
 								</div>
 							</div>
-							{/* <div className="col-sm-2" style={{ position: 'relative' }}>
-								<button
-									className="btn btn-danger btn-sm"
-									style={{ margin: '45px 0 0', display: 'block' }}
-									type="submit">
+							<div className="col-sm-2" style={{ position: 'relative' }}>
+								<a
+									className="btn btn-info btn-sm text-white pointer"
+									style={{ margin: '40px 0 0', display: 'block' }}
+									onClick={() => onSubmit()}
+								>
 									<i className="os-icon os-icon-plus-circle" /> Add
-								</button>
-							</div> */}
+								</a>
+							</div>
 						</div>
 					</form>
 				</div>
@@ -210,26 +196,13 @@ const Diagnosis = ({ previous, next, patient }) => {
 						<div className="row">
 							<div className="col-md-12">
 								<div className="form-group">
-									<label>
-										Existing Diagnosis{' '}
-										<input
-											type="checkbox"
-											checked={existing}
-											className="form-control"
-											onChange={e => {
-												setExisting(e.target.checked);
-												setSelectedPastDiagnoses(
-													e.target.checked ? [...pastDiagnoses] : []
-												);
-											}}
-										/>
-									</label>
+									<label>Existing Diagnosis</label>
 								</div>
 							</div>
 						</div>
 						<div className="row">
-							{pastDiagnoses.map((item, i) => {
-								const value = selectedPastDiagnoses.find(o => o.id === item.id);
+							{existingDiagnoses.map((item, i) => {
+								const value = diagnoses.find(o => o.id && o.id === item.id);
 								return (
 									<div className="col-md-12" key={i}>
 										<div className="form-group history-item">
