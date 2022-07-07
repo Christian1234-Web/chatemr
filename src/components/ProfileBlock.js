@@ -626,6 +626,24 @@ const ProfileBlock = ({
 													value={`${dob} (${getAge(patient?.date_of_birth)})`}
 												/>
 											</tr>
+											{patient.mother && (
+												<>
+													<tr>
+														<UserItem
+															icon="user"
+															label="Mother's Name"
+															value={patientname(patient.mother)}
+														/>
+													</tr>
+													<tr>
+														<UserItem
+															icon="user"
+															label="Mother's EMR ID"
+															value={formatPatientId(patient.mother)}
+														/>
+													</tr>
+												</>
+											)}
 											{admission && admission.room && (
 												<tr>
 													<UserItem
