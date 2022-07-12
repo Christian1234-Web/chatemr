@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -13,19 +13,35 @@ import NewAssessment from '../Antenatal/NewAssessment';
 import { USER_RECORD } from '../../services/constants';
 import SSRStorage from '../../services/storage';
 import { toggleProfile } from '../../actions/user';
+import {
+	hasViewANCNotePermission,
+	hasViewVisitNotePermission,
+} from '../../permission-utils/patient';
 
 const storage = new SSRStorage();
 
 const Dashboard = () => {
-	const [tab, setTab] = useState('visitNotes');
+	const [tab, setTab] = useState('');
 	const [encounterModal, setEncounterModal] = useState(false);
 	const [assessmentModal, setAssessmentModal] = useState(false);
 
 	const dispatch = useDispatch();
 
+	const staff = useSelector(state => state.user.profile);
 	const patient = useSelector(state => state.user.patient);
 	const appointmentId = useSelector(state => state.user.appointmentId);
 	const antenatal = useSelector(state => state.user.antenatal);
+
+	useEffect(() => {
+		if (
+			hasViewVisitNotePermission(staff.permissions) ||
+			hasViewANCNotePermission(staff.permissions)
+		) {
+			setTab('visitNotes');
+		} else {
+			setTab('visitSummary');
+		}
+	}, [staff]);
 
 	const startEncounter = () => {
 		document.body.classList.add('modal-open');
@@ -53,26 +69,30 @@ const Dashboard = () => {
 				<div className="os-tabs-w">
 					<div className="os-tabs-controls os-tabs-complex">
 						<ul className="nav nav-tabs">
-							<li className="nav-item">
-								<a
-									className={
-										tab === 'visitNotes' ? 'nav-link active' : 'nav-link'
-									}
-									onClick={() => setTab('visitNotes')}
-								>
-									Visit Notes
-								</a>
-							</li>
-							<li className="nav-item">
-								<a
-									className={
-										tab === 'ancVisitNotes' ? 'nav-link active' : 'nav-link'
-									}
-									onClick={() => setTab('ancVisitNotes')}
-								>
-									ANC Visit Notes
-								</a>
-							</li>
+							{hasViewVisitNotePermission(staff.permissions) && (
+								<li className="nav-item">
+									<a
+										className={
+											tab === 'visitNotes' ? 'nav-link active' : 'nav-link'
+										}
+										onClick={() => setTab('visitNotes')}
+									>
+										Visit Notes
+									</a>
+								</li>
+							)}
+							{hasViewANCNotePermission(staff.permissions) && (
+								<li className="nav-item">
+									<a
+										className={
+											tab === 'ancVisitNotes' ? 'nav-link active' : 'nav-link'
+										}
+										onClick={() => setTab('ancVisitNotes')}
+									>
+										ANC Visit Notes
+									</a>
+								</li>
+							)}
 							<li className="nav-item">
 								<a
 									className={
