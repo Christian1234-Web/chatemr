@@ -3,7 +3,7 @@ import { Switch, Route, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import ReduxBlockUi from 'react-block-ui/redux';
-import IdleTimer from 'react-idle-timer';
+import { IdleTimerProvider } from 'react-idle-timer';
 
 import ScrollToTop from './containers/ScrollToTop';
 import TopBar from './components/TopBar';
@@ -18,6 +18,7 @@ import {
 	TOKEN_COOKIE,
 	USER_RECORD,
 	CK_ENCOUNTER,
+	TIMEOUT,
 } from './services/constants';
 import { toggleProfile, signOut } from './actions/user';
 import { setConnection, toggleChat } from './actions/general';
@@ -63,26 +64,6 @@ const Accounting = lazy(() => import('./pages/Accounting/Home'));
 const storage = new SSRStorage();
 
 class App extends Component {
-	constructor(props) {
-		super(props);
-		this.myInterval = null;
-		this.idleTimer = null;
-		this.timeout = 1000 * 60 * 20;
-
-		this.state = {
-			remaining: this.timeout,
-			isIdle: false,
-			lastActive: new Date(),
-			elapsed: 0,
-			lastEvent: 'Events Emitted on Leader',
-			leader: false,
-		};
-
-		// Bind event handlers and methods
-		this.handleOnActive = this.handleOnActive.bind(this);
-		this.handleOnIdle = this.handleOnIdle.bind(this);
-	}
-
 	async componentDidMount() {
 		const fullscreen = await storage.getItem(FULLSCREEN_COOKIE);
 		const theme_mode = await storage.getItem(MODE_COOKIE);
@@ -93,26 +74,6 @@ class App extends Component {
 		window.document.body.className = `menu-position-side menu-side-left${
 			fullscreen || isLogin ? ' full-screen' : ''
 		} with-content-panel${theme_mode ? ' color-scheme-dark' : ''}`;
-
-		if (this.idleTimer) {
-			this.setState({
-				remaining: this.idleTimer.getRemainingTime(),
-				lastActive: this.idleTimer.getLastActiveTime(),
-				elapsed: this.idleTimer.getElapsedTime(),
-				leader: this.idleTimer.isLeader(),
-				isIdle: this.idleTimer.isIdle(),
-			});
-
-			this.myInterval = setInterval(() => {
-				this.setState({
-					remaining: this.idleTimer.getRemainingTime(),
-					lastActive: this.idleTimer.getLastActiveTime(),
-					elapsed: this.idleTimer.getElapsedTime(),
-					leader: this.idleTimer.isLeader(),
-					isIdle: this.idleTimer.isIdle(),
-				});
-			}, 1000);
-		}
 
 		if (!connected && loggedIn) {
 			initSocket();
@@ -151,20 +112,22 @@ class App extends Component {
 		disconnectSocket();
 		this.props.setConnection(false);
 
-		this.idleTimer = null;
-		clearInterval(this.myInterval);
-
 		notifyError('session time out!');
 		this.props.history.push('/?session=expired');
 	};
 
-	handleOnActive() {
-		this.setState({ lastEvent: 'active' });
+	onPrompt() {
+		// Fire a Modal Prompt
+		console.log('fire prompt');
 	}
 
-	handleOnIdle() {
-		this.setState({ lastEvent: 'idle' });
-		this.doLogout();
+	onActive(event) {
+		// Close Modal Prompt
+		// Do some active action
+	}
+
+	onAction(event) {
+		// Do something when a user triggers a watched event
 	}
 
 	render() {
@@ -198,7 +161,15 @@ class App extends Component {
 									<Route path="/change-password" component={ChangePassword} />
 								</Switch>
 							) : (
-								<>
+								<IdleTimerProvider
+									timeout={TIMEOUT}
+									onPrompt={this.onPrompt}
+									onIdle={this.doLogout}
+									onActive={this.onActive}
+									onAction={this.onAction}
+									crossTab={true}
+									stopOnIdle={true}
+								>
 									<ReduxBlockUi block="REQUEST_START" unblock="REQUEST_STOP">
 										<div className="all-wrapper with-side-panel solid-bg-all">
 											<Suspense fallback={<Splash />}>
@@ -281,19 +252,7 @@ class App extends Component {
 									{is_modal_open && (
 										<div className={`modal-backdrop fade show`} />
 									)}
-									<IdleTimer
-										ref={ref => {
-											this.idleTimer = ref;
-										}}
-										onActive={this.handleOnActive}
-										onIdle={this.handleOnIdle}
-										timeout={this.timeout}
-										crossTab={{
-											emitOnAllTabs: true,
-										}}
-										stopOnIdle={true}
-									/>
-								</>
+								</IdleTimerProvider>
 							)}
 						</>
 					) : (

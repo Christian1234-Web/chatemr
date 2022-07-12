@@ -32,6 +32,7 @@ import { setPatientRecord, toggleProfile } from '../actions/user';
 import SSRStorage from '../services/storage';
 import { hasCloseAncPermission } from '../permission-utils/antenatal';
 import CreateNote from './Modals/CreateNote';
+import PatientProfile from './Modals/PatientProfile';
 
 const storage = new SSRStorage();
 
@@ -87,6 +88,7 @@ const ProfileBlock = ({
 	const [admission, setAdmission] = useState(null);
 	const [alertShown, setAlertShown] = useState(false);
 	const [showNoteModal, setShowNoteModal] = useState(false);
+	const [showProfileModal, setShowProfileModal] = useState(false);
 
 	const dispatch = useDispatch();
 
@@ -200,6 +202,7 @@ const ProfileBlock = ({
 		setShowModal(false);
 		setEditModal(false);
 		setShowNoteModal(false);
+		setShowProfileModal(false);
 		document.body.classList.remove('modal-open');
 	};
 
@@ -463,6 +466,11 @@ const ProfileBlock = ({
 		setShowNoteModal(true);
 	};
 
+	const openProfile = () => {
+		document.body.classList.add('modal-open');
+		setShowProfileModal(true);
+	};
+
 	return (
 		<>
 			<div className="row profile-block">
@@ -714,6 +722,14 @@ const ProfileBlock = ({
 												</Link>
 											</li>
 										</span>
+										<span className="b-avatar badge-light-primary rounded shiftright post-box">
+											<li>
+												<a onClick={openProfile}>
+													<i className="picons-thin-icon-thin-0708_user_profile" />
+													<span>Profile</span>
+												</a>
+											</li>
+										</span>
 									</ul>
 								</div>
 								{(user.role.slug === 'it-admin' ||
@@ -797,6 +813,9 @@ const ProfileBlock = ({
 					updateNote={() => {}}
 					type="consultation"
 				/>
+			)}
+			{showProfileModal && patient && (
+				<PatientProfile patient={patient} closeModal={closeModal} />
 			)}
 		</>
 	);

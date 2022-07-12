@@ -572,6 +572,10 @@ export const patientname = (user, pid = false) => {
 	return user ? `${user.other_names} ${user.surname} ${patientId}` : '--';
 };
 
+export const patientnokname = user => {
+	return user ? `${user.other_names} ${user.surname}` : '--';
+};
+
 export const formatNumber = n =>
 	parseFloat(n).toLocaleString(undefined, { maximumFractionDigits: 2 });
 
