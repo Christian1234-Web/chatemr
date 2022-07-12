@@ -21,6 +21,7 @@ const Notes = ({ can_request = true }) => {
 	const [showModal, setShowModal] = useState(false);
 
 	const dispatch = useDispatch();
+
 	const antenatal = useSelector(state => state.user.item);
 
 	const fetchNotes = useCallback(

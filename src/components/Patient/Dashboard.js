@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import VisitNotesTable from './VisitNotesTable';
+import AncVisitNotes from './AncVisitNotes';
 import VisitSummary from './VisitSummary';
 import PatientBills from './PatientBills';
 import AppointmentHistory from './AppointmentHistory';
@@ -65,6 +66,16 @@ const Dashboard = () => {
 							<li className="nav-item">
 								<a
 									className={
+										tab === 'ancVisitNotes' ? 'nav-link active' : 'nav-link'
+									}
+									onClick={() => setTab('ancVisitNotes')}
+								>
+									ANC Visit Notes
+								</a>
+							</li>
+							<li className="nav-item">
+								<a
+									className={
 										tab === 'visitSummary' ? 'nav-link active' : 'nav-link'
 									}
 									onClick={() => setTab('visitSummary')}
@@ -117,6 +128,7 @@ const Dashboard = () => {
 					</div>
 					<div className="tab-content">
 						{tab === 'visitNotes' && <VisitNotesTable />}
+						{tab === 'ancVisitNotes' && <AncVisitNotes />}
 						{tab === 'visitSummary' && <VisitSummary />}
 						{tab === 'appointment' && <AppointmentHistory />}
 						{tab === 'billing' && <PatientBills />}
