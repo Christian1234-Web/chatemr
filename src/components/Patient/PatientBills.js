@@ -16,6 +16,7 @@ import {
 	formatCurrency,
 	formatDate,
 	parseSource,
+	confirmAction,
 } from '../../services/utilities';
 import { notifyError } from '../../services/notify';
 import { startBlock, stopBlock } from '../../actions/redux-block';
@@ -189,6 +190,29 @@ const PatientBills = () => {
 		const uri = `patient/${patient.id}/outstandings`;
 		const res = await request(uri, 'GET', true);
 		messageService.sendMessage({ type: 'balance', data: res });
+	};
+
+	const applyDeposit = async item => {
+		try {
+			dispatch(startBlock());
+			const data = {
+				items: [{ id: item.id, amount: item.amount }],
+				patient_id: patient.id,
+				payment_method: 'Credit',
+				amount_paid: Math.abs(Number(item.amount)),
+			};
+			const url = 'transactions/process-credit';
+			await request(url, 'POST', true, data);
+			dispatch(stopBlock());
+			doRefresh();
+		} catch (e) {
+			dispatch(stopBlock());
+			notifyError(e.message || 'could not process transaction');
+		}
+	};
+
+	const confirmAppyDeposit = item => {
+		confirmAction(applyDeposit, item, 'Apply deposit to this item');
 	};
 
 	return (
@@ -401,6 +425,7 @@ const PatientBills = () => {
 												<th>Type</th>
 												<th>Status</th>
 												<th>Received By</th>
+												<th></th>
 											</tr>
 										</thead>
 										<tbody>
@@ -492,6 +517,18 @@ const PatientBills = () => {
 															)}
 														</td>
 														<td>{item.staff ? staffname(item.staff) : '--'}</td>
+														<td>
+															{item.status !== 1 && depositBalance > 0 && (
+																<Tooltip title="Apply Deposit">
+																	<a
+																		onClick={() => confirmAppyDeposit(item)}
+																		className="primary"
+																	>
+																		<i className="os-icon os-icon-credit-card" />
+																	</a>
+																</Tooltip>
+															)}
+														</td>
 													</tr>
 												);
 											})}
@@ -500,7 +537,7 @@ const PatientBills = () => {
 													<strong>Total</strong>
 												</td>
 												<td>{formatCurrency(totalAmount)}</td>
-												<td colSpan="4">
+												<td colSpan="5">
 													<strong>Outstanding Amount:</strong>{' '}
 													{formatCurrency(outstandingAmount)}
 												</td>
