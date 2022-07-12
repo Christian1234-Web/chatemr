@@ -15,11 +15,16 @@ const validate = values => {
 	return errors;
 };
 
-class CreatePermission extends Component {
+class EditPermission extends Component {
 	state = {
 		submitting: false,
 		permissionCategory: null,
 	};
+
+	componentDidMount() {
+		const category = this.props.permissionItem?.category || '';
+		this.setState({ permissionCategory: category });
+	}
 
 	save = async data => {
 		try {
@@ -31,24 +36,27 @@ class CreatePermission extends Component {
 				return;
 			}
 
+			const { permissionItem } = this.props;
 			this.setState({ submitting: true });
 			const datum = { ...data, category_id: data.permissionCategory.id };
-			const rs = await request('settings/permissions', 'POST', true, datum);
-			this.props.setDataList(rs);
+			const uri = `settings/permissions/${permissionItem.id}`;
+			const rs = await request(uri, 'PATCH', true, datum);
+			this.props.editDataList(rs);
 			this.setState({ submitting: false, permissionCategory: null });
-			this.props.reset('create_permission');
-			notifySuccess('permission created!');
+			this.props.reset('edit_permission');
+			this.props.cancel();
+			notifySuccess('permission saved!');
 		} catch (e) {
 			this.setState({ submitting: false });
 			throw new SubmissionError({
-				_error: e.message || 'could not create permission',
+				_error: e.message || 'could not edit permission',
 			});
 		}
 	};
 
 	render() {
 		const { submitting, permissionCategory } = this.state;
-		const { error, handleSubmit, categories } = this.props;
+		const { error, handleSubmit, categories, cancel } = this.props;
 		return (
 			<div className="pipeline white lined-warning">
 				<form onSubmit={handleSubmit(this.save)}>
@@ -93,6 +101,13 @@ class CreatePermission extends Component {
 						>
 							{submitting ? <img src={waiting} alt="submitting" /> : 'save'}
 						</button>
+						<button
+							className="btn btn-secondary ml-2"
+							type="button"
+							onClick={() => cancel()}
+						>
+							Cancel
+						</button>
 					</div>
 				</form>
 			</div>
@@ -100,15 +115,18 @@ class CreatePermission extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
 	return {
-		initialValues: { permissionCategory: '' },
+		initialValues: {
+			permissionCategory: ownProps.permissionItem?.category || '',
+			name: ownProps.permissionItem?.name || '',
+		},
 	};
 };
 
-CreatePermission = reduxForm({
-	form: 'create_permission',
+EditPermission = reduxForm({
+	form: 'edit_permission',
 	validate,
-})(CreatePermission);
+})(EditPermission);
 
-export default connect(mapStateToProps, { reset, change })(CreatePermission);
+export default connect(mapStateToProps, { reset, change })(EditPermission);
