@@ -1,6 +1,6 @@
 import React, { Component, Suspense, lazy } from 'react';
 import { connect } from 'react-redux';
-import { Switch, withRouter, Link } from 'react-router-dom';
+import { Switch, withRouter } from 'react-router-dom';
 
 import { toggleProfile } from '../actions/user';
 import StaffMenu from '../components/Navigation/StaffMenu';
@@ -18,6 +18,7 @@ const storage = new SSRStorage();
 
 const Page = ({ location }) => {
 	const hash = location.hash.substr(1);
+	// const {  staff } = this.props;
 	switch (hash) {
 		case 'payroll':
 			return <Payroll />;
@@ -30,12 +31,17 @@ const Page = ({ location }) => {
 };
 
 class StaffProfile extends Component {
+	state = {
+		profile_image: null,
+	};
 	closeProfile = () => {
 		storage.removeItem(USER_RECORD);
 		this.props.toggleProfile(false);
 	};
 
 	componentDidMount() {
+		const image = localStorage.getItem('STAFFIMAGE');
+		this.setState({ profile_image: image });
 		const { location } = this.props;
 		if (!location.hash) {
 			this.props.history.push(`${location.pathname}#profile`);
@@ -47,7 +53,21 @@ class StaffProfile extends Component {
 		this.props.history.push(location.pathname);
 	}
 
+	onChange = async e => {
+		const reader = new FileReader(),
+			files = e.target.files;
+
+		reader.onload = function () {
+			localStorage.setItem('STAFFIMAGE', reader.result);
+		};
+		const image = await localStorage.getItem('STAFFIMAGE');
+		localStorage.removeItem('STAFFIMAGE');
+		await this.setState({ profile_image: image });
+		reader.readAsDataURL(files[0]);
+	};
 	render() {
+		const { profile_image } = this.state;
+
 		const { location, staff } = this.props;
 		return (
 			<div className="layout-w">
@@ -84,9 +104,35 @@ class StaffProfile extends Component {
 															style={{ boxShadow: 'none' }}
 														>
 															<img
-																alt=""
-																src={parseAvatar(staff?.profile_pic)}
+																alt="staff profile"
+																src={
+																	profile_image !== null
+																		? profile_image
+																		: parseAvatar(staff?.profile_pic)
+																}
+																className="rounded-circle"
 															/>
+															<div
+																className="avatar-xs p-0 rounded-circle profile-photo-edit position-absolute"
+																style={{ top: '70%', left: '60%' }}
+															>
+																<input
+																	id="profile-img-file-input"
+																	type="file"
+																	onChange={this.onChange}
+																	hidden
+																	accept="image/*"
+																	className="profile-img-file-input form-control d-none"
+																/>
+																<label
+																	htmlFor="profile-img-file-input"
+																	className="profile-photo-edit avatar-xs"
+																>
+																	<span className="avatar-title rounded-circle bg-light text-body p-2">
+																		<i className="icon-feather-camera"></i>
+																	</span>
+																</label>
+															</div>
 														</div>
 														<h4 className="customer-name">
 															{staffname(staff.details)}
@@ -95,7 +141,7 @@ class StaffProfile extends Component {
 															{staff.details?.department?.name || '--'}
 														</div>
 													</div>
-													<div className="up-controls">
+													{/* <div className="up-controls">
 														<div className="row">
 															<div className="col-lg-12 text-center mt-4">
 																<Link
@@ -107,7 +153,7 @@ class StaffProfile extends Component {
 																</Link>
 															</div>
 														</div>
-													</div>
+													</div> */}
 												</div>
 											</div>
 										</div>

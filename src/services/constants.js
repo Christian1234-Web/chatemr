@@ -1,7 +1,7 @@
 export const DEBUG = process.env.REACT_APP_DEBUG;
 export const APP_NAME = process.env.REACT_APP_NAME;
 export const API_URI = process.env.REACT_APP_API;
-export const PRINT_URI = process.env.REACT_APP_PRINT;
+export const PRINT_URI = process.env.PRINT_URI;
 export const VAT = Number(process.env.REACT_APP_VAT) / 100;
 
 export const TOKEN_COOKIE = 'EMR:TOKEN_COOKIE';

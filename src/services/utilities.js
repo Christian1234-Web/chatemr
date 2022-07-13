@@ -68,7 +68,9 @@ const checkStatus = async response => {
 			(new SSRStorage()).removeItem(TOKEN_COOKIE);
 			window.location.reload(true);
 		}
+
 		const message = await response.text();
+
 		const err = JSON.parse(message);
 		throw Object.freeze({ message: err.message || err.error });
 	}
@@ -183,7 +185,7 @@ export const getPageList = (array, page_size, page_number) => {
 export const renderTextInput = ({ className, input, label, type, id, placeholder, readOnly = false, meta: { touched, error } }) => (
 	<div
 		className={`form-group ${touched &&
-		(error ? 'has-error has-danger' : '')} ${className ? className : ''}`}>
+			(error ? 'has-error has-danger' : '')} ${className ? className : ''}`}>
 		<label htmlFor={id}>{label}</label>
 		<input
 			{...input}
@@ -234,7 +236,7 @@ export const renderTextArea = ({
 export const renderTextInputGroup = ({ input, append, label, icon, type, id, placeholder, meta: { touched, error } }) => (
 	<div
 		className={`form-group ${touched &&
-		(error ? 'has-error has-danger' : '')}`}>
+			(error ? 'has-error has-danger' : '')}`}>
 		<label htmlFor={id}>{label}</label>
 		<div className="input-group">
 			{!append && (
