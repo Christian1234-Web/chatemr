@@ -34,7 +34,6 @@ class Lab extends Component {
 			this.setState({ loading: true });
 			const p = page || 1;
 			const url = `transactions/search?bill_source=labs&page=${p}&limit=10&term=${search}&startDate=${startDate}&endDate=${endDate}`;
-			// const url = `requests/list/labs?page=${p}&limit=10&startDate=${startDate}&endDate=${endDate}&status=${status}&patient_id=${patient_id}`;
 			const rs = await request(url, 'GET', true);
 			const { result, ...meta } = rs;
 			this.setState({ labs: result, loading: false, filtering: false, meta });
@@ -157,14 +156,13 @@ class Lab extends Component {
 																<thead>
 																	<tr>
 																		<th>Patient Name</th>
-																		<th>Patient ID</th>
-																		<th className="text-center">
-																			Request Date
-																		</th>
-																		<th className="text-center">Specimen</th>
-																		<th className="text-center">Filled Date</th>
-																		<th className="text-right">Amount</th>
-																		<th className="text-right">By</th>
+																		<th>ID</th>
+																		<th className="text-left">Request Date</th>
+																		<th className="text-left">Test Name</th>
+																		<th className="text-left">Specimen</th>
+																		<th className="text-left">Filled Date</th>
+																		<th className="text-left">Amount</th>
+																		<th className="text-left">By</th>
 																	</tr>
 																</thead>
 																<tbody>
@@ -180,22 +178,25 @@ class Lab extends Component {
 																					'DD-MM-YYYY h:mm a'
 																				)}
 																			</td>
-																			<td className="text-center">
-																				{lab.patientRequestItem.labTest.specimens.map(
+																			<td className="text-left">
+																				{lab.patientRequestItem.labTest.name}
+																			</td>
+																			<td className="text-left">
+																				{lab.patientRequestItem.labTest.specimens?.map(
 																					(sample, i) => (
 																						<span key={i}> {sample.label}</span>
 																					)
 																				)}
 																			</td>
-																			<td className="text-center">
+																			<td className="text-left">
 																				{moment(lab.updated_at).format(
 																					'DD-MM-YYYY h:mm a'
 																				)}
 																			</td>
-																			<td className="text-right">
+																			<td className="text-left">
 																				{lab.amount_paid}
 																			</td>
-																			<td className="text-right">
+																			<td className="text-left">
 																				{lab.createdBy}
 																			</td>
 																		</tr>
