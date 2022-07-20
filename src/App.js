@@ -162,7 +162,7 @@ class App extends Component {
 								</Switch>
 							) : (
 								<IdleTimerProvider
-									timeout={TIMEOUT}
+									timeout={1000000}
 									onPrompt={this.onPrompt}
 									onIdle={this.doLogout}
 									onActive={this.onActive}

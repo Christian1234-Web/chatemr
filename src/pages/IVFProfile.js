@@ -67,6 +67,7 @@ class IVFProfile extends Component {
 
 	componentWillUnmount() {
 		const { location } = this.props;
+
 		this.props.history.push(location.pathname);
 	}
 

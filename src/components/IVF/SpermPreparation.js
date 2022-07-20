@@ -2,7 +2,10 @@ import React from 'react';
 
 const SpermPreparation = () => {
 	return (
-		<>
+		<div
+			className="p-2"
+			style={{ height: '37rem', overflowY: 'scroll', overflowX: 'hidden' }}
+		>
 			<h6 className="element-header">SPERM PREPARATION</h6>
 			<table className="table table-striped table-bordered">
 				<tbody>
@@ -193,46 +196,46 @@ const SpermPreparation = () => {
 				</tbody>
 			</table>
 
-			<div className="row">
-				<div className="col-md-4">
-					<div className="form-group row">
-						<label className="col-form-label col-sm-5">
-							Time of Production
-						</label>
-						<div className="col-sm-7">
-							<input
-								className="form-control"
-								placeholder="Time of Production"
-								type="text"
-							/>
+			<form>
+				<div className="row">
+					<div className="col-md-4">
+						<div className="form-group ">
+							<label className="">Time of Production</label>
+							<div className="">
+								<input
+									className="form-control"
+									placeholder="Time of Production"
+									type="time"
+								/>
+							</div>
+						</div>
+					</div>
+					<div className="col-md-4">
+						<div className="form-group ">
+							<label className="">Time Received</label>
+							<div className="">
+								<input
+									className="form-control"
+									placeholder="Time Received"
+									type="time"
+								/>
+							</div>
+						</div>
+					</div>
+					<div className="col-md-4">
+						<div className="form-group">
+							<label className="">Time Analyzed</label>
+							<div className="">
+								<input
+									className="form-control"
+									placeholder="Time Analyzed"
+									type="time"
+								/>
+							</div>
 						</div>
 					</div>
 				</div>
-				<div className="col-md-4">
-					<div className="form-group row">
-						<label className="col-form-label col-sm-5">Time Received</label>
-						<div className="col-sm-7">
-							<input
-								className="form-control"
-								placeholder="Time Received"
-								type="text"
-							/>
-						</div>
-					</div>
-				</div>
-				<div className="col-md-4">
-					<div className="form-group row">
-						<label className="col-form-label col-sm-5">Time Analyzed</label>
-						<div className="col-sm-7">
-							<input
-								className="form-control"
-								placeholder="Time Analyzed"
-								type="text"
-							/>
-						</div>
-					</div>
-				</div>
-			</div>
+			</form>
 			<div className="table-responsive">
 				<table className="table table-striped table-bordered">
 					<thead>
@@ -373,30 +376,40 @@ const SpermPreparation = () => {
 						</tr>
 					</tbody>
 				</table>
-				<div className="row">
-					<div className="col-sm-6">
-						<div className="form-group">
-							<label>EMBRIOLOGIST</label>
-							<input
-								className="form-control"
-								placeholder="Embriologist"
-								type="text"
-							/>
+				<form>
+					<div className="row">
+						<div className="col-sm-6">
+							<div className="form-group">
+								<label>EMBRIOLOGIST</label>
+								<input
+									className="form-control"
+									placeholder="Embriologist"
+									type="text"
+								/>
+							</div>
+						</div>
+						<div className="col-sm-6">
+							<div className="form-group">
+								<label>WITNESS</label>
+								<input
+									className="form-control"
+									placeholder="Witness"
+									type="text"
+								/>
+							</div>
 						</div>
 					</div>
-					<div className="col-sm-6">
-						<div className="form-group">
-							<label>WITNESS</label>
-							<input
-								className="form-control"
-								placeholder="Witness"
-								type="text"
-							/>
-						</div>
-					</div>
+				</form>
+			</div>
+			<div className="d-flex justify-content-between">
+				<div></div>
+				<div>
+					<button type="button" className="btn btn-primary">
+						Submit
+					</button>
 				</div>
 			</div>
-		</>
+		</div>
 	);
 };
 
