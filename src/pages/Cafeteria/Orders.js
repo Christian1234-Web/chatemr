@@ -353,7 +353,7 @@ const Orders = () => {
 																	)}
 																</>
 															)}
-															{
+															{/* {
 																<Tooltip title="Print Receipt">
 																	<a
 																		className="primary"
@@ -362,7 +362,7 @@ const Orders = () => {
 																		<i className="os-icon os-icon-printer" />
 																	</a>
 																</Tooltip>
-															}
+															} */}
 														</td>
 													</tr>
 												);
