@@ -356,7 +356,7 @@ const Orders = () => {
 															{
 																<Tooltip title="Print Receipt">
 																	<a
-																		className="success"
+																		className="primary"
 																		onClick={() => handlePrint(item)}
 																	>
 																		<i className="os-icon os-icon-printer" />

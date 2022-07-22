@@ -2,6 +2,7 @@ export const DEBUG = process.env.REACT_APP_DEBUG;
 export const APP_NAME = process.env.REACT_APP_NAME;
 export const API_URI = process.env.REACT_APP_API;
 export const VAT = Number(process.env.REACT_APP_VAT) / 100;
+export const TIMEOUT = Number(process.env.REACT_APP_TIMEOUT) * 1000;
 
 export const TOKEN_COOKIE = 'EMR:TOKEN_COOKIE';
 export const MODE_COOKIE = 'EMR:MODE_COOKIE';
