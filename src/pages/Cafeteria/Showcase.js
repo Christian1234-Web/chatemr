@@ -16,6 +16,7 @@ import { cafeteriaAPI, paginate } from '../../services/constants';
 import { notifyError, notifySuccess } from '../../services/notify';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import TableLoading from '../../components/TableLoading';
+import ModalEditShowcaseItem from '../../components/Modals/ModalEditShowcaseItem';
 
 const Showcase = () => {
 	const initialState = {
@@ -28,9 +29,11 @@ const Showcase = () => {
 	const [data, getDataToEdit] = useState(null);
 	const [loaded, setLoaded] = useState(false);
 	const [foodItem, setFoodItem] = useState(null);
+	const [editModal, setEditModal] = useState(false);
 
 	const [items, setItems] = useState([]);
 	const [meta, setMeta] = useState({ ...paginate });
+	const [item, setItem] = useState(null);
 
 	const dispatch = useDispatch();
 
@@ -106,6 +109,12 @@ const Showcase = () => {
 		getDataToEdit(data);
 	};
 
+	const editShowcaseItem = item => {
+		document.body.classList.add('modal-open');
+		setItem(item);
+		setEditModal(true);
+	};
+
 	const cancelEditButton = () => {
 		setSubmitButton({ ...initialState });
 		setState({ ...initialState });
@@ -125,6 +134,11 @@ const Showcase = () => {
 			dispatch(stopBlock());
 			notifyError('Error deleting showcase item');
 		}
+	};
+
+	const closeModal = () => {
+		document.body.classList.remove('modal-open');
+		setEditModal(false);
 	};
 
 	const confirmDelete = data => {
@@ -178,7 +192,7 @@ const Showcase = () => {
 											<th>Approved</th>
 											<th width="120px">Approved At</th>
 											<th>Approved By</th>
-											<th></th>
+											<th>Actions</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -208,6 +222,35 @@ const Showcase = () => {
 													</td>
 													<td>{item.approved_by || '--'}</td>
 													<td className="row-actions">
+														{item.approved === 1 && (
+															<>
+																{/* <Tooltip title="Approve Item">
+																	<a
+																		className="info"
+																		onClick={() => onApprove(item)}
+																	>
+																		<i className="os-icon os-icon-check-square" />
+																	</a>
+																</Tooltip> */}
+																<Tooltip title="Edit Item">
+																	<a
+																		className="secondary"
+																		// onClick={() => onClickEdit(item)}
+																		onClick={() => editShowcaseItem(item)}
+																	>
+																		<i className="os-icon os-icon-edit-32" />
+																	</a>
+																</Tooltip>
+																{/* <Tooltip title="Delete Item">
+																	<a
+																		className="danger"
+																		onClick={() => confirmDelete(item)}
+																	>
+																		<i className="os-icon os-icon-ui-15" />
+																	</a>
+																</Tooltip> */}
+															</>
+														)}
 														{item.approved === 0 && (
 															<>
 																<Tooltip title="Approve Item">
@@ -222,6 +265,7 @@ const Showcase = () => {
 																	<a
 																		className="secondary"
 																		onClick={() => onClickEdit(item)}
+																		// onClick={() => editShowcaseItem(item)}
 																	>
 																		<i className="os-icon os-icon-edit-32" />
 																	</a>
@@ -320,6 +364,16 @@ const Showcase = () => {
 					</form>
 				</div>
 			</div>
+			{editModal && item && (
+				<ModalEditShowcaseItem
+					item={item}
+					category="cafeteria"
+					closeModal={() => closeModal()}
+					// updateItem={updateItem}
+					onClickEdit={onClickEdit}
+					onEditItem={onEditItem}
+				/>
+			)}
 		</div>
 	);
 };

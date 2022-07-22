@@ -9016,10 +9016,10 @@ react-hook-form@^4.9.8:
   resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-4.10.2.tgz#fb56160c302a0e2b595ef78cc8946c9dc9cb776a"
   integrity sha512-Ule/KqHBwUvuubqGC4WDvOARS6VjlULSS+WHspgQ5FhFKR4ytHDc4AMpjVfnv+Wbz2TEbMp9/ZHmuZsUksPCiA==
 
-react-idle-timer@^4.6.4:
-  version "4.6.4"
-  resolved "https://registry.yarnpkg.com/react-idle-timer/-/react-idle-timer-4.6.4.tgz#71ba954ba6f464df24d46a94e63c5ef19f7319dc"
-  integrity sha512-iq61dPud8fgj7l1KOJEY5pyiD532fW0KcIe/5XUe/0lB/4Vytoy4tZBlLGSiYodPzKxTL6HyKoOmG6tyzjD7OQ==
+react-idle-timer@^5.4.1:
+  version "5.4.1"
+  resolved "https://registry.yarnpkg.com/react-idle-timer/-/react-idle-timer-5.4.1.tgz#4f05e5d2a41656e78fb78a30a4bc232d3964b8f5"
+  integrity sha512-Pn0ede5OBeUxkIdnGevKAcVtdMnzRzFgBI6k2DC3gDbDCqRSePblxKH6Lbb0ncLzwaw9hnZfe3/Z8Bj1HA8khA==
 
 react-is@^16.10.2, react-is@^16.12.0, react-is@^16.13.1, react-is@^16.3.2, react-is@^16.4.2, react-is@^16.6.0, react-is@^16.7.0:
   version "16.13.1"

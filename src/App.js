@@ -3,7 +3,7 @@ import { Switch, Route, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import ReduxBlockUi from 'react-block-ui/redux';
-import IdleTimer from 'react-idle-timer';
+import { IdleTimer } from 'react-idle-timer';
 
 import ScrollToTop from './containers/ScrollToTop';
 import TopBar from './components/TopBar';
