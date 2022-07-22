@@ -353,16 +353,6 @@ const Orders = () => {
 																	)}
 																</>
 															)}
-															{/* {
-																<Tooltip title="Print Receipt">
-																	<a
-																		className="primary"
-																		onClick={() => handlePrint(item)}
-																	>
-																		<i className="os-icon os-icon-printer" />
-																	</a>
-																</Tooltip>
-															} */}
 														</td>
 													</tr>
 												);
