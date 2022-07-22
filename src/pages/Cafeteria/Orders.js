@@ -326,6 +326,14 @@ const Orders = () => {
 															)}
 														</td>
 														<td className="row-actions">
+															<Tooltip title="Print Receipt">
+																<a
+																	className="primary"
+																	onClick={() => handlePrint(item)}
+																>
+																	<i className="os-icon os-icon-printer" />
+																</a>
+															</Tooltip>
 															{!item.transaction && (
 																<>
 																	{item.status === 0 &&
