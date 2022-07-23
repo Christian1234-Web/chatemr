@@ -5,7 +5,7 @@ import waiting from '../../assets/images/waiting.gif';
 
 const UploadDocument = ({ onHide, uploading, doUpload, documentType }) => {
 	const [theDocumentType, setDocumentType] = useState('');
-	const [files, setFile] = useState(null);
+	const [files, setFiles] = useState(null);
 	let uploadAttachment;
 
 	return (
@@ -58,7 +58,7 @@ const UploadDocument = ({ onHide, uploading, doUpload, documentType }) => {
 												ref={el => {
 													uploadAttachment = el;
 												}}
-												onChange={e => setFile(e.target.files)}
+												onChange={e => setFiles(e.target.files)}
 											/>
 											<label htmlFor="department">File</label>
 											<a

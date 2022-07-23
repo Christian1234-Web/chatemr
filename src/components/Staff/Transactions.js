@@ -1,5 +1,5 @@
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { notifyError } from '../../services/notify';
 import { itemRender, request } from '../../services/utilities';
@@ -8,29 +8,37 @@ import { paginate } from '../../services/constants';
 
 const Transactions = () => {
 	const [transactions, setTransactions] = useState([]);
+	const [fetching, setFetching] = useState(true);
 	const [debt, setDebt] = useState(0);
 	const [meta, setMeta] = useState({ ...paginate });
 
 	const profile = useSelector(state => state.user.profile);
 
-	useEffect(() => {
-		fetchTransactions();
-	}, [transactions.length]);
+	const fetchTransactions = useCallback(
+		async page => {
+			try {
+				const p = page || 1;
+				const url = `transactions/staff?staff_id=${profile.id}&page=${p}&limit=10`;
+				const rs = await request(url, 'GET', true);
+				const { result, ...meta } = rs;
+				setFetching(false);
+				setTransactions(result);
+				setMeta(meta);
+				setDebt(Math.abs(rs.totalPurchase) - Math.abs(rs.totalAmountPaid));
+			} catch (error) {
+				console.log(error);
+				setFetching(false);
+				notifyError('Error fetching transaction request');
+			}
+		},
+		[profile]
+	);
 
-	const fetchTransactions = async page => {
-		try {
-			const p = page || 1;
-			const url = `transactions/staff?staff_id=${profile.id}&page=${p}&limit=10`;
-			const rs = await request(url, 'GET', true);
-			const { result, ...meta } = rs;
-			setTransactions(result);
-			setMeta(meta);
-			setDebt(Math.abs(rs.totalPurchase) - Math.abs(rs.totalAmountPaid));
-		} catch (error) {
-			console.log(error);
-			notifyError('Error fetching transaction request');
+	useEffect(() => {
+		if (fetching) {
+			fetchTransactions();
 		}
-	};
+	}, [fetchTransactions, fetching]);
 
 	const onNavigatePage = async nextPage => {
 		await fetchTransactions(nextPage);
@@ -83,7 +91,6 @@ const Transactions = () => {
 										</td>
 										<td class="text-right"> {`${transaction.amount_paid}`}</td>
 										<td class="text-right">
-											{' '}
 											{`${transaction.amount + transaction.amount_paid}`}
 										</td>
 									</tr>

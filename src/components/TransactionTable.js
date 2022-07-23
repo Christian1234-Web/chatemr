@@ -180,7 +180,9 @@ const TransactionTable = ({
 											<span className="text-capitalize">
 												<strong>{parseSource(transaction.bill_source)}</strong>
 												{(transaction?.bill_source === 'ward' ||
-													transaction?.bill_source === 'nicu-accommodation') &&
+													transaction?.bill_source === 'nicu-accommodation' ||
+													transaction?.bill_source === 'credit-deposit' ||
+													transaction?.bill_source === 'debit-charge') &&
 													`: ${transaction.description}`}
 												{(transaction?.bill_source === 'consultancy' ||
 													transaction?.bill_source === 'labs' ||

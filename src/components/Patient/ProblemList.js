@@ -7,6 +7,7 @@ import { notifyError } from '../../services/notify';
 import {
 	confirmAction,
 	formatDate,
+	getPageList,
 	itemRender,
 	request,
 	updateImmutable,
@@ -15,11 +16,12 @@ import { startBlock, stopBlock } from '../../actions/redux-block';
 import TableLoading from '../TableLoading';
 import RecordProblem from '../Modals/RecordProblem';
 import { messageService } from '../../services/message';
+import { paginate, patientAPI } from '../../services/constants';
 
 const ProblemList = () => {
 	const [loaded, setLoaded] = useState(false);
 	const [list, setList] = useState([]);
-	const [meta, setMeta] = useState(null);
+	const [meta, setMeta] = useState({ ...paginate, itemsPerPage: 10 });
 	const [showModal, setShowModal] = useState(false);
 
 	const patient = useSelector(state => state.user.patient);
@@ -30,12 +32,12 @@ const ProblemList = () => {
 		async page => {
 			try {
 				dispatch(startBlock());
-				const p = page || 1;
-				const url = `patient-notes?page=${p}&limit=10&patient_id=${patient.id}&type=diagnosis`;
+				const url = `${patientAPI}/${patient.id}/diagnoses?group_by=code`;
 				const rs = await request(url, 'GET', true);
-				const { result, ...paginate } = rs;
-				setMeta(paginate);
-				setList(result);
+				const p = page || 1;
+				setMeta({ ...meta, currentPage: p, totalPages: rs.length });
+				const items = getPageList(rs, meta.itemsPerPage, p);
+				setList(items);
 				setLoaded(true);
 				dispatch(stopBlock());
 			} catch (e) {
@@ -44,7 +46,7 @@ const ProblemList = () => {
 				notifyError(e.message || 'could not fetch problems');
 			}
 		},
-		[dispatch, patient]
+		[dispatch, meta, patient]
 	);
 
 	useEffect(() => {
@@ -86,8 +88,12 @@ const ProblemList = () => {
 			dispatch(startBlock());
 			const url = `patient-notes/${id}/resolve`;
 			const rs = await request(url, 'POST', true);
-			setList(updateImmutable(list, rs.data));
 			dispatch(stopBlock());
+			if (rs.success) {
+				setList(updateImmutable(list, { ...rs.data, id }));
+			} else {
+				notifyError(rs.message || 'could not resolve problem');
+			}
 		} catch (e) {
 			setLoaded(true);
 			dispatch(stopBlock());
@@ -112,70 +118,54 @@ const ProblemList = () => {
 				</div>
 				<h6 className="element-header">Problem List</h6>
 				<div className="element-box p-3 m-0">
-					<div className="bootstrap-table">
-						<div className="fixed-table-container pb-0">
-							<div className="fixed-table-body">
-								{!loaded ? (
-									<TableLoading />
-								) : (
-									<>
-										<table className="table table-striped">
-											<thead>
-												<tr>
-													<th>Date</th>
-													<th>Diagnosis</th>
-													<th>Type</th>
-													<th>Comment</th>
-													<th>Consultant</th>
-													<th>Status</th>
+					{!loaded ? (
+						<TableLoading />
+					) : (
+						<>
+							<div className="table-responsive">
+								<table className="table table-striped">
+									<thead>
+										<tr>
+											<th>Diagnosis</th>
+											<th>Type</th>
+											<th>Comment</th>
+											<th>Consultant</th>
+											<th>Status</th>
+										</tr>
+									</thead>
+									<tbody>
+										{list.map((item, i) => {
+											return (
+												<tr key={i}>
+													<td>{`${item.diagnosis.type.toUpperCase()} (${
+														item.diagnosis.code
+													}): ${item.diagnosis.description}`}</td>
+													<td>{item.diagnosis_type}</td>
+													<td>{item.comment || ''}</td>
+													<td>{item.createdBy}</td>
+													<td>
+														{item.status === 'Active' ? (
+															<>
+																{item.status} |{' '}
+																<a onClick={() => resolve(item.id)}>Resolve</a>
+															</>
+														) : (
+															<>
+																{item.status}
+																<br />
+																<small className="bold">{`by ${item.resolved_by}`}</small>{' '}
+																on{' '}
+																<small className="bold">
+																	{formatDate(item.resolved_at, 'DD-MMM-YYYY')}
+																</small>
+															</>
+														)}
+													</td>
 												</tr>
-											</thead>
-											<tbody>
-												{list.map((item, i) => {
-													return (
-														<tr key={i}>
-															<td>
-																{formatDate(
-																	item.createdAt,
-																	'DD-MMM-YYYY h:mmA'
-																)}
-															</td>
-															<td>{`${item.diagnosis.type.toUpperCase()} (${
-																item.diagnosis.code
-															}): ${item.diagnosis.description}`}</td>
-															<td>{item.diagnosis_type}</td>
-															<td>{item.comment || ''}</td>
-															<td>{item.createdBy}</td>
-															<td>
-																{item.status === 'Active' ? (
-																	<>
-																		{item.status} |{' '}
-																		<a onClick={() => resolve(item.id)}>
-																			Resolve
-																		</a>
-																	</>
-																) : (
-																	<>
-																		{item.status}
-																		<br />
-																		<small className="bold">{`by ${item.resolved_by}`}</small>
-																		<br />
-																		<small className="bold">
-																			{formatDate(
-																				item.resolved_at,
-																				'DD-MMM-YYYY'
-																			)}
-																		</small>
-																	</>
-																)}
-															</td>
-														</tr>
-													);
-												})}
-											</tbody>
-										</table>
-									</>
-								)}
+											);
+										})}
+									</tbody>
+								</table>
 							</div>
 							{meta && (
 								<div className="pagination pagination-center mt-4">
@@ -190,8 +180,8 @@ const ProblemList = () => {
 									/>
 								</div>
 							)}
-						</div>
-					</div>
+						</>
+					)}
 				</div>
 				{showModal && (
 					<RecordProblem closeModal={closeModal} update={updateList} />

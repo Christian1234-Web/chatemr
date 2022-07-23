@@ -33,9 +33,12 @@ class MainMenu extends Component {
 	state = {
 		menuHeight: 1,
 		clientHeight: 0,
+		profile_image: null,
 	};
 
 	componentDidMount() {
+		const image = localStorage.getItem('STAFFIMAGE');
+		this.setState({ profile_image: image });
 		$(this.menu_ref).on('click', 'ul.main-menu > li.has-sub-menu', function () {
 			var $elem = $(this);
 			console.log($elem.closest('ul').hasClass('has-active'));
@@ -63,7 +66,7 @@ class MainMenu extends Component {
 
 	render() {
 		const { role, theme_mode, menu_mode, profile, menu_mini } = this.props;
-		const { menuHeight, clientHeight } = this.state;
+		const { menuHeight, clientHeight, profile_image } = this.state;
 		return (
 			<div
 				className={`menu-w color-scheme-dark ${
@@ -84,7 +87,14 @@ class MainMenu extends Component {
 				<div className="logged-user-w avatar-inline">
 					<div className="logged-user-i">
 						<div className="avatar-w">
-							<img alt="" src={parseAvatar(profile.details?.profile_pic)} />
+							<img
+								alt=""
+								src={
+									profile_image !== null
+										? profile_image
+										: parseAvatar(profile?.details?.profile_pic)
+								}
+							/>
 						</div>
 						<div className="logged-user-info-w">
 							<div className="logged-user-name">

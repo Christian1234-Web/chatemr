@@ -15,6 +15,7 @@ import {
 	ethnicities,
 	hmoAPI,
 	relationships,
+	searchAPI,
 } from '../../services/constants';
 import {
 	request,
@@ -23,6 +24,7 @@ import {
 	ErrorBlock,
 	ReactSelectAdapter,
 	Condition,
+	patientname,
 } from '../../services/utilities';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import { notifySuccess } from '../../services/notify';
@@ -37,6 +39,7 @@ const PatientForm = ({ patient, closeModal, history, location }) => {
 	const [dateOfBirth, setDateOfBirth] = useState(null);
 	const [nokDateOfBirth, setNokDateOfBirth] = useState(null);
 	const [staff, setStaff] = useState(null);
+	const [mother, setMother] = useState(null);
 
 	const dispatch = useDispatch();
 
@@ -58,6 +61,16 @@ const PatientForm = ({ patient, closeModal, history, location }) => {
 		const url = `hr/staffs/find?q=${q}`;
 		const result = await request(url, 'GET', true);
 		return result;
+	};
+
+	const getPatients = async q => {
+		if (!q || q.length < 1) {
+			return [];
+		}
+
+		const url = `${searchAPI}?q=${q}&gender=female`;
+		const res = await request(url, 'GET', true);
+		return res;
 	};
 
 	let initialValues = {};
@@ -118,7 +131,10 @@ const PatientForm = ({ patient, closeModal, history, location }) => {
 			nok_address: patient?.nextOfKin?.address || '',
 			nok_phoneNumber: patient?.nextOfKin?.phoneNumber || '',
 			nok_email: patient?.nextOfKin?.email || '',
-			is_staff: patient?.staff?.id || false,
+			is_staff: patient?.staff ? true : false,
+			is_mother: patient?.mother ? true : false,
+			staff_id: patient?.staff?.id || null,
+			mother_id: patient?.mother_id,
 		};
 	}
 
@@ -143,6 +159,11 @@ const PatientForm = ({ patient, closeModal, history, location }) => {
 					setStaff(null);
 				}
 				setHmo(patient?.hmo);
+				if (patient?.mother) {
+					setMother(patient.mother);
+				} else {
+					setMother(null);
+				}
 			}
 			setLoaded(true);
 		}
@@ -784,6 +805,46 @@ const PatientForm = ({ patient, closeModal, history, location }) => {
 														/>
 													</div>
 												</div>
+											</div>
+											<div className="row">
+												<div className="col-sm-2">
+													<div className="form-group">
+														<label className="mr-2">Is Mother</label>
+														<Field
+															name="is_mother"
+															component="input"
+															type="checkbox"
+														/>
+													</div>
+												</div>
+												<Condition when="is_mother" is={true}>
+													<div className="col-sm-10">
+														<div className="form-group">
+															<label>Mother</label>
+															<Field name="mother_id">
+																{({ input, meta }) => (
+																	<AsyncSelect
+																		isClearable
+																		getOptionValue={option => option.id}
+																		getOptionLabel={option =>
+																			patientname(option, true)
+																		}
+																		defaultOptions
+																		value={mother}
+																		loadOptions={getPatients}
+																		onChange={e => {
+																			setMother(e);
+																			e
+																				? input.onChange(e.id)
+																				: input.onChange('');
+																		}}
+																		placeholder="Search patient"
+																	/>
+																)}
+															</Field>
+														</div>
+													</div>
+												</Condition>
 											</div>
 										</FormWizard.Page>
 									</FormWizard>

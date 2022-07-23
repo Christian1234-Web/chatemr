@@ -61,6 +61,14 @@ const ReportMenu = () => {
 				</Link>
 			</li>
 			<li>
+				<Link to="/report/payable">
+					<div className="icon-w">
+						<div className="os-icon os-icon-layers" />
+					</div>
+					<span>Payable</span>
+				</Link>
+			</li>
+			<li>
 				<Link to="/report/others">
 					<div className="icon-w">
 						<div className="os-icon os-icon-layers" />

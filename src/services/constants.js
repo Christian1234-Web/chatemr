@@ -1,8 +1,9 @@
 export const DEBUG = process.env.REACT_APP_DEBUG;
 export const APP_NAME = process.env.REACT_APP_NAME;
 export const API_URI = process.env.REACT_APP_API;
+export const PRINT_URI = process.env.PRINT_URI;
 export const VAT = Number(process.env.REACT_APP_VAT) / 100;
-export const TIMEOUT = Number(process.env.REACT_APP_TIMEOUT) * 1000;
+export const TIMEOUT = process.env.REACT_APP_TIMEOUT;
 
 export const TOKEN_COOKIE = 'EMR:TOKEN_COOKIE';
 export const MODE_COOKIE = 'EMR:MODE_COOKIE';
@@ -17,7 +18,6 @@ export const CK_COMPLAINTS = 'E:COMPLAINTS';
 export const CK_REVIEW_OF_SYSTEMS = 'E:REVIEW_OF_SYSTEMS';
 export const CK_HX_FORMS = 'E:HX_FORMS';
 export const CK_DIAGNOSIS = 'E:DIAGNOSIS';
-export const CK_PAST_DIAGNOSIS = 'E:PAST_DIAGNOSIS';
 export const CK_PAST_HISTORY = 'E:PAST_HISTORY';
 export const CK_TREATMENT_PLAN = 'E:TREATMENT_PLAN';
 
@@ -187,6 +187,7 @@ export const documentType = [
 	{ id: 'Prescription', name: 'Prescription' },
 	{ id: 'Consent Form', name: 'Consent Form' },
 	{ id: 'Medical Report', name: 'Medical Report' },
+	{ id: 'Referral Form', name: 'Referral Form' },
 ];
 
 export const paymentTypeExtra = [

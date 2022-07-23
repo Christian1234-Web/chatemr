@@ -29,7 +29,13 @@ class TopBar extends Component {
 		focus: false,
 		style: { display: 'none' },
 		count: 0,
+		profile_image: null,
 	};
+
+	componentDidMount() {
+		const image = localStorage.getItem('STAFFIMAGE');
+		this.setState({ profile_image: image });
+	}
 
 	getCoords = elem => {
 		return { top: 12, right: 100 };
@@ -39,6 +45,11 @@ class TopBar extends Component {
 		const { profile } = this.props;
 		const info = { staff: profile, type: 'staff' };
 		this.props.toggleProfile(true, info);
+	};
+
+	getProfileImage = async () => {
+		const image = await localStorage.getItem('STAFFIMAGE');
+		return image;
 	};
 
 	toggleSettings = () => {
@@ -94,7 +105,7 @@ class TopBar extends Component {
 		const paths = location.pathname.split('/');
 		const title = paths.length > 1 ? paths[1] : '';
 		const sub_title = paths.length > 2 ? paths[2] : '';
-		const { hover_settings, focus, style, count } = this.state;
+		const { hover_settings, focus, style, count, profile_image } = this.state;
 		return (
 			<div className="top-bar color-scheme-transparent">
 				{title && title !== '' && (
@@ -171,14 +182,25 @@ class TopBar extends Component {
 					<div className="logged-user-w">
 						<div className="logged-user-i">
 							<div className="avatar-w">
-								<img alt="" src={parseAvatar(profile?.details?.profile_pic)} />
+								<img
+									alt=""
+									src={
+										profile_image !== null
+											? profile_image
+											: parseAvatar(profile?.details?.profile_pic)
+									}
+								/>
 							</div>
 							<div className="logged-user-menu color-style-bright">
 								<div className="logged-user-avatar-info">
 									<div className="avatar-w">
 										<img
 											alt=""
-											src={parseAvatar(profile?.details?.profile_pic)}
+											src={
+												profile_image !== null
+													? profile_image
+													: parseAvatar(profile?.details?.profile_pic)
+											}
 										/>
 									</div>
 									<div className="logged-user-info-w">

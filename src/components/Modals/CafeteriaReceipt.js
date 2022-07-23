@@ -1,14 +1,65 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import axios from 'axios';
 
 import ModalHeader from '../ModalHeader';
 import {
 	formatCurrency,
+	formatCurrencyBare,
 	formatDate,
 	patientname,
 	staffname,
 } from '../../services/utilities';
+import { notifyError } from '../../services/notify';
+import { PRINT_URI } from '../../services/constants';
 
 const CafeteriaReceipt = ({ transaction, closeModal }) => {
+	const [printed, setPrinted] = useState(false);
+
+	const print = useCallback(async () => {
+		try {
+			const date = formatDate(transaction.createdAt, 'DD-MMM-YYYY');
+			const payment_method = transaction.payment_method;
+
+			let customer = '';
+			if (transaction.dedastaff) {
+				customer = staffname(transaction.dedastaff);
+			} else if (transaction.patient) {
+				customer = patientname(transaction.patient);
+			} else {
+				customer = 'Guest';
+			}
+
+			const amount = formatCurrencyBare(transaction.amount, true);
+			const paid = formatCurrencyBare(transaction.amount_paid);
+			const change = formatCurrencyBare(transaction.change);
+			const items = transaction.transaction_details
+				?.map(item => {
+					const price = formatCurrencyBare(item.price);
+					const total = formatCurrencyBare(
+						Number(item.price) * Number(item.qty)
+					);
+					return `${item.name},${item.qty},${price},${total}`;
+				})
+				.join(':');
+
+			const rs = await axios.get(
+				`${PRINT_URI}/receipt?date=${date}&payment_method=${payment_method}&name=${customer}&amount=${amount}&paid=${paid}&change=${change}&items=${items}`
+			);
+			console.log(rs.data);
+			setPrinted(true);
+		} catch (e) {
+			setPrinted(true);
+			console.log(e);
+			notifyError('could not print receipt');
+		}
+	}, [transaction]);
+
+	useEffect(() => {
+		if (!printed) {
+			print();
+		}
+	}, [print, printed]);
+
 	return (
 		<div
 			className="onboarding-modal modal fade animated show"
@@ -129,7 +180,11 @@ const CafeteriaReceipt = ({ transaction, closeModal }) => {
 							</div>
 						</div>
 						<div className="text-right">
-							<button className="btn btn-primary btn-sm mx-3" type="button">
+							<button
+								className="btn btn-primary btn-sm mx-3"
+								type="button"
+								onClick={() => print()}
+							>
 								<i className="icon-feather-printer" />
 							</button>
 						</div>

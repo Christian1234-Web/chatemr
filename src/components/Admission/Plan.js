@@ -14,7 +14,6 @@ import {
 	CK_PAST_HISTORY,
 	CK_TREATMENT_PLAN,
 	CK_DIAGNOSIS,
-	CK_PAST_DIAGNOSIS,
 } from '../../services/constants';
 import SSRStorage from '../../services/storage';
 
@@ -81,7 +80,6 @@ const Plan = ({ previous, patient, closeModal, item_id, module }) => {
 				storage.removeItem(CK_PAST_HISTORY);
 				storage.removeItem(CK_TREATMENT_PLAN);
 				storage.removeItem(CK_DIAGNOSIS);
-				storage.removeItem(CK_PAST_DIAGNOSIS);
 
 				closeModal(true);
 			} else {

@@ -1,15 +1,19 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useCallback, useEffect, useState } from 'react';
 import moment from 'moment';
 import Pagination from 'antd/lib/pagination';
 import startCase from 'lodash.startcase';
 import { useDispatch, useSelector } from 'react-redux';
 import DatePicker from 'antd/lib/date-picker';
+import Tooltip from 'antd/lib/tooltip';
+import axios from 'axios';
 
 import waiting from '../../assets/images/waiting.gif';
 import TableLoading from '../../components/TableLoading';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import {
 	formatCurrency,
+	formatCurrencyBare,
 	formatDate,
 	itemRender,
 	patientname,
@@ -17,6 +21,7 @@ import {
 	staffname,
 } from '../../services/utilities';
 import { notifyError } from '../../services/notify';
+// import { PRINT_URI } from '../../services/constants';
 
 const { RangePicker } = DatePicker;
 
@@ -81,6 +86,46 @@ const Transactions = () => {
 
 		setStartDate(date[0]);
 		setEndDate(date[1]);
+	};
+
+	const print = async transaction => {
+		try {
+			const date = formatDate(transaction.createdAt, 'DD-MMM-YYYY');
+			const payment_method = transaction.payment_method;
+
+			let customer = '';
+			if (transaction.dedastaff) {
+				customer = staffname(transaction.dedastaff);
+			} else if (transaction.patient) {
+				customer = patientname(transaction.patient);
+			} else {
+				customer = 'Guest';
+			}
+
+			const amount = formatCurrencyBare(transaction.amount, true);
+			const paid = formatCurrencyBare(transaction.amount_paid);
+			const change = formatCurrencyBare(transaction.change);
+			const items = transaction.transaction_details
+				?.map(item => {
+					const price = formatCurrencyBare(item.price);
+					const total = formatCurrencyBare(
+						Number(item.price) * Number(item.qty)
+					);
+					return `${item.name},${item.qty},${price},${total}`;
+				})
+				.join(':');
+			// console.log(items)
+			console.log(items);
+			const PRINT_URI = 'http://192.168.0.123';
+
+			const rs = await axios.get(
+				`${PRINT_URI}/receipt?date=${date}&payment_method=${payment_method}&name=${'chris'}&amount=${amount}&paid=${paid}&change=${change}&items=${items}`
+			);
+			console.log(rs);
+		} catch (e) {
+			console.log(e);
+			notifyError('could not print receipt');
+		}
 	};
 
 	return (
@@ -168,6 +213,7 @@ const Transactions = () => {
 										<th>Type</th>
 										<th>Amount</th>
 										<th>Paid</th>
+										<th></th>
 									</tr>
 								</thead>
 								<tbody>
@@ -202,6 +248,18 @@ const Transactions = () => {
 														</span>
 													) : (
 														<span className="badge badge-secondary">owing</span>
+													)}
+												</td>
+												<td className="row-actions">
+													{item.transaction_type === 'credit' && (
+														<Tooltip title="Print Receipt">
+															<a
+																className="secondary"
+																onClick={() => print(item)}
+															>
+																<i className="os-icon os-icon-printer" />
+															</a>
+														</Tooltip>
 													)}
 												</td>
 											</tr>
