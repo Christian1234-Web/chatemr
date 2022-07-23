@@ -3,7 +3,7 @@ import { Switch, Route, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import ReduxBlockUi from 'react-block-ui/redux';
-import { IdleTimerProvider } from 'react-idle-timer';
+import IdleTimer from 'react-idle-timer';
 
 import ScrollToTop from './containers/ScrollToTop';
 import TopBar from './components/TopBar';
@@ -64,6 +64,25 @@ const Accounting = lazy(() => import('./pages/Accounting/Home'));
 const storage = new SSRStorage();
 
 class App extends Component {
+	constructor(props) {
+		super(props);
+		this.myInterval = null;
+		this.idleTimer = null;
+		this.timeout = 1000 * 60 * Number(TIMEOUT);
+
+		this.state = {
+			remaining: this.timeout,
+			isIdle: false,
+			lastActive: new Date(),
+			elapsed: 0,
+			lastEvent: 'Events Emitted on Leader',
+			leader: false,
+		};
+
+		// Bind event handlers and methods
+		this.handleOnActive = this.handleOnActive.bind(this);
+	}
+
 	async componentDidMount() {
 		const fullscreen = await storage.getItem(FULLSCREEN_COOKIE);
 		const theme_mode = await storage.getItem(MODE_COOKIE);
@@ -74,6 +93,27 @@ class App extends Component {
 		window.document.body.className = `menu-position-side menu-side-left${
 			fullscreen || isLogin ? ' full-screen' : ''
 		} with-content-panel${theme_mode ? ' color-scheme-dark' : ''}`;
+
+		if (this.idleTimer) {
+			this.setState({
+				remaining: this.idleTimer.getRemainingTime(),
+				lastActive: this.idleTimer.getLastActiveTime(),
+				elapsed: this.idleTimer.getElapsedTime(),
+				leader: this.idleTimer.isLeader(),
+				isIdle: this.idleTimer.isIdle(),
+			});
+
+			this.myInterval = setInterval(() => {
+				this.setState({
+					remaining: this.idleTimer.getRemainingTime(),
+					lastActive: this.idleTimer.getLastActiveTime(),
+					elapsed: this.idleTimer.getElapsedTime(),
+					leader: this.idleTimer.isLeader(),
+					isIdle: this.idleTimer.isIdle(),
+				});
+			}, 1000);
+			console.log(this.myInterval);
+		}
 
 		if (!connected && loggedIn) {
 			initSocket();
@@ -112,22 +152,15 @@ class App extends Component {
 		disconnectSocket();
 		this.props.setConnection(false);
 
+		this.idleTimer = null;
+		clearInterval(this.myInterval);
+
 		notifyError('session time out!');
 		this.props.history.push('/?session=expired');
 	};
 
-	onPrompt() {
-		// Fire a Modal Prompt
-		console.log('fire prompt');
-	}
-
-	onActive(event) {
-		// Close Modal Prompt
-		// Do some active action
-	}
-
-	onAction(event) {
-		// Do something when a user triggers a watched event
+	handleOnActive() {
+		this.setState({ lastEvent: 'active' });
 	}
 
 	render() {
@@ -161,15 +194,7 @@ class App extends Component {
 									<Route path="/change-password" component={ChangePassword} />
 								</Switch>
 							) : (
-								<IdleTimerProvider
-									timeout={TIMEOUT}
-									onPrompt={this.onPrompt}
-									onIdle={this.doLogout}
-									onActive={this.onActive}
-									onAction={this.onAction}
-									crossTab={true}
-									stopOnIdle={true}
-								>
+								<>
 									<ReduxBlockUi block="REQUEST_START" unblock="REQUEST_STOP">
 										<div className="all-wrapper with-side-panel solid-bg-all">
 											<Suspense fallback={<Splash />}>
@@ -252,7 +277,19 @@ class App extends Component {
 									{is_modal_open && (
 										<div className={`modal-backdrop fade show`} />
 									)}
-								</IdleTimerProvider>
+									<IdleTimer
+										ref={ref => {
+											this.idleTimer = ref;
+										}}
+										onActive={this.handleOnActive}
+										onIdle={this.doLogout}
+										timeout={this.timeout}
+										crossTab={{
+											emitOnAllTabs: true,
+										}}
+										stopOnIdle={true}
+									/>
+								</>
 							)}
 						</>
 					) : (
