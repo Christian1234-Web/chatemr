@@ -21,7 +21,7 @@ import {
 	staffname,
 } from '../../services/utilities';
 import { notifyError } from '../../services/notify';
-import { PRINT_URI } from '../../services/constants';
+// import { PRINT_URI } from '../../services/constants';
 
 const { RangePicker } = DatePicker;
 
@@ -114,11 +114,14 @@ const Transactions = () => {
 					return `${item.name},${item.qty},${price},${total}`;
 				})
 				.join(':');
+			// console.log(items)
+			console.log(items);
+			const PRINT_URI = 'http://192.168.0.123';
 
 			const rs = await axios.get(
-				`${PRINT_URI}/receipt?date=${date}&payment_method=${payment_method}&name=${customer}&amount=${amount}&paid=${paid}&change=${change}&items=${items}`
+				`${PRINT_URI}/receipt?date=${date}&payment_method=${payment_method}&name=${'chris'}&amount=${amount}&paid=${paid}&change=${change}&items=${items}`
 			);
-			console.log(rs.data);
+			console.log(rs);
 		} catch (e) {
 			console.log(e);
 			notifyError('could not print receipt');
