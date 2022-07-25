@@ -21,7 +21,7 @@ import {
 	staffname,
 } from '../../services/utilities';
 import { notifyError } from '../../services/notify';
-// import { PRINT_URI } from '../../services/constants';
+import { CAFETERIA2, VAT } from '../../services/constants';
 
 const { RangePicker } = DatePicker;
 
@@ -102,7 +102,11 @@ const Transactions = () => {
 				customer = 'Guest';
 			}
 
-			const amount = formatCurrencyBare(transaction.amount, true);
+			const total_amount = Math.abs(Number(transaction.amount));
+			const vat = total_amount * Number(VAT);
+			const subTotal = formatCurrencyBare(total_amount - vat, true);
+			const amount = formatCurrencyBare(total_amount);
+
 			const paid = formatCurrencyBare(transaction.amount_paid);
 			const change = formatCurrencyBare(transaction.change);
 			const items = transaction.transaction_details
@@ -114,14 +118,11 @@ const Transactions = () => {
 					return `${item.name},${item.qty},${price},${total}`;
 				})
 				.join(':');
-			// console.log(items)
-			console.log(items);
-			const PRINT_URI = 'http://192.168.0.123';
 
 			const rs = await axios.get(
-				`${PRINT_URI}/receipt?date=${date}&payment_method=${payment_method}&name=${'chris'}&amount=${amount}&paid=${paid}&change=${change}&items=${items}`
+				`${CAFETERIA2}/receipt?date=${date}&payment_method=${payment_method}&name=${customer}&sub_total=${subTotal}&vat=${vat}&amount=${amount}&paid=${paid}&change=${change}&items=${items}`
 			);
-			console.log(rs);
+			console.log(rs.data);
 		} catch (e) {
 			console.log(e);
 			notifyError('could not print receipt');

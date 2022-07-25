@@ -3,12 +3,19 @@ import React, { useCallback, useEffect, useState } from 'react';
 import Pagination from 'antd/lib/pagination';
 import Tooltip from 'antd/lib/tooltip';
 import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
 
 import TableLoading from '../../components/TableLoading';
-import { cafeteriaAPI, paginate } from '../../services/constants';
+import {
+	cafeteriaAPI,
+	paginate,
+	CAFETERIA1,
+	VAT,
+} from '../../services/constants';
 import {
 	confirmAction,
 	formatCurrency,
+	formatCurrencyBare,
 	formatDate,
 	itemRender,
 	patientname,
@@ -169,6 +176,41 @@ const Orders = () => {
 		document.body.classList.remove('modal-open');
 	};
 
+	const print = async item => {
+		try {
+			const date = formatDate(item.createdAt, 'DD-MMM-YYYY');
+			const payment_method = '--';
+
+			let customer = '';
+			if (item.staff) {
+				customer = staffname(item.staff);
+			} else if (item.patient) {
+				customer = patientname(item.patient);
+			} else {
+				customer = 'Guest';
+			}
+
+			const food = item.foodItem;
+
+			const total_amount = Number(item.amount) * Number(item.quantity);
+
+			const vat = total_amount * Number(VAT);
+			const subTotal = formatCurrencyBare(total_amount - vat, true);
+			const amount = formatCurrencyBare(total_amount);
+			const paid = formatCurrencyBare(0);
+			const change = formatCurrencyBare(0);
+			const items = `${food.name},${item.quantity},${item.amount},${total_amount}`;
+
+			const rs = await axios.get(
+				`${CAFETERIA1}/receipt?date=${date}&payment_method=${payment_method}&name=${customer}&sub_total=${subTotal}&vat=${vat}&amount=${amount}&paid=${paid}&change=${change}&items=${items}`
+			);
+			console.log(rs.data);
+		} catch (e) {
+			console.log(e);
+			notifyError('could not print receipt');
+		}
+	};
+
 	return (
 		<>
 			<div className="row">
@@ -320,7 +362,7 @@ const Orders = () => {
 															<Tooltip title="Print Receipt">
 																<a
 																	className="primary"
-																	onClick={() => handlePrint(item)}
+																	onClick={() => print(item)}
 																>
 																	<i className="os-icon os-icon-printer" />
 																</a>

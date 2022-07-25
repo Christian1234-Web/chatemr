@@ -1,7 +1,8 @@
 export const DEBUG = process.env.REACT_APP_DEBUG;
 export const APP_NAME = process.env.REACT_APP_NAME;
 export const API_URI = process.env.REACT_APP_API;
-export const PRINT_URI = process.env.PRINT_URI;
+export const CAFETERIA1 = process.env.REACT_APP_CAFETERIA1;
+export const CAFETERIA2 = process.env.REACT_APP_CAFETERIA2;
 export const VAT = Number(process.env.REACT_APP_VAT) / 100;
 export const TIMEOUT = process.env.REACT_APP_TIMEOUT;
 

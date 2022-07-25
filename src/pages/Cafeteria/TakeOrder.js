@@ -6,27 +6,19 @@ import { useDispatch } from 'react-redux';
 import { Form, Field } from 'react-final-form';
 import { FORM_ERROR } from 'final-form';
 import AsyncSelect from 'react-select/async/dist/react-select.esm';
-import axios from 'axios';
 
-import {
-	cafeteriaAPI,
-	PRINT_URI,
-	paginate,
-	searchAPI,
-} from '../../services/constants';
+import { cafeteriaAPI, paginate, searchAPI } from '../../services/constants';
 import {
 	Condition,
 	ErrorBlock,
 	formatCurrency,
 	getPageList,
-	formatCurrencyBare,
 	itemRender,
 	patientname,
 	request,
 	staffname,
 	updateImmutable,
 	ConditionNot,
-	formatDate,
 	confirmAction,
 } from '../../services/utilities';
 import { notifyError, notifySuccess } from '../../services/notify';
@@ -231,24 +223,6 @@ const TakeOrder = () => {
 				formRef.current.reset();
 				setCartItems([]);
 				notifySuccess('order created!');
-				const date = formatDate(rs.data[0].createdAt, 'DD-MMM-YYYY');
-				const customer = rs.data[0].name;
-				const amount = rs.data.reduce((total, item) => total + item.amount, 0);
-				const payment_method = 'pending';
-				const items = rs.data
-					?.map(item => {
-						const price = formatCurrencyBare(item.amount);
-						const total = formatCurrencyBare(
-							Number(item.amount) * Number(item.quantity)
-						);
-						return `${item.name},${item.quantity},${price},${total}`;
-					})
-					.join(':');
-				const PRINT_URI = 'http://192.168.0.121';
-				const rp = await axios.get(
-					`${PRINT_URI}/receipt?date=${date}&payment_method=${payment_method}&name=${customer}&amount=${amount}&paid=${amount}&change=${0.0}&items=${items}`
-				);
-				// console.log(rp);
 			} else {
 				return {
 					[FORM_ERROR]: rs.message || 'could not take order',
