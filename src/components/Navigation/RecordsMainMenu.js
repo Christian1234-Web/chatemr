@@ -5,15 +5,10 @@ import PayPointMenu from './PayPointMenu';
 import PharmacyMenu from './PharmacyMenu';
 import RadiologyMenu from './RadiologyMenu';
 import NurseMenu from './NurseMenu';
-import DoctorMenu from './DoctorMenu';
-import HrMenu from './HrMenu';
-import StoreMenu from './StoreMenu';
-import CafeteriaMenu from './CafeteriaMenu';
 import HMOMenu from './HMOMenu';
 import FrontDeskMenu from './FrontDeskMenu';
 import ProcedureMenu from './ProcedureMenu';
 import RecordsMenu from './RecordsMenu';
-import AccountingMenu from './AccountingMenu';
 import ReportMenu from './ReportMenu';
 import MyAccount from './MyAccount';
 
@@ -49,22 +44,6 @@ const RecordsMainMenu = () => {
 			</li>
 			<NurseMenu />
 			<li className="sub-header">
-				<span>DOCTOR</span>
-			</li>
-			<DoctorMenu />
-			<li className="sub-header">
-				<span>HUMAN RESOURCES</span>
-			</li>
-			<HrMenu />
-			<li className="sub-header">
-				<span>STORE</span>
-			</li>
-			<StoreMenu />
-			<li className="sub-header">
-				<span>CAFETERIA</span>
-			</li>
-			<CafeteriaMenu />
-			<li className="sub-header">
 				<span>HMO MGT</span>
 			</li>
 			<HMOMenu />
@@ -72,10 +51,6 @@ const RecordsMainMenu = () => {
 				<span>RECORDS</span>
 			</li>
 			<RecordsMenu />
-			<li className="sub-header">
-				<span>ACCOUNTING</span>
-			</li>
-			<AccountingMenu />
 			<li className="sub-header">
 				<span>REPORTS</span>
 			</li>
