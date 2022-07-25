@@ -25,6 +25,7 @@ import AccountingMenu from './AccountingMenu';
 import { APP_NAME } from '../../services/constants';
 import { hasViewHmoPermission } from '../../permission-utils/hmo';
 import { hasViewSettingsPermission } from '../../permission-utils/settings';
+import RecordsMainMenu from './RecordsMainMenu';
 
 class MainMenu extends Component {
 	menu_ref = null;
@@ -117,6 +118,8 @@ class MainMenu extends Component {
 				<ul className="main-menu" ref={ref => (this.menu_list = ref)}>
 					{role === 'it-admin' ? (
 						<AdminMenu />
+					) : role === 'records' ? (
+						<RecordsMainMenu />
 					) : (
 						<>
 							{role === 'front-desk' && <FrontDeskMenu />}

@@ -33,3 +33,7 @@ export function hasConfirmOrderReadyPermission(permissions) {
 export function hasCanDoCafeteriaPaymentPermission(permissions) {
 	return permissions.find(p => p === 'can-take-cafeteria-payments');
 }
+
+export function hasCanDeleteShowcaseItemPermission(permissions) {
+	return permissions.find(p => p === 'can-delete-showcase-item');
+}
