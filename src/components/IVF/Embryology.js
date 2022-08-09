@@ -13,7 +13,6 @@ const Embryology = () => {
 	const [showModal, setShowModal] = useState(false);
 
 	const newEntry = () => {
-		console.log('malik');
 		document.body.classList.add('modal-open');
 		setShowModal(true);
 	};

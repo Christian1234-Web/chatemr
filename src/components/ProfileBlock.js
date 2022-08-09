@@ -122,6 +122,7 @@ const ProfileBlock = ({
 	}, [alertShown, getAlerts]);
 
 	useEffect(() => {
+		// console.log(patient);
 		const subscription = messageService.getMessage().subscribe(message => {
 			if (message !== '') {
 				const { type, data } = message.text;

@@ -64,11 +64,11 @@ const CreateFreezing = ({ closeModal }) => {
 								</ul>
 							</div>
 						</div>
-						<div className="element-box-tp p-3">
+						<div className="element-box-md p-3">
 							<div className="row">
 								<div className="col-md-12">
-									{tab === 'sperm' && <Sperm />}
-									{tab === 'oocyte' && <Oocyte />}
+									{tab === 'sperm' && <Sperm closeModal={closeModal} />}
+									{tab === 'oocyte' && <Oocyte closeModal={closeModal} />}
 								</div>
 							</div>
 						</div>

@@ -17,6 +17,7 @@ import {
 	contracts,
 	staffAPI,
 } from '../../services/constants';
+
 import {
 	Compulsory,
 	ErrorBlock,
@@ -24,6 +25,7 @@ import {
 	request,
 	updateImmutable,
 } from '../../services/utilities';
+
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import { notifyError, notifySuccess } from '../../services/notify';
 import { loadDepartments } from '../../actions/department';
