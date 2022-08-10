@@ -6,7 +6,6 @@ import { useDispatch } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
 import DatePicker from 'antd/lib/date-picker';
 import AsyncSelect from 'react-select/async/dist/react-select.esm';
-
 import { notifyError } from '../../services/notify';
 import { request, itemRender, patientname } from '../../services/utilities';
 import waiting from '../../assets/images/waiting.gif';

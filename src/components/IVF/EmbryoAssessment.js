@@ -2,23 +2,29 @@ import React from 'react';
 
 const EmbryoAssessment = () => {
 	return (
-		<>
-			<div className="row">
-				<div className="col-md-6">
-					<div className="form-group">
-						<label>ASSESSMENT OF EMBROYO QUALITY</label>
+		<div
+			className="p-2"
+			style={{ height: '37rem', overflowY: 'scroll', overflowX: 'hidden' }}
+		>
+			<form>
+				<div className="row">
+					<div className="col-md-6">
+						<div className="form-group"></div>
+					</div>
+					<div className="col-md-6">
+						<div className="form-group">
+							<label>ASSESSMENT OF EMBROYO QUALITY</label>
+
+							<input
+								className="single-daterange form-control"
+								placeholder="Date"
+								type="date"
+							/>
+						</div>
 					</div>
 				</div>
-				<div className="col-md-6">
-					<div className="form-group">
-						<input
-							className="single-daterange form-control"
-							placeholder="Date"
-							type="text"
-						/>
-					</div>
-				</div>
-			</div>
+			</form>
+
 			<table className="table table-striped table-bordered">
 				<tbody>
 					<tr>
@@ -191,27 +197,49 @@ const EmbryoAssessment = () => {
 					</tr>
 				</tbody>
 			</table>
-			<div className="row">
-				<div className="col-md-4">
-					<div className="form-group">
-						<label>CHANGE OVER DONE BY</label>
-						<input className="form-control" placeholder="total" type="text" />
+			<form>
+				<div className="row">
+					<div className="col-md-4">
+						<div className="form-group">
+							<label>CHANGE OVER DONE BY</label>
+							<input
+								className="form-control"
+								placeholder="Change over done by"
+								type="text"
+							/>
+						</div>
+					</div>
+					<div className="col-md-4">
+						<div className="form-group">
+							<label>BIOPSY DONE BY</label>
+							<input
+								className="form-control"
+								placeholder="Biopsy done by"
+								type="text"
+							/>
+						</div>
+					</div>
+					<div className="col-md-4">
+						<div className="form-group">
+							<label>WITNESS</label>
+							<input
+								className="form-control"
+								placeholder="Witness"
+								type="text"
+							/>
+						</div>
 					</div>
 				</div>
-				<div className="col-md-4">
-					<div className="form-group">
-						<label>BIOPSY DONE BY</label>
-						<input className="form-control" placeholder="total" type="text" />
-					</div>
-				</div>
-				<div className="col-md-4">
-					<div className="form-group">
-						<label>WITNESS</label>
-						<input className="form-control" placeholder="total" type="text" />
-					</div>
+			</form>
+			<div className="d-flex justify-content-between">
+				<div></div>
+				<div>
+					<button type="button" className="btn btn-primary">
+						Submit
+					</button>
 				</div>
 			</div>
-		</>
+		</div>
 	);
 };
 
