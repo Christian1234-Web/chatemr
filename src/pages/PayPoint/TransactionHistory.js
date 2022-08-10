@@ -219,7 +219,6 @@ class TransactionHistory extends Component {
 									transactions={transactions}
 									showActionBtns={true}
 									queue={false}
-									showPrint={true}
 								/>
 								{meta && (
 									<div className="pagination pagination-center mt-4">

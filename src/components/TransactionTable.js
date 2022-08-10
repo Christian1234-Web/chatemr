@@ -12,24 +12,20 @@ import {
 	patientname,
 	parseSource,
 	updateImmutable,
+	print,
+	billItem,
+	formatCurrencyBare,
 } from '../services/utilities';
 import { deleteTransaction, loadTransactions } from '../actions/transaction';
 import { notifyError, notifySuccess } from '../services/notify';
 import ModalShowTransactions from './Modals/ModalShowTransactions';
 import ModalApproveTransaction from './Modals/ModalApproveTransaction';
-import ModalPrintTransaction from './Modals/ModalPrintTransaction';
 import Admitted from './Admitted';
 import NicuAdmitted from './NicuAdmitted';
 import { startBlock, stopBlock } from '../actions/redux-block';
 import { hasDeleteTransactionPermission } from '../permission-utils/paypoint';
 
-const TransactionTable = ({
-	transactions,
-	showActionBtns,
-	showPrint = false,
-	queue,
-}) => {
-	const [showPrintModal, setShowPrintModal] = useState(false);
+const TransactionTable = ({ transactions, showActionBtns, queue }) => {
 	const [showTransactions, setShowTransactions] = useState(false);
 	const [transaction, setTransaction] = useState(null);
 	const [patient, setPatient] = useState(null);
@@ -76,13 +72,6 @@ const TransactionTable = ({
 		setShowTransactions(false);
 		setTransaction(null);
 		setPatient(null);
-		setShowPrintModal(false);
-	};
-
-	const handlePrint = item => {
-		setTransaction(item);
-		document.body.classList.add('modal-open');
-		setShowPrintModal(true);
 	};
 
 	const sendToQueue = async transaction => {
@@ -120,6 +109,27 @@ const TransactionTable = ({
 		}
 	};
 
+	const doPrint = async transaction => {
+		const itemName = billItem(transaction);
+
+		const total_amount = Math.abs(Number(transaction.amount));
+
+		const items =
+			transaction?.bill_source === 'cafeteria'
+				? transaction?.transaction_details
+						?.map(item => {
+							const price = formatCurrencyBare(item.price);
+							const total = formatCurrencyBare(
+								Number(item.price) * Number(item.qty)
+							);
+							return `${item.name},${item.qty},${price},${total}`;
+						})
+						.join(':')
+				: `${itemName.replace(',', ' - ')},1,${total_amount},${total_amount}`;
+
+		await print(transaction, items);
+	};
+
 	return (
 		<>
 			<table className="table table-striped">
@@ -127,7 +137,7 @@ const TransactionTable = ({
 					<tr>
 						<th>DATE</th>
 						<th>PATIENT NAME</th>
-						<th>DEPARTMENT</th>
+						<th>SERVICE</th>
 						<th>AMOUNT (&#x20A6;)</th>
 						<th>PAYMENT STATUS</th>
 						{!queue && <th>TYPE</th>}
@@ -321,13 +331,12 @@ const TransactionTable = ({
 												)}
 										</>
 									)}
-									{showPrint &&
-										transaction.status === 1 &&
+									{transaction.status === 1 &&
 										transaction.transaction_type === 'credit' && (
 											<Tooltip title="Print">
 												<a
 													className="text-info"
-													onClick={() => handlePrint(transaction)}
+													onClick={async () => doPrint(transaction)}
 												>
 													<i className="os-icon os-icon-printer" />
 												</a>
@@ -352,12 +361,6 @@ const TransactionTable = ({
 			)}
 			{processTransaction && transaction && (
 				<ModalApproveTransaction
-					transaction={transaction}
-					closeModal={() => closeModal()}
-				/>
-			)}
-			{showPrintModal && transaction && (
-				<ModalPrintTransaction
 					transaction={transaction}
 					closeModal={() => closeModal()}
 				/>

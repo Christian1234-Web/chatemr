@@ -3,14 +3,24 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
 import Tooltip from 'antd/lib/tooltip';
+import axios from 'axios';
 
 import { notifyError } from '../../services/notify';
 import { startBlock, stopBlock } from '../../actions/redux-block';
-import { request, itemRender, patientname } from '../../services/utilities';
+import {
+	request,
+	itemRender,
+	patientname,
+	billItem,
+	formatCurrencyBare,
+	staffname,
+	formatDate,
+} from '../../services/utilities';
 import waiting from '../../assets/images/waiting.gif';
 import { loadTransactions } from '../../actions/transaction';
 import TableLoading from '../TableLoading';
 import PatientBillItem from '../PatientBillItem';
+import { PAYPOINT, VAT } from '../../services/constants';
 
 const ModalShowTransactions = ({ patient, closeModal }) => {
 	const [loading, setLoading] = useState(true);
@@ -123,6 +133,75 @@ const ModalShowTransactions = ({ patient, closeModal }) => {
 		}
 	};
 
+	const doPrint = async transactions => {
+		try {
+			const item = transactions[0];
+			if (item) {
+				const date = formatDate(item.createdAt, 'DD-MMM-YYYY');
+				const payment_method = item.payment_method;
+
+				let customer = '';
+				if (item.dedastaff) {
+					customer = staffname(item.dedastaff);
+				} else if (item.patient) {
+					customer = patientname(item.patient);
+				} else {
+					customer = 'Guest';
+				}
+
+				let total_amount = 0;
+				let amount_paid = 0;
+				let amount_change = 0;
+				let _items = [];
+
+				for (const transaction of transactions) {
+					const itemName = billItem(transaction);
+
+					const totalAmount = Math.abs(Number(transaction.amount));
+
+					total_amount = total_amount + Number(transaction.amount);
+					amount_paid = amount_paid + Number(transaction.amount_paid);
+					amount_change = amount_change + Number(transaction.change);
+
+					_items = [
+						..._items,
+						transaction?.bill_source === 'cafeteria'
+							? transaction?.transaction_details
+									?.map(item => {
+										const price = formatCurrencyBare(item.price);
+										const total = formatCurrencyBare(
+											Number(item.price) * Number(item.qty)
+										);
+										return `${item.name},${item.qty},${price},${total}`;
+									})
+									.join(':')
+							: `${itemName.replace(
+									',',
+									' - '
+							  )},1,${totalAmount},${totalAmount}`,
+					];
+				}
+
+				const vat = total_amount * Number(VAT);
+				const subTotal = formatCurrencyBare(total_amount - vat, true);
+				const amount = formatCurrencyBare(total_amount);
+
+				const paid = formatCurrencyBare(amount_paid);
+				const change = formatCurrencyBare(amount_change);
+
+				const items = _items.join(':');
+
+				const rs = await axios.get(
+					`${PAYPOINT}/receipt?date=${date}&payment_method=${payment_method}&name=${customer}&sub_total=${subTotal}&vat=${vat}&amount=${amount}&paid=${paid}&change=${change}&items=${items}`
+				);
+				console.log(rs.data);
+			}
+		} catch (e) {
+			console.log(e);
+			notifyError('could not print receipt');
+		}
+	};
+
 	const processPayment = async () => {
 		try {
 			if (checked.length === 0) {
@@ -159,6 +238,8 @@ const ModalShowTransactions = ({ patient, closeModal }) => {
 			} else {
 				dispatch(loadTransactions(newTransactions));
 			}
+
+			await doPrint(rs.credits);
 
 			setSubmitting(false);
 			closeModal();
@@ -280,6 +361,7 @@ const ModalShowTransactions = ({ patient, closeModal }) => {
 														placeholder="Enter Amount"
 														value={amountPaid > 0 ? amountPaid : total}
 														onChange={e => setAmountPaid(e.target.value)}
+														style={{ width: '145px' }}
 													/>
 												</div>
 												<div className="form-group mr-3">

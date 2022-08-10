@@ -12,13 +12,13 @@ import moment from 'moment';
 import truncate from 'lodash.truncate';
 import { Field } from 'react-final-form';
 import Select from 'react-select';
-
-import SSRStorage from './storage';
-import { API_URI, patientAPI, TOKEN_COOKIE } from './constants';
 import axios from 'axios';
 
+import SSRStorage from './storage';
+import { API_URI, patientAPI, PAYPOINT, TOKEN_COOKIE, VAT } from './constants';
 import placeholder from '../assets/images/placeholder.jpg';
 import { hasViewAppointmentPermission } from '../permission-utils/appointment';
+import { notifyError } from './notify';
 
 export const formatCurrencyBare = (amount, abs) => {
 	if (!amount) {
@@ -828,4 +828,73 @@ export const countDate = ({ start_date, end_date }) => {
 		moment(start_date, 'YYYY-MM-DD'),
 		'days'
 	);
+};
+
+export const billItem = transaction => {
+	const reqItem = transaction.patientRequestItem;
+
+	let title = parseSource(transaction.bill_source);
+
+	if (
+		transaction?.bill_source === 'ward' ||
+		transaction?.bill_source === 'nicu-accommodation' ||
+		transaction?.bill_source === 'credit-deposit' ||
+		transaction?.bill_source === 'debit-charge'
+	) {
+		title = `${title}- ${transaction.description}`;
+	}
+
+	if (
+		transaction?.bill_source === 'consultancy' ||
+		transaction?.bill_source === 'labs' ||
+		transaction?.bill_source === 'scans' ||
+		transaction?.bill_source === 'procedure' ||
+		transaction?.bill_source === 'nursing-service'
+	) {
+		title = transaction.service?.item?.name
+			? `${title}- ${transaction.service?.item?.name}`
+			: '';
+	}
+
+	if (transaction?.bill_source === 'drugs') {
+		title = `${title}- ${reqItem.fill_quantity} ${
+			reqItem.drug.unitOfMeasure
+		} of ${reqItem.drugGeneric.name} (${reqItem.drug.name}) at ${formatCurrency(
+			reqItem.drugBatch.unitPrice
+		)} each`;
+	}
+
+	return title;
+};
+
+export const print = async (transaction, items) => {
+	try {
+		const date = formatDate(transaction.createdAt, 'DD-MMM-YYYY');
+		const payment_method = transaction.payment_method;
+
+		let customer = '';
+		if (transaction.dedastaff) {
+			customer = staffname(transaction.dedastaff);
+		} else if (transaction.patient) {
+			customer = patientname(transaction.patient);
+		} else {
+			customer = 'Guest';
+		}
+
+		const total_amount = Math.abs(Number(transaction.amount));
+		const vat = total_amount * Number(VAT);
+		const subTotal = formatCurrencyBare(total_amount - vat, true);
+		const amount = formatCurrencyBare(total_amount);
+
+		const paid = formatCurrencyBare(transaction.amount_paid);
+		const change = formatCurrencyBare(transaction.change);
+
+		const rs = await axios.get(
+			`${PAYPOINT}/receipt?date=${date}&payment_method=${payment_method}&name=${customer}&sub_total=${subTotal}&vat=${vat}&amount=${amount}&paid=${paid}&change=${change}&items=${items}`
+		);
+		console.log(rs.data);
+	} catch (e) {
+		console.log(e);
+		notifyError('could not print receipt');
+	}
 };

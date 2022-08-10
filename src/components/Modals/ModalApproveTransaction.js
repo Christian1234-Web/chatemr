@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import {
+	billItem,
+	formatCurrencyBare,
+	print,
 	renderSelect,
 	renderTextInput,
 	request,
@@ -32,6 +35,27 @@ class ModalApproveTransaction extends Component {
 		voucherId: null,
 		vouchers: [],
 		amount: null,
+	};
+
+	doPrint = async transaction => {
+		const itemName = billItem(transaction);
+
+		const total_amount = Math.abs(Number(transaction.amount));
+
+		const items =
+			transaction?.bill_source === 'cafeteria'
+				? transaction?.transaction_details
+						?.map(item => {
+							const price = formatCurrencyBare(item.price);
+							const total = formatCurrencyBare(
+								Number(item.price) * Number(item.qty)
+							);
+							return `${item.name},${item.qty},${price},${total}`;
+						})
+						.join(':')
+				: `${itemName.replace(',', ' - ')},1,${total_amount},${total_amount}`;
+
+		await print(transaction, items);
 	};
 
 	approveTransaction = async data => {
@@ -65,6 +89,7 @@ class ModalApproveTransaction extends Component {
 				} else {
 					this.props.loadTransactions(newTransactions);
 				}
+				await this.doPrint(rs.credit);
 				this.setState({ submitting: false });
 				this.props.closeModal();
 			} else {

@@ -3,6 +3,7 @@ export const APP_NAME = process.env.REACT_APP_NAME;
 export const API_URI = process.env.REACT_APP_API;
 export const CAFETERIA1 = process.env.REACT_APP_CAFETERIA1;
 export const CAFETERIA2 = process.env.REACT_APP_CAFETERIA2;
+export const PAYPOINT = process.env.REACT_APP_PAYPOINT;
 export const VAT = Number(process.env.REACT_APP_VAT) / 100;
 export const TIMEOUT = process.env.REACT_APP_TIMEOUT;
 

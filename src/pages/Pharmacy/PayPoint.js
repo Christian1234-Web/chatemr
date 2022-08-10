@@ -64,7 +64,6 @@ class PayPoint extends Component {
 									showActionBtns={true}
 									handlePrint={this.handlePrintClick}
 									queue={false}
-									showPrint={true}
 								/>
 							</div>
 							{meta && (

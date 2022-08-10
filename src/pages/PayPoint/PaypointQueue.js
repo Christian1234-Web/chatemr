@@ -188,7 +188,6 @@ const PaypointQueue = () => {
 								transactions={transactions}
 								showActionBtns={true}
 								queue={true}
-								showPrint={true}
 							/>
 							{meta && (
 								<div className="pagination pagination-center mt-4">
