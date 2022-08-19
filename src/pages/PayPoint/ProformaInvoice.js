@@ -98,7 +98,7 @@ const ProformaInvoice = ({ history }) => {
 	const fetchServicesByCategory = async slug => {
 		try {
 			dispatch(startBlock());
-			const uri = `${serviceAPI}/${slug}?hmo_id=${patient.hmo.id}`;
+			const uri = `${serviceAPI}/${slug}?hmo_id=${patient.hmo.id}&limit=10000`;
 			const rs = await request(uri, 'GET', true);
 			setServices(rs);
 			dispatch(stopBlock());
@@ -120,9 +120,14 @@ const ProformaInvoice = ({ history }) => {
 	};
 
 	const handlePrint = async () => {
-		const serviceId = requests.map(service => service.id).join('-');
 		try {
+			if (!patient) {
+				notifyError('Select a patient');
+				return;
+			}
+
 			dispatch(startBlock());
+			const serviceId = requests.map(service => service.id).join('-');
 			const uri = `services/cost/print?patientId=${patient.id}&services=${serviceId}`;
 			const rs = await request(uri, 'GET', true);
 			dispatch(stopBlock());
@@ -265,8 +270,12 @@ const ProformaInvoice = ({ history }) => {
 									'Create Request'
 								)}
 							</button>
-							<button class="btn btn-success ml-3">
-								<i class="fa fa-print" onClick={handlePrint}></i>
+							<button
+								class="btn btn-success ml-3"
+								type="button"
+								onClick={() => handlePrint()}
+							>
+								<i class="fa fa-print"></i>
 							</button>
 						</div>
 					</div>
