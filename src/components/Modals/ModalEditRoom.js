@@ -7,6 +7,7 @@ import waiting from '../../assets/images/waiting.gif';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import { notifySuccess } from '../../services/notify';
 import { updateService } from '../../actions/settings';
+import ModalHeader from '../ModalHeader';
 
 const validate = values => {
 	const errors = {};
@@ -55,17 +56,8 @@ const ModalEditRoom = ({ closeModal, service, error, handleSubmit, hmo }) => {
 				style={{ maxWidth: '320px' }}
 			>
 				<div className="modal-content text-center">
-					<button
-						aria-label="Close"
-						className="close"
-						type="button"
-						onClick={closeModal}
-					>
-						<span className="os-icon os-icon-close" />
-					</button>
+					<ModalHeader title="Edit Room Category" closeModal={closeModal} />
 					<div className="onboarding-content with-gradient">
-						<h4 className="onboarding-title">Edit Room Category</h4>
-
 						<div className="form-block">
 							<form onSubmit={handleSubmit(update)}>
 								{error && (

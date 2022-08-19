@@ -10,6 +10,7 @@ import TableLoading from '../TableLoading';
 import waiting from '../../assets/images/waiting.gif';
 import { notifySuccess } from '../../services/notify';
 import { updateService } from '../../actions/settings';
+import ModalHeader from '../ModalHeader';
 
 const ModalViewRooms = ({ closeModal, service, error }) => {
 	const [state, setState] = useState('add');
@@ -81,17 +82,9 @@ const ModalViewRooms = ({ closeModal, service, error }) => {
 				className="modal-dialog modal-centered"
 				style={{ maxWidth: '640px' }}
 			>
-				<div className="modal-content text-center">
-					<button
-						aria-label="Close"
-						className="close"
-						type="button"
-						onClick={closeModal}
-					>
-						<span className="os-icon os-icon-close" />
-					</button>
+				<div className="modal-content modal-scroll text-center">
+					<ModalHeader title="List of Rooms" closeModal={closeModal} />
 					<div className="onboarding-content with-gradient">
-						<h4 className="onboarding-title">List of Rooms</h4>
 						<div className="onboarding-text alert-custom mb-3">
 							<div>{service.name}</div>
 						</div>

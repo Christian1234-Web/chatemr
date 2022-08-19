@@ -66,11 +66,12 @@ const RoomHmo = ({ hmo, toggle, doToggle }) => {
 	const onDeleteService = async data => {
 		try {
 			dispatch(startBlock());
-			const rs = await request(`services/${data.id}`, 'DELETE', true);
-			dispatch(deleteService(rs));
+			await request(`rooms/categories/${data.id}`, 'DELETE', true);
+			dispatch(deleteService(data));
 			notifySuccess('Service deleted');
 			dispatch(stopBlock());
 		} catch (error) {
+			console.log(error);
 			dispatch(stopBlock());
 			notifyError('Error deleting service');
 		}
