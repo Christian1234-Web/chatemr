@@ -149,7 +149,7 @@ const Cafeteria = () => {
 					</form>
 				</div>
 				<div className="row">
-					<div className="col-sm-8 col-lg-9 col-xl-6 col-xxl-12">
+					<div className="col-sm-12 col-lg-12 col-xl-12 col-xxl-12">
 						<div className="element-box">
 							<div className="element-wrapper">
 								<div className="element-box-tp">
@@ -172,43 +172,6 @@ const Cafeteria = () => {
 														</tr>
 													</thead>
 													<tbody>
-														{cafeteriaTransactions?.map(
-															(transaction, index) => (
-																<tr key={index}>
-																	{/* <td>
-																					{transaction.patient.surname}{' '}
-																					{transaction.patient.other_names}
-																				</td> */}
-																	{/* <td>{transaction.patient.id}</td> */}
-																	{/* <td>
-																					{moment(transaction.createdAt).format(
-																						'DD-MM-YYYY h:mm a'
-																					)}
-																				</td> */}
-																	{/* <td className="text-center">
-																					{moment(
-																						transaction.patientRequestItem
-																							.filled_at
-																					).format('DD-MM-YYYY h:mm a')}
-																				</td> */}
-																	{/* <td className="text-left">
-																					{
-																						transaction.patientRequestItem
-																							.drugGeneric.name
-																					}
-																				</td> */}
-																	{/* <td className="text-right">
-																					&#x20A6; {transaction.amount * -1}
-																				</td> */}
-																	{/* <td className="text-right">
-																					{
-																						transaction.patientRequestItem
-																							.fill_quantity
-																					}
-																				</td> */}
-																</tr>
-															)
-														)}
 														{cafeteriaTransactions.map((item, i) => {
 															const patient = item.patient
 																? patientname(item.patient, true)
@@ -221,9 +184,14 @@ const Cafeteria = () => {
 																			: patient}
 																	</td>
 																	<td>
-																		{item?.transaction_details
-																			?.map(t => `${t.name}`)
-																			.join(', ') || '-'}
+																		<span>
+																			{item?.transaction_details
+																				?.map(t => `${t.name}`)
+																				.join(', ') || '-'}
+																		</span>
+																		{/* {item?.transaction_details
+																			?.map(t => <span>{t.name} <span class="smaller lighter">{formatCurrency(t?.price)}</span> </span>)
+																			 || '-'} */}
 																	</td>
 																	<td>
 																		{formatDate(
