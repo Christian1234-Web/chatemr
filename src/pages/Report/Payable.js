@@ -104,7 +104,7 @@ const Payable = () => {
 				<div className="element-box m-0 mb-4 p-3">
 					<form className="row">
 						<div className="form-group col-md-3">
-							<label>From - To</label>
+							<label className="mr-2 ">From - To</label>
 							<RangePicker onChange={e => dateChange(e)} />
 						</div>
 						<div className="form-group col-md-3">
