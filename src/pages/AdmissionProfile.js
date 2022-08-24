@@ -42,7 +42,9 @@ const Page = ({ location }) => {
 		case 'encounters':
 			return <Encounters />;
 		case 'vitals':
-			return <Vitals type={hash[1].split('%20').join(' ')} />;
+			return (
+				<Vitals type={hash[1].split('%20').join(' ')} category="general" />
+			);
 		case 'clinical-tasks':
 			return (
 				<ClinicalTasks

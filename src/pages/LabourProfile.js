@@ -13,6 +13,14 @@ import HashRoute from '../components/HashRoute';
 import AncBlock from '../components/AncBlock';
 
 const Notes = lazy(() => import('../components/Labour/Notes'));
+const Measurements = lazy(() => import('../components/Labour/Measurements'));
+const Lab = lazy(() => import('../components/Patient/Lab'));
+const LabRequest = lazy(() => import('../components/Patient/LabRequest'));
+const Vitals = lazy(() => import('../components/Patient/Vitals'));
+const RiskAssessments = lazy(() =>
+	import('../components/Labour/RiskAssessments')
+);
+const Delivery = lazy(() => import('../components/Labour/Delivery'));
 
 const storage = new SSRStorage();
 
@@ -20,6 +28,24 @@ const Page = ({ location }) => {
 	const labour = useSelector(state => state.user.item);
 	const hash = location.hash.substr(1).split('#');
 	switch (hash[0]) {
+		case 'measurements':
+			return <Measurements can_request={labour && labour.status === 0} />;
+		case 'lab':
+			return (
+				<Lab
+					can_request={labour && labour.status === 0}
+					itemId={labour.id || ''}
+					type="labour"
+				/>
+			);
+		case 'lab-request':
+			return <LabRequest module="labour" itemId={labour.id || ''} />;
+		case 'partograph':
+			return <Vitals type={hash[1].split('%20').join(' ')} category="labour" />;
+		case 'risk-assessments':
+			return <RiskAssessments />;
+		case 'delivery':
+			return <Delivery />;
 		case 'notes':
 		default:
 			return <Notes can_request={labour && labour.status === 0} />;

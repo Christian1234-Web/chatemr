@@ -1,18 +1,10 @@
 import {
 	LOAD_VITALS,
 	UPDATE_VITALS,
-	LOAD_LABOUR,
-	LOAD_LABOUR_DETAIL,
-	CLEAR_LABOUR_DETAIL,
 	PATIENT_REGULATION_TABLE,
-	LOAD_PARTOGRAPH,
-	LOAD_RISK,
-	LOAD_DELIVERY_RECORD,
-	LOAD_LABOUR_MEASUREMENT,
 	PATIENT_IVF,
 	READING_DONE,
 	SET_IVF,
-	CAN_CLOSE_LABOUR,
 	UPDATE_ENCOUNTER_DATA,
 	RESET_ENCOUNTER_DATA,
 	UPDATE_SOAP_DATA,
@@ -90,57 +82,4 @@ export const updateAssessmentData = (data, pid) => {
 		payload: data,
 		patient_id: pid,
 	};
-};
-
-export const loadLabour = payload => {
-	return {
-		type: LOAD_LABOUR,
-		payload,
-	};
-};
-
-export const loadLabourDetails = payload => {
-	return {
-		type: LOAD_LABOUR_DETAIL,
-		payload,
-	};
-};
-
-export const clearLabourDetails = () => {
-	return {
-		type: CLEAR_LABOUR_DETAIL,
-	};
-};
-
-export const loadPartograph = payload => {
-	return {
-		type: LOAD_PARTOGRAPH,
-		payload,
-	};
-};
-
-export const loadRiskAssessment = payload => {
-	return {
-		type: LOAD_RISK,
-		payload,
-	};
-};
-export const loadDeliveryRecord = payload => {
-	return {
-		type: LOAD_DELIVERY_RECORD,
-		payload,
-	};
-};
-
-export const loadLabourMeasurement = payload => {
-	return {
-		type: LOAD_LABOUR_MEASUREMENT,
-		payload,
-	};
-};
-
-export const closeLabour = () => dispatch => {
-	dispatch({
-		type: CAN_CLOSE_LABOUR,
-	});
 };

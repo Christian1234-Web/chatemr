@@ -6,7 +6,7 @@ import Tooltip from 'antd/lib/tooltip';
 import DatePicker from 'react-datepicker';
 
 import waiting from '../../assets/images/waiting.gif';
-import { admissionAPI, vitalItems } from '../../services/constants';
+import { admissionAPI, allVitalItems } from '../../services/constants';
 import { formatDate, request } from '../../services/utilities';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import { notifyError, notifySuccess } from '../../services/notify';
@@ -177,29 +177,32 @@ const CreateTask = ({ closeModal, refreshTasks }) => {
 								<div className="col-sm-12">
 									<div className="element-box-tp mb-3">
 										<div className="el-buttons-list">
-											{[...vitalItems, 'Medication', 'Fluid Chart'].map(
-												(vital, i) => {
-													const item = clinicalTasks.find(
-														t => t.name === vital
-													);
-													return (
-														<a
-															className={`btn btn-white btn-sm mr-2 ${
-																item ? 'toggled' : ''
-															}`}
-															key={i}
-															onClick={() =>
-																vital === 'Medication'
-																	? createMedication()
-																	: setTask(vital)
-															}
-														>
-															<i className="os-icon os-icon-delivery-box-2" />
-															<span>{vital}</span>
-														</a>
-													);
-												}
-											)}
+											{[
+												...allVitalItems.filter(v => {
+													const item = v.category.find(c => c === 'general');
+													return item && item === 'general';
+												}),
+												'Medication',
+												'Fluid Chart',
+											].map((vital, i) => {
+												const item = clinicalTasks.find(t => t.name === vital);
+												return (
+													<a
+														className={`btn btn-white btn-sm mr-2 ${
+															item ? 'toggled' : ''
+														}`}
+														key={i}
+														onClick={() =>
+															vital === 'Medication'
+																? createMedication()
+																: setTask(vital)
+														}
+													>
+														<i className="os-icon os-icon-delivery-box-2" />
+														<span>{vital}</span>
+													</a>
+												);
+											})}
 										</div>
 									</div>
 								</div>
