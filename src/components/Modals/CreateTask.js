@@ -182,10 +182,12 @@ const CreateTask = ({ closeModal, refreshTasks }) => {
 													const item = v.category.find(c => c === 'general');
 													return item && item === 'general';
 												}),
-												'Medication',
-												'Fluid Chart',
+												{ name: 'Medication' },
+												{ name: 'Fluid Chart' },
 											].map((vital, i) => {
-												const item = clinicalTasks.find(t => t.name === vital);
+												const item = clinicalTasks.find(
+													t => t.name === vital.name
+												);
 												return (
 													<a
 														className={`btn btn-white btn-sm mr-2 ${
@@ -193,13 +195,13 @@ const CreateTask = ({ closeModal, refreshTasks }) => {
 														}`}
 														key={i}
 														onClick={() =>
-															vital === 'Medication'
+															vital.name === 'Medication'
 																? createMedication()
-																: setTask(vital)
+																: setTask(vital.name)
 														}
 													>
 														<i className="os-icon os-icon-delivery-box-2" />
-														<span>{vital}</span>
+														<span>{vital.name}</span>
 													</a>
 												);
 											})}
