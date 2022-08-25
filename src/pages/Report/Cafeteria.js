@@ -16,6 +16,7 @@ import DatePicker from 'antd/lib/date-picker';
 import waiting from '../../assets/images/waiting.gif';
 import { Tooltip } from 'react-bootstrap';
 import startCase from 'lodash.startcase';
+import { stopBlock } from '../../actions/redux-block';
 
 const { RangePicker } = DatePicker;
 
@@ -31,6 +32,8 @@ const Cafeteria = () => {
 	const [endDate, setEndDate] = useState('');
 	const [searchValue, setSearchValue] = useState('');
 	const [filtering, setFiltering] = useState(false);
+	const [hmos, setHMOS] = useState([]);
+	const [hmoId, setHMOId] = useState('');
 
 	const dateChange = e => {
 		const date = e.map(d => {
@@ -46,7 +49,7 @@ const Cafeteria = () => {
 			try {
 				const p = page || 1;
 				setLoading(true);
-				const url = `transactions/search?bill_source=cafeteria&page=${p}&limit=10&term=${searchValue}&startDate=${startDate}&endDate=${endDate}`;
+				const url = `transactions/search?bill_source=cafeteria&page=${p}&limit=10&term=${searchValue}&startDate=${startDate}&endDate=${endDate}&hmo_id=${hmoId}`;
 				const rs = await request(url, 'GET', true);
 				const { result, ...meta } = rs;
 				setCafeteriaTransactions(result);
@@ -58,8 +61,28 @@ const Cafeteria = () => {
 				setLoading(false);
 			}
 		},
-		[endDate, searchValue, startDate]
+		[endDate, searchValue, startDate, hmoId]
 	);
+
+	const fetchHMOS = async () => {
+		try {
+			setLoading(true);
+			const url = `hmos/schemes?limit=100`;
+			const rs = await request(url, 'GET', true);
+			const { result, ...meta } = rs;
+			setLoading(false);
+			setFiltering(false);
+			setHMOS(result);
+			stopBlock();
+		} catch (error) {
+			console.log(error);
+			stopBlock();
+		}
+	};
+
+	useEffect(() => {
+		fetchHMOS();
+	}, []);
 
 	useEffect(() => {
 		if (loading) {
@@ -114,6 +137,25 @@ const Cafeteria = () => {
 								onChange={e => setSearchValue(e.target.value)}
 								placeholder="search "
 							/>
+						</div>
+						<div className="form-group col-md-2">
+							<label>Hmo</label>
+							<select
+								style={{ height: '35px' }}
+								id="hmo_id"
+								className="form-control"
+								name="hmo_id"
+								onChange={e => setHMOId(e.target.value)}
+							>
+								{/* <option value="">Choose Hmo</option> */}
+								{hmos.map((pat, i) => {
+									return (
+										<option key={i} value={pat.id}>
+											{pat.name}
+										</option>
+									);
+								})}
+							</select>
 						</div>
 						<div className="form-group col-md-2">
 							<label>Category</label>

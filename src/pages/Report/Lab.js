@@ -22,18 +22,21 @@ class Lab extends Component {
 		meta: null,
 		patient_id: '',
 		search: '',
+		hmos: [],
+		hmo_id: '',
 	};
 
 	componentDidMount() {
 		this.fetchLabs();
+		this.fetchHMOS();
 	}
 
 	fetchLabs = async page => {
 		try {
-			const { startDate, endDate, search } = this.state;
+			const { startDate, endDate, search, hmo_id } = this.state;
 			this.setState({ loading: true });
 			const p = page || 1;
-			const url = `transactions/search?bill_source=labs&page=${p}&limit=10&term=${search}&startDate=${startDate}&endDate=${endDate}`;
+			const url = `transactions/search?bill_source=labs&page=${p}&limit=10&term=${search}&startDate=${startDate}&endDate=${endDate}&hmo_id=${hmo_id}`;
 			const rs = await request(url, 'GET', true);
 			const { result, ...meta } = rs;
 			this.setState({ labs: result, loading: false, filtering: false, meta });
@@ -41,6 +44,20 @@ class Lab extends Component {
 		} catch (error) {
 			console.log(error);
 			notifyError('Error fetching all lab request');
+		}
+	};
+
+	fetchHMOS = async page => {
+		try {
+			this.setState({ loading: true });
+			const url = `hmos/schemes?limit=100`;
+			const rs = await request(url, 'GET', true);
+			const { result, ...meta } = rs;
+			this.setState({ loading: false, filtering: false, hmos: result });
+			this.props.stopBlock();
+		} catch (error) {
+			console.log(error);
+			this.props.stopBlock();
 		}
 	};
 
@@ -83,7 +100,7 @@ class Lab extends Component {
 	};
 
 	render() {
-		const { filtering, loading, labs, meta } = this.state;
+		const { filtering, loading, labs, meta, hmos } = this.state;
 		return (
 			<div className="content-i">
 				<div className="content-box">
@@ -122,6 +139,27 @@ class Lab extends Component {
 									placeholder="search name,patient id, drug, amount, qty"
 									onChange={e => this.handleChange(e)}
 								/>
+							</div>
+							<div className="form-group col-md-2">
+								<label>Hmo</label>
+								<select
+									style={{ height: '35px' }}
+									id="hmo_id"
+									className="form-control"
+									name="hmo_id"
+									onChange={e =>
+										this.setState({ filtered: false, hmo_id: e.target.value })
+									}
+								>
+									{/* <option value="">Choose Hmo</option> */}
+									{hmos.map((pat, i) => {
+										return (
+											<option key={i} value={pat.id}>
+												{pat.name}
+											</option>
+										);
+									})}
+								</select>
 							</div>
 							<div className="form-group col mt-4">
 								<div
@@ -179,10 +217,10 @@ class Lab extends Component {
 																				)}
 																			</td>
 																			<td className="text-left">
-																				{lab.patientRequestItem.labTest.name}
+																				{lab.patientRequestItem?.labTest.name}
 																			</td>
 																			<td className="text-left">
-																				{lab.patientRequestItem.labTest.specimens?.map(
+																				{lab.patientRequestItem?.labTest.specimens?.map(
 																					(sample, i) => (
 																						<span key={i}> {sample.label}</span>
 																					)

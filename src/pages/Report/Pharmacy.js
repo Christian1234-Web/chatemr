@@ -7,6 +7,7 @@ import TableLoading from '../../components/TableLoading';
 import { paginate } from '../../services/constants';
 import DatePicker from 'antd/lib/date-picker';
 import waiting from '../../assets/images/waiting.gif';
+import { stopBlock } from '../../actions/redux-block';
 
 const { RangePicker } = DatePicker;
 
@@ -28,6 +29,8 @@ const Pharmacy = () => {
 	const [searchValue, setSearchValue] = useState('');
 	// const [status, setStatus] = useState('');
 	const [filtering, setFiltering] = useState(false);
+	const [hmos, setHMOS] = useState([]);
+	const [hmoId, setHMOId] = useState('');
 
 	const dateChange = e => {
 		const date = e.map(d => {
@@ -43,7 +46,7 @@ const Pharmacy = () => {
 			try {
 				const p = page || 1;
 				setLoading(true);
-				const url = `transactions/search?bill_source=drugs&page=${p}&limit=10&term=${searchValue}&startDate=${startDate}&endDate=${endDate}`;
+				const url = `transactions/search?bill_source=drugs&page=${p}&limit=10&term=${searchValue}&startDate=${startDate}&endDate=${endDate}&hmo_id=${hmoId}`;
 				const rs = await request(url, 'GET', true);
 				const { result, ...meta } = rs;
 				setDrugTransactions(result);
@@ -55,7 +58,7 @@ const Pharmacy = () => {
 				setLoading(false);
 			}
 		},
-		[endDate, searchValue, startDate]
+		[endDate, searchValue, startDate, hmoId]
 	);
 
 	const fetchDrugDispensations = useCallback(async page => {
@@ -80,6 +83,26 @@ const Pharmacy = () => {
 		} catch (err) {
 			console.log('Pharm Sales Err', err);
 		}
+	}, []);
+
+	const fetchHMOS = async () => {
+		try {
+			setLoading(true);
+			const url = `hmos/schemes?limit=100`;
+			const rs = await request(url, 'GET', true);
+			const { result, ...meta } = rs;
+			setLoading(false);
+			setFiltering(false);
+			setHMOS(result);
+			stopBlock();
+		} catch (error) {
+			console.log(error);
+			stopBlock();
+		}
+	};
+
+	useEffect(() => {
+		fetchHMOS();
 	}, []);
 
 	useEffect(() => {
@@ -150,6 +173,25 @@ const Pharmacy = () => {
 								onChange={e => setSearchValue(e.target.value)}
 								placeholder="search name,patient id, drug, amount, qty"
 							/>
+						</div>
+						<div className="form-group col-md-2">
+							<label>Hmo</label>
+							<select
+								style={{ height: '35px' }}
+								id="hmo_id"
+								className="form-control"
+								name="hmo_id"
+								onChange={e => setHMOId(e.target.value)}
+							>
+								{/* <option value="">Choose Hmo</option> */}
+								{hmos.map((pat, i) => {
+									return (
+										<option key={i} value={pat.id}>
+											{pat.name}
+										</option>
+									);
+								})}
+							</select>
 						</div>
 						<div className="form-group col mt-4">
 							<div
