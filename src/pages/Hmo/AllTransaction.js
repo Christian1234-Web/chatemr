@@ -68,6 +68,7 @@ class AllTransactions extends Component {
 
 	componentDidMount() {
 		this.fetchTransactions();
+		this.fetchHMOS();
 	}
 
 	fetchTransactions = async (
@@ -87,6 +88,22 @@ class AllTransactions extends Component {
 			const arr = [...result];
 			this.props.loadTransactions(arr);
 			this.setState({ loading: false, filtering: false, meta });
+			this.props.stopBlock();
+		} catch (error) {
+			console.log(error);
+			this.props.stopBlock();
+		}
+	};
+
+	fetchHMOS = async page => {
+		try {
+			// const p = page || 1;
+			this.setState({ loading: true });
+			const url = `hmos/schemes?limit=100`;
+			const rs = await request(url, 'GET', true);
+			const { result, ...meta } = rs;
+			const arr = [...result];
+			this.setState({ loading: false, filtering: false, hmos: result });
 			this.props.stopBlock();
 		} catch (error) {
 			console.log(error);
@@ -275,13 +292,15 @@ class AllTransactions extends Component {
 								id="hmo_id"
 								className="form-control"
 								name="hmo_id"
-								onChange={e => this.change(e)}
+								onChange={e =>
+									this.setState({ filtered: false, hmo_id: e.target.value })
+								}
 							>
-								<option value="">Choose Hmo</option>
+								{/* <option value="">Choose Hmo</option> */}
 								{hmos.map((pat, i) => {
 									return (
-										<option key={i} value={pat.value}>
-											{pat.label}
+										<option key={i} value={pat.id}>
+											{pat.name}
 										</option>
 									);
 								})}
