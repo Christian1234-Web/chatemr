@@ -18,8 +18,7 @@ const Pharmacy = () => {
 	const [metaDispense, setMetaDispense] = useState({ ...paginate });
 	const [meta, setMeta] = useState({ ...paginate });
 
-	// eslint-disable-next-line no-unused-vars
-	const [pharmSales, setPharmSales] = useState(null);
+	// const [pharmSales, setPharmSales] = useState(null);
 
 	const [linkPharm, setLinkPharm] = useState(true);
 	const [linkDen, setLinkDen] = useState(false);
@@ -28,6 +27,8 @@ const Pharmacy = () => {
 	const [searchValue, setSearchValue] = useState('');
 	// const [status, setStatus] = useState('');
 	const [filtering, setFiltering] = useState(false);
+	const [hmos, setHMOS] = useState([]);
+	const [hmoId, setHMOId] = useState('');
 
 	const dateChange = e => {
 		const date = e.map(d => {
@@ -43,7 +44,7 @@ const Pharmacy = () => {
 			try {
 				const p = page || 1;
 				setLoading(true);
-				const url = `transactions/search?bill_source=drugs&page=${p}&limit=10&term=${searchValue}&startDate=${startDate}&endDate=${endDate}`;
+				const url = `transactions/search?bill_source=drugs&page=${p}&limit=10&term=${searchValue}&startDate=${startDate}&endDate=${endDate}&hmo_id=${hmoId}`;
 				const rs = await request(url, 'GET', true);
 				const { result, ...meta } = rs;
 				setDrugTransactions(result);
@@ -55,7 +56,7 @@ const Pharmacy = () => {
 				setLoading(false);
 			}
 		},
-		[endDate, searchValue, startDate]
+		[endDate, searchValue, startDate, hmoId]
 	);
 
 	const fetchDrugDispensations = useCallback(async page => {
@@ -72,23 +73,38 @@ const Pharmacy = () => {
 		}
 	}, []);
 
-	const fetchPharmSales = useCallback(async () => {
+	// const fetchPharmSales = useCallback(async () => {
+	// 	try {
+	// 		const url = `transactions/bill-source?bill_source=drugs`;
+	// 		const rs = await request(url, 'GET', true);
+	// 		setPharmSales(rs);
+	// 	} catch (err) {
+	// 		console.log('Pharm Sales Err', err);
+	// 	}
+	// }, []);
+
+	const fetchHMOS = useCallback(async () => {
 		try {
-			const url = `transactions/bill-source?bill_source=drugs`;
+			const url = `hmos/schemes?limit=100`;
 			const rs = await request(url, 'GET', true);
-			setPharmSales(rs);
-		} catch (err) {
-			console.log('Pharm Sales Err', err);
+			const { result } = rs;
+			setHMOS(result);
+		} catch (error) {
+			console.log(error);
 		}
 	}, []);
+
+	useEffect(() => {
+		fetchHMOS();
+	}, [fetchHMOS]);
 
 	useEffect(() => {
 		if (loading) {
 			fetchDrugTransactions();
 			fetchDrugDispensations();
-			fetchPharmSales();
+			// fetchPharmSales();
 		}
-	}, [fetchDrugDispensations, fetchDrugTransactions, fetchPharmSales, loading]);
+	}, [fetchDrugDispensations, fetchDrugTransactions, loading]);
 
 	const doFilter = async () => {
 		setFiltering(true);
@@ -150,6 +166,25 @@ const Pharmacy = () => {
 								onChange={e => setSearchValue(e.target.value)}
 								placeholder="search name,patient id, drug, amount, qty"
 							/>
+						</div>
+						<div className="form-group col-md-2">
+							<label>Hmo</label>
+							<select
+								style={{ height: '35px' }}
+								id="hmo_id"
+								className="form-control"
+								name="hmo_id"
+								onChange={e => setHMOId(e.target.value)}
+							>
+								{/* <option value="">Choose Hmo</option> */}
+								{hmos.map((pat, i) => {
+									return (
+										<option key={i} value={pat.id}>
+											{pat.name}
+										</option>
+									);
+								})}
+							</select>
 						</div>
 						<div className="form-group col mt-4">
 							<div
