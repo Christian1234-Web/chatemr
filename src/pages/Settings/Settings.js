@@ -40,9 +40,9 @@ const Settings = () => {
 						</div>
 					</div>
 					<div className="row">
-						<div className="col-lg-7">
+						<div className="col-lg-12">
 							<div className="element-wrapper">
-								<div className="element-box-tp">
+								<div className="element-box">
 									{loading ? (
 										<TableLoading />
 									) : (

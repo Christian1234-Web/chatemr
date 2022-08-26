@@ -151,7 +151,7 @@ const Diagnosis = () => {
 							) : (
 								<div className="col-lg-12">
 									<div className="element-wrapper">
-										<div className="element-box-tp">
+										<div className="element-box">
 											<div className="controls-above-table">
 												<div className="row">
 													<div className="col-md-12">
