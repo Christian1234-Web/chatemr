@@ -189,7 +189,10 @@ class LabBlock extends Component {
 			<TableLoading />
 		) : (
 			<>
-				<table className="table table-striped">
+				<table
+					className="table table-striped"
+					style={{ backgroundColor: 'transparent' }}
+				>
 					<thead>
 						<tr>
 							<th>Request Date</th>
