@@ -693,12 +693,12 @@ const ProfileBlock = ({
 													value={`${dob} (${getAge(patient?.date_of_birth)})`}
 												/>
 											</tr>
-											{patient && patient.staff_id && (
+											{patient && patient.staff && (
 												<tr>
 													<UserItem
 														icon="user"
 														label="Staff ID"
-														value={patient.staff_id}
+														value={patient.staff.id}
 													/>
 												</tr>
 											)}
