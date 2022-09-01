@@ -7,7 +7,6 @@ import TableLoading from '../../components/TableLoading';
 import { paginate } from '../../services/constants';
 import DatePicker from 'antd/lib/date-picker';
 import waiting from '../../assets/images/waiting.gif';
-import { stopBlock } from '../../actions/redux-block';
 
 const { RangePicker } = DatePicker;
 
@@ -19,8 +18,7 @@ const Pharmacy = () => {
 	const [metaDispense, setMetaDispense] = useState({ ...paginate });
 	const [meta, setMeta] = useState({ ...paginate });
 
-	// eslint-disable-next-line no-unused-vars
-	const [pharmSales, setPharmSales] = useState(null);
+	// const [pharmSales, setPharmSales] = useState(null);
 
 	const [linkPharm, setLinkPharm] = useState(true);
 	const [linkDen, setLinkDen] = useState(false);
@@ -75,43 +73,38 @@ const Pharmacy = () => {
 		}
 	}, []);
 
-	const fetchPharmSales = useCallback(async () => {
-		try {
-			const url = `transactions/bill-source?bill_source=drugs`;
-			const rs = await request(url, 'GET', true);
-			setPharmSales(rs);
-		} catch (err) {
-			console.log('Pharm Sales Err', err);
-		}
-	}, []);
+	// const fetchPharmSales = useCallback(async () => {
+	// 	try {
+	// 		const url = `transactions/bill-source?bill_source=drugs`;
+	// 		const rs = await request(url, 'GET', true);
+	// 		setPharmSales(rs);
+	// 	} catch (err) {
+	// 		console.log('Pharm Sales Err', err);
+	// 	}
+	// }, []);
 
-	const fetchHMOS = async () => {
+	const fetchHMOS = useCallback(async () => {
 		try {
-			setLoading(true);
 			const url = `hmos/schemes?limit=100`;
 			const rs = await request(url, 'GET', true);
-			const { result, ...meta } = rs;
-			setLoading(false);
-			setFiltering(false);
+			const { result } = rs;
 			setHMOS(result);
-			stopBlock();
 		} catch (error) {
 			console.log(error);
-			stopBlock();
 		}
-	};
+	}, []);
 
 	useEffect(() => {
 		fetchHMOS();
-	}, []);
+	}, [fetchHMOS]);
 
 	useEffect(() => {
 		if (loading) {
 			fetchDrugTransactions();
 			fetchDrugDispensations();
-			fetchPharmSales();
+			// fetchPharmSales();
 		}
-	}, [fetchDrugDispensations, fetchDrugTransactions, fetchPharmSales, loading]);
+	}, [fetchDrugDispensations, fetchDrugTransactions, loading]);
 
 	const doFilter = async () => {
 		setFiltering(true);

@@ -46,6 +46,16 @@ class TakeReadings extends Component {
 
 			if (info.type === 'blood-pressure') {
 				_data = { blood_pressure: `${data.systolic}/${data.diastolic}` };
+			} else if (info.type === 'contractions') {
+				_data = {
+					contractions: `${data.rate || ''}/${data.duration || ''}`,
+				};
+			} else if (info.type === 'servico-graph') {
+				_data = {
+					servico_graph: `${data.alert || ''}/${data.action || ''}/${
+						data.cervical_dilation || ''
+					}/${data.fetal_head_station || ''}`,
+				};
 			} else if (info.type === 'bmi') {
 				const h = parseFloat(data.height);
 				const w = parseFloat(data.weight);

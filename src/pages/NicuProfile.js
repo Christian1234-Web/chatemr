@@ -36,7 +36,9 @@ const Page = ({ location }) => {
 	const hash = location.hash.substr(1).split('#');
 	switch (hash[0]) {
 		case 'vitals':
-			return <Vitals type={hash[1].split('%20').join(' ')} />;
+			return (
+				<Vitals type={hash[1].split('%20').join(' ')} category="general" />
+			);
 		case 'clinical-tasks':
 			return (
 				<ClinicalTasks

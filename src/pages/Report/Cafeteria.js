@@ -14,9 +14,6 @@ import TableLoading from '../../components/TableLoading';
 import { paginate } from '../../services/constants';
 import DatePicker from 'antd/lib/date-picker';
 import waiting from '../../assets/images/waiting.gif';
-import { Tooltip } from 'react-bootstrap';
-import startCase from 'lodash.startcase';
-import { stopBlock } from '../../actions/redux-block';
 
 const { RangePicker } = DatePicker;
 
@@ -25,8 +22,6 @@ const Cafeteria = () => {
 
 	const [cafeteriaTransactions, setCafeteriaTransactions] = useState([]);
 	const [meta, setMeta] = useState({ ...paginate });
-
-	// eslint-disable-next-line no-unused-vars
 
 	const [startDate, setStartDate] = useState('');
 	const [endDate, setEndDate] = useState('');
@@ -64,25 +59,20 @@ const Cafeteria = () => {
 		[endDate, searchValue, startDate, hmoId]
 	);
 
-	const fetchHMOS = async () => {
+	const fetchHMOS = useCallback(async () => {
 		try {
-			setLoading(true);
 			const url = `hmos/schemes?limit=100`;
 			const rs = await request(url, 'GET', true);
-			const { result, ...meta } = rs;
-			setLoading(false);
-			setFiltering(false);
+			const { result } = rs;
 			setHMOS(result);
-			stopBlock();
 		} catch (error) {
 			console.log(error);
-			stopBlock();
 		}
-	};
+	}, []);
 
 	useEffect(() => {
 		fetchHMOS();
-	}, []);
+	}, [fetchHMOS]);
 
 	useEffect(() => {
 		if (loading) {
@@ -191,7 +181,7 @@ const Cafeteria = () => {
 					</form>
 				</div>
 				<div className="row">
-					<div className="col-sm-8 col-lg-9 col-xl-6 col-xxl-12">
+					<div className="col-sm-12 col-lg-12 col-xl-12 col-xxl-12">
 						<div className="element-box">
 							<div className="element-wrapper">
 								<div className="element-box-tp">
@@ -214,43 +204,6 @@ const Cafeteria = () => {
 														</tr>
 													</thead>
 													<tbody>
-														{cafeteriaTransactions?.map(
-															(transaction, index) => (
-																<tr key={index}>
-																	{/* <td>
-																					{transaction.patient.surname}{' '}
-																					{transaction.patient.other_names}
-																				</td> */}
-																	{/* <td>{transaction.patient.id}</td> */}
-																	{/* <td>
-																					{moment(transaction.createdAt).format(
-																						'DD-MM-YYYY h:mm a'
-																					)}
-																				</td> */}
-																	{/* <td className="text-center">
-																					{moment(
-																						transaction.patientRequestItem
-																							.filled_at
-																					).format('DD-MM-YYYY h:mm a')}
-																				</td> */}
-																	{/* <td className="text-left">
-																					{
-																						transaction.patientRequestItem
-																							.drugGeneric.name
-																					}
-																				</td> */}
-																	{/* <td className="text-right">
-																					&#x20A6; {transaction.amount * -1}
-																				</td> */}
-																	{/* <td className="text-right">
-																					{
-																						transaction.patientRequestItem
-																							.fill_quantity
-																					}
-																				</td> */}
-																</tr>
-															)
-														)}
 														{cafeteriaTransactions.map((item, i) => {
 															const patient = item.patient
 																? patientname(item.patient, true)
@@ -263,9 +216,14 @@ const Cafeteria = () => {
 																			: patient}
 																	</td>
 																	<td>
-																		{item?.transaction_details
-																			?.map(t => `${t.name}`)
-																			.join(', ') || '-'}
+																		<span>
+																			{item?.transaction_details
+																				?.map(t => `${t.name}`)
+																				.join(', ') || '-'}
+																		</span>
+																		{/* {item?.transaction_details
+																			?.map(t => <span>{t.name} <span class="smaller lighter">{formatCurrency(t?.price)}</span> </span>)
+																			 || '-'} */}
 																	</td>
 																	<td>
 																		{formatDate(

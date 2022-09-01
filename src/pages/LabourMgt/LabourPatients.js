@@ -8,7 +8,12 @@ import DatePicker from 'antd/lib/date-picker';
 import AsyncSelect from 'react-select/async/dist/react-select.esm';
 
 import { notifyError } from '../../services/notify';
-import { request, itemRender, patientname } from '../../services/utilities';
+import {
+	request,
+	itemRender,
+	patientname,
+	updateImmutable,
+} from '../../services/utilities';
 import waiting from '../../assets/images/waiting.gif';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import { searchAPI, labourAPI } from '../../services/constants';
@@ -16,6 +21,7 @@ import { toggleProfile } from '../../actions/user';
 import TableLoading from '../../components/TableLoading';
 import ProfilePopup from '../../components/Patient/ProfilePopup';
 import { staffname } from '../../services/utilities';
+import { messageService } from '../../services/message';
 
 const { RangePicker } = DatePicker;
 
@@ -69,6 +75,20 @@ const LabourPatients = () => {
 			setLoading(false);
 		}
 	}, [loading, fetchLabours]);
+
+	useEffect(() => {
+		const subscription = messageService.getMessage().subscribe(message => {
+			const { type, data } = message.text;
+			if (type === 'labour') {
+				const enrollments = updateImmutable(patients, data);
+				setPatients(enrollments);
+			}
+		});
+
+		return () => {
+			subscription.unsubscribe();
+		};
+	});
 
 	const getOptionValues = option => option.id;
 	const getOptionLabels = option => patientname(option, true);

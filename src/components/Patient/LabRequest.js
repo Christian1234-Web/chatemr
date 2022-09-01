@@ -124,6 +124,7 @@ const LabRequest = ({ module, history, location, itemId }) => {
 				admission_id: module === 'admission' ? itemId : '',
 				nicu_id: module === 'nicu' ? itemId : '',
 				ivf_id: module === 'ivf' ? itemId : '',
+				labour_id: module === 'labour' ? itemId : '',
 			};
 
 			setSubmitting(true);

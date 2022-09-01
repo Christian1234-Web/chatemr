@@ -11,14 +11,9 @@ import {
 	TOGGLE_VIEW_CURRENT_PAYROLL,
 	TOGGLE_EDIT_PAYROLL,
 	TOGGLE_ADD_NEW_OBSERVATION,
-	TOGGLE_CREATE_LABOUR_MEASUREMENT,
-	TOGGLE_CREATE_RISK_ASSESSMENT,
-	TOGGLE_CREATE_RECORD_DELIVERY,
-	TOGGLE_CREATE_RECORD_VITAL,
 	TOGGLE_CREATE_CLINICAL_TASK,
 	TOGGLE_LINE_APPRAISAL,
 	TOGGLE_STAFF_APPRAISAL,
-	TOGGLE_LABOUR_MEASURMENT_DETAIL,
 	ADD_STAFF_FOR_APPRAISAL,
 	SET_IS_STAFF_APPRAISAL,
 	CREAE_NEW_DRUG,
@@ -144,33 +139,6 @@ export const toggleEditPayroll = (status, id) => {
 	};
 };
 
-export const toggleCreateLabourMeasurement = status => {
-	return {
-		type: TOGGLE_CREATE_LABOUR_MEASUREMENT,
-		payload: status,
-	};
-};
-
-export const toggleCreateRiskAssessment = status => {
-	return {
-		type: TOGGLE_CREATE_RISK_ASSESSMENT,
-		payload: status,
-	};
-};
-
-export const toggleCreateRecordVital = status => {
-	return {
-		type: TOGGLE_CREATE_RECORD_VITAL,
-		payload: status,
-	};
-};
-export const toggleCreateRecordDelivery = status => {
-	return {
-		type: TOGGLE_CREATE_RECORD_DELIVERY,
-		payload: status,
-	};
-};
-
 export const toggleCreateClinicalTask = status => {
 	return {
 		type: TOGGLE_CREATE_CLINICAL_TASK,
@@ -194,14 +162,6 @@ export const toggleStaffAppraisal = (status, data) => {
 	};
 };
 
-export const toggleLabourMeasurementDetail = (action, data) => {
-	return {
-		type: TOGGLE_LABOUR_MEASURMENT_DETAIL,
-		payload: action,
-		data,
-	};
-};
-
 // nicu
 export const toggleAddNewObservation = status => {
 	return {
@@ -221,14 +181,9 @@ export const closeModals = () => {
 		dispatch(toggleCurrentPayroll(false));
 		dispatch(toggleEditPayroll(false));
 		dispatch(toggleAddNewObservation(false));
-		dispatch(toggleCreateLabourMeasurement(false));
-		dispatch(toggleCreateRiskAssessment(false));
-		dispatch(toggleCreateRecordDelivery(false));
 		dispatch(toggleCreateClinicalTask(false));
-		dispatch(toggleCreateRecordVital(false));
 		dispatch(toggleLineAppraisal(false));
 		dispatch(toggleStaffAppraisal(false, null));
-		dispatch(toggleLabourMeasurementDetail(false, null));
 	};
 };
 
@@ -301,37 +256,6 @@ export const viewEditPayroll = (action, isModal, id) => {
 	};
 };
 
-export const createLabourMeasurement = action => {
-	return dispatch => {
-		dispatch(closeModals());
-		dispatch(toggleModal(true));
-		dispatch(toggleCreateLabourMeasurement(action));
-	};
-};
-
-export const createRiskAssessment = action => {
-	return dispatch => {
-		dispatch(closeModals());
-		dispatch(toggleModal(true));
-		dispatch(toggleCreateRiskAssessment(action));
-	};
-};
-export const createRecordDelivery = action => {
-	return dispatch => {
-		dispatch(closeModals());
-		dispatch(toggleModal(true));
-		dispatch(toggleCreateRecordDelivery(action));
-	};
-};
-
-export const createRecordVital = action => {
-	return dispatch => {
-		dispatch(closeModals());
-		dispatch(toggleModal(true));
-		dispatch(toggleCreateRecordVital(action));
-	};
-};
-
 export const createClinicalTask = action => {
 	return dispatch => {
 		dispatch(closeModals());
@@ -353,14 +277,6 @@ export const loadStaffAppraisal = (action, data) => {
 		dispatch(closeModals());
 		dispatch(toggleModal(true));
 		dispatch(toggleStaffAppraisal(action, data));
-	};
-};
-
-export const labourMeasurementDetail = (action, data) => {
-	return dispatch => {
-		dispatch(closeModals());
-		dispatch(toggleModal(true));
-		dispatch(toggleLabourMeasurementDetail(action, data));
 	};
 };
 

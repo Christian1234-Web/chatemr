@@ -6,18 +6,10 @@ import {
 	GET_LAB_REQUESTS,
 	GET_PHARMACY_REQUESTS,
 	GET_ALL_REQUESTS,
-	LOAD_LABOUR,
-	LOAD_LABOUR_DETAIL,
-	CLEAR_LABOUR_DETAIL,
-	LOAD_PARTOGRAPH,
-	LOAD_RISK,
 	PATIENT_REGULATION_TABLE,
-	LOAD_DELIVERY_RECORD,
-	LOAD_LABOUR_MEASUREMENT,
 	PATIENT_IVF,
 	READING_DONE,
 	SET_IVF,
-	CAN_CLOSE_LABOUR,
 	UPDATE_ENCOUNTER_DATA,
 	RESET_ENCOUNTER_DATA,
 	UPDATE_SOAP_DATA,
@@ -81,14 +73,7 @@ const INITIAL_STATE = {
 		pharmacyRequest: null,
 		nextAppointment: null,
 	},
-	enrolments: [],
-	labourDetail: null,
-	partographies: [],
-	riskAssessment: [],
-	deliveryRecord: [],
-	labourMeasurement: [],
 	reading_done: null,
-	canCloseLabour: false,
 };
 
 const patient = (state = INITIAL_STATE, action) => {
@@ -96,8 +81,6 @@ const patient = (state = INITIAL_STATE, action) => {
 		case SET_IVF:
 			console.log(SET_IVF);
 			return { ...state, ivfDetails: action.payload };
-		case CAN_CLOSE_LABOUR:
-			return { ...state, canCloseLabour: true };
 		case PATIENT_IVF:
 			return { ...state, ivf: action.payload };
 		case PATIENT_REGULATION_TABLE:
@@ -141,41 +124,6 @@ const patient = (state = INITIAL_STATE, action) => {
 			return { ...state, pharmacyRequests: action.payload };
 		case GET_ALL_REQUESTS:
 			return { ...state, allRequests: action.payload };
-		case LOAD_LABOUR:
-			return {
-				...state,
-				enrolments: action.payload,
-			};
-		case LOAD_LABOUR_DETAIL:
-			return {
-				...state,
-				labourDetail: action.payload,
-			};
-		case CLEAR_LABOUR_DETAIL:
-			return {
-				...state,
-				labourDetail: {},
-			};
-		case LOAD_PARTOGRAPH:
-			return {
-				...state,
-				partographies: action.payload,
-			};
-		case LOAD_RISK:
-			return {
-				...state,
-				riskAssessment: action.payload,
-			};
-		case LOAD_DELIVERY_RECORD:
-			return {
-				...state,
-				deliveryRecord: action.payload,
-			};
-		case LOAD_LABOUR_MEASUREMENT:
-			return {
-				...state,
-				labourMeasurement: action.payload,
-			};
 		case READING_DONE:
 			return { ...state, reading_done: action.payload };
 		default:

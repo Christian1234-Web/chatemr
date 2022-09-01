@@ -64,7 +64,9 @@ const Page = ({ location }) => {
 				/>
 			);
 		case 'vitals':
-			return <Vitals type={hash[1].split('%20').join(' ')} />;
+			return (
+				<Vitals type={hash[1].split('%20').join(' ')} category="general" />
+			);
 		case 'notes':
 		default:
 			return <Notes can_request={procedure && !procedure.finishedDate} />;

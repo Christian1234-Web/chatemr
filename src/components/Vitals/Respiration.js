@@ -20,7 +20,7 @@ const info = {
 	title: 'Respiration',
 	type: kebabCase('Respiration'),
 	inputs: [
-		{ name: 'respiration', title: 'Respiration', weight: 'breaths/min' },
+		{ name: 'respiration', title: 'Respiration Rate', weight: 'breaths/min' },
 	],
 };
 
@@ -73,7 +73,7 @@ const Respiration = ({ vitals, task }) => {
 						<XAxis dataKey="name" />
 						<YAxis
 							label={{
-								value: `Respiration (${unit})`,
+								value: `Respiration Rate (${unit})`,
 								angle: -90,
 								position: 'left',
 							}}

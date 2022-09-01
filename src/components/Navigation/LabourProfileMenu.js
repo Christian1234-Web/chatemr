@@ -14,6 +14,37 @@ const LabourProfileMenu = ({ location }) => {
 						Notes
 					</Link>
 				</li>
+				<li className={checkHash(hash, 'measurements') ? 'active' : ''}>
+					<Link to={`${location.pathname}#measurements`} className="pointer">
+						Measurements
+					</Link>
+				</li>
+				<li className={checkHash(hash, 'lab') ? 'active' : ''}>
+					<Link to={`${location.pathname}#lab`} className="pointer">
+						Lab
+					</Link>
+				</li>
+				<li className={checkHash(hash, 'partograph') ? 'active' : ''}>
+					<Link
+						to={`${location.pathname}#partograph#Blood Pressure`}
+						className="pointer"
+					>
+						Partograph
+					</Link>
+				</li>
+				<li className={checkHash(hash, 'risk-assessments') ? 'active' : ''}>
+					<Link
+						to={`${location.pathname}#risk-assessments`}
+						className="pointer"
+					>
+						Risk Assessments
+					</Link>
+				</li>
+				<li className={checkHash(hash, 'delivery') ? 'active' : ''}>
+					<Link to={`${location.pathname}#delivery`} className="pointer">
+						Delivery
+					</Link>
+				</li>
 			</ul>
 		</div>
 	);

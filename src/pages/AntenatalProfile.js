@@ -69,7 +69,9 @@ const Page = ({ location }) => {
 		case 'lab-request':
 			return <LabRequest module="antenatal" itemId={antenatal.id || ''} />;
 		case 'vitals':
-			return <Vitals type={hash[1].split('%20').join(' ')} />;
+			return (
+				<Vitals type={hash[1].split('%20').join(' ')} category="general" />
+			);
 		case 'assessments':
 			return (
 				<AntenatalAssessments

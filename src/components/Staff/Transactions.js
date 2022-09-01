@@ -23,10 +23,11 @@ const Transactions = () => {
 		async page => {
 			try {
 				const p = page || 1;
-				const url = `transactions/staff?staff_id=${profile.id}&page=${p}&limit=10`;
+				const url = `transactions/staff?staff_id=${profile.id}&page=${p}&limit=50`;
 				const rs = await request(url, 'GET', true);
 				const { result, ...meta } = rs;
 				setFetching(false);
+				console.log('Malik', result);
 				setTransactions(result);
 				setMeta(meta);
 				setDebt(Math.abs(rs.totalPurchase) - Math.abs(rs.totalAmountPaid));
@@ -68,6 +69,7 @@ const Transactions = () => {
 								</tr>
 							</thead>
 							<tbody>
+
 								{transactions.map(transaction => {
 									const reqItem = transaction.patientRequestItem;
 									return (
@@ -109,6 +111,16 @@ const Transactions = () => {
 												) : (
 													''
 												)}
+
+								{transactions &&
+									transactions?.map(transaction => (
+										<tr>
+											<td>{transaction.bill_source}</td>
+											<td>
+												{transaction?.transaction_details
+													?.map(t => `${t.name} (${t?.qty || 1})`)
+													.join(', ') || '-'}
+
 											</td>
 											<td>
 												{moment(transaction.createdAt).format('DD-MM-YYYY')}
@@ -133,8 +145,12 @@ const Transactions = () => {
 												{`${transaction.amount + transaction.amount_paid}`}
 											</td>
 										</tr>
+
 									);
 								})}
+
+									))}
+
 							</tbody>
 						</table>
 						<div>Total Debt: ₦{debt}</div>

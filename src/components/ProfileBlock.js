@@ -18,6 +18,7 @@ import {
 	admissionAPI,
 	USER_RECORD,
 	antenatalAPI,
+	labourAPI,
 } from '../services/constants';
 import { notifySuccess, notifyError } from './../services/notify';
 import { startBlock, stopBlock } from '../actions/redux-block';
@@ -33,6 +34,7 @@ import SSRStorage from '../services/storage';
 import { hasCloseAncPermission } from '../permission-utils/antenatal';
 import CreateNote from './Modals/CreateNote';
 import PatientProfile from './Modals/PatientProfile';
+import { hasCloseLabourPermission } from '../permission-utils/labour';
 
 const storage = new SSRStorage();
 
@@ -449,7 +451,7 @@ const ProfileBlock = ({
 			}
 		} catch (error) {
 			dispatch(stopBlock());
-			notifyError(error.message || 'Could not discharge patient');
+			notifyError(error.message || 'Could not close antenatal');
 		}
 	};
 
@@ -458,6 +460,62 @@ const ProfileBlock = ({
 			doCloseANC,
 			id,
 			`You want to close antenatal?`,
+			'Are you sure?'
+		);
+	};
+
+	const doCloseLabour = async id => {
+		try {
+			dispatch(startBlock());
+			const url = `${labourAPI}/${id}/close`;
+			const rs = await request(url, 'PUT', true, {});
+			dispatch(stopBlock());
+			if (rs.success) {
+				const result = rs.enrollment;
+
+				const newPatient = {
+					...patient,
+					labour_id: null,
+				};
+				dispatch(setPatientRecord(newPatient));
+
+				messageService.sendMessage({
+					type: 'update-patient',
+					data: newPatient,
+				});
+
+				const enrollment = {
+					id: result.id,
+					date_closed: result.date_closed,
+					closedBy: result.closedBy,
+					status: 1,
+					lastChangedBy: result.lastChangedBy,
+					patient: newPatient,
+				};
+
+				messageService.sendMessage({
+					type: 'labour',
+					data: enrollment,
+				});
+
+				notifySuccess('Labour Management closed');
+
+				storage.removeItem(USER_RECORD);
+				dispatch(toggleProfile(false));
+			} else {
+				notifyError(rs.message);
+			}
+		} catch (error) {
+			dispatch(stopBlock());
+			notifyError(error.message || 'Could not close labour management');
+		}
+	};
+
+	const closeLabour = id => {
+		confirmAction(
+			doCloseLabour,
+			id,
+			`You want to close labour management?`,
 			'Are you sure?'
 		);
 	};
@@ -635,6 +693,15 @@ const ProfileBlock = ({
 													value={`${dob} (${getAge(patient?.date_of_birth)})`}
 												/>
 											</tr>
+											{patient && patient.staff && (
+												<tr>
+													<UserItem
+														icon="user"
+														label="Staff ID"
+														value={patient.staff.id}
+													/>
+												</tr>
+											)}
 											{patient.mother && (
 												<>
 													<tr>
@@ -766,6 +833,16 @@ const ProfileBlock = ({
 											Close Antenatal
 										</button>
 									)}
+								{patient.labour_id &&
+									hasCloseLabourPermission(user.permissions) && (
+										<button
+											type="button"
+											onClick={() => closeLabour(patient.labour_id)}
+											className="btn btn-block btn-outline-danger"
+										>
+											Close Labour Mgt
+										</button>
+									)}
 							</div>
 						)}
 						{!hasButtons && (
@@ -778,6 +855,16 @@ const ProfileBlock = ({
 											className="btn btn-block btn-outline-danger"
 										>
 											Close Antenatal
+										</button>
+									)}
+								{patient.labour_id &&
+									hasCloseLabourPermission(user.permissions) && (
+										<button
+											type="button"
+											onClick={() => closeLabour(patient.labour_id)}
+											className="btn btn-block btn-outline-danger"
+										>
+											Close Labour Mgt
 										</button>
 									)}
 							</div>

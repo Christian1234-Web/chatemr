@@ -73,7 +73,9 @@ const Page = ({ location }) => {
 		case 'documents':
 			return <Documents />;
 		case 'vitals':
-			return <Vitals type={hash[1].split('%20').join(' ')} />;
+			return (
+				<Vitals type={hash[1].split('%20').join(' ')} category="general" />
+			);
 		case 'allergens':
 			return <Allergies />;
 		case 'clinical-tasks':
