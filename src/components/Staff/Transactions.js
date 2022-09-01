@@ -2,7 +2,12 @@ import moment from 'moment';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { notifyError } from '../../services/notify';
-import { itemRender, request } from '../../services/utilities';
+import {
+	formatCurrency,
+	itemRender,
+	parseSource,
+	request,
+} from '../../services/utilities';
 import Pagination from 'antd/lib/pagination';
 import { paginate } from '../../services/constants';
 
@@ -44,6 +49,8 @@ const Transactions = () => {
 		await fetchTransactions(nextPage);
 	};
 
+	console.log('amala', transactions);
+
 	return (
 		<div className="col-sm-12">
 			<div className="element-wrapper">
@@ -61,40 +68,73 @@ const Transactions = () => {
 								</tr>
 							</thead>
 							<tbody>
-								{transactions.map(transaction => (
-									<tr>
-										<td>{transaction.bill_source}</td>
-										<td>
-											{transaction.transaction_details[0]?.name}
-											<span className="smaller lighter">
-												{' '}
-												₦
-												{transaction.transaction_details[0]?.staff_price
-													? transaction.transaction_details[0]?.staff_price
-													: transaction.transaction_details[0]?.price}
-											</span>
-										</td>
-										<td>
-											{moment(transaction.createdAt).format('DD-MM-YYYY')}
-										</td>
+								{transactions.map(transaction => {
+									const reqItem = transaction.patientRequestItem;
+									return (
+										<tr>
+											<td>{transaction.bill_source}</td>
+											<td>
+												<strong>{transaction.bill_source}</strong>
+												{(transaction?.bill_source === 'ward' ||
+													transaction?.bill_source === 'nicu-accommodation' ||
+													transaction?.bill_source === 'credit-deposit' ||
+													transaction?.bill_source === 'debit-charge') &&
+													`: ${transaction.description}`}
+												{(transaction?.bill_source === 'consultancy' ||
+													transaction?.bill_source === 'labs' ||
+													transaction?.bill_source === 'scans' ||
+													transaction?.bill_source === 'procedure' ||
+													transaction?.bill_source === 'nursing-service') &&
+												transaction.service?.item?.name
+													? `: ${transaction.service?.item?.name}`
+													: ''}
+												{transaction?.bill_source === 'drugs' && (
+													<>
+														{` : ${reqItem.fill_quantity} ${
+															reqItem.drug.unitOfMeasure
+														} of ${reqItem.drugGeneric.name} (${
+															reqItem.drug.name
+														}) at ${formatCurrency(
+															reqItem.drugBatch.unitPrice
+														)} each`}
+													</>
+												)}
+												{transaction?.bill_source === 'labs' && (
+													<>{` : ${reqItem.labTest.name} `}</>
+												)}
+												{transaction?.bill_source === 'cafeteria' ? (
+													<>{`: ${transaction?.transaction_details
+														?.map(t => `${t.name} (${t?.qty || 1})`)
+														.join(', ')}`}</>
+												) : (
+													''
+												)}
+											</td>
+											<td>
+												{moment(transaction.createdAt).format('DD-MM-YYYY')}
+											</td>
 
-										<td class="text-center">
-											<div
-												class={`status-pill ${
-													transaction.status === 1 ? 'green' : 'red'
-												}`}
-												data-title="Complete"
-												data-toggle="tooltip"
-												data-original-title=""
-												title=""
-											></div>
-										</td>
-										<td class="text-right"> {`${transaction.amount_paid}`}</td>
-										<td class="text-right">
-											{`${transaction.amount + transaction.amount_paid}`}
-										</td>
-									</tr>
-								))}
+											<td class="text-center">
+												<div
+													class={`status-pill ${
+														transaction.status === 1 ? 'green' : 'red'
+													}`}
+													data-title="Complete"
+													data-toggle="tooltip"
+													data-original-title=""
+													title=""
+												></div>
+											</td>
+											<td class="text-right">
+												{' '}
+												{`${transaction.amount_paid}`}
+											</td>
+											<td class="text-right">
+												{`${transaction.amount + transaction.amount_paid}`}
+											</td>
+										</tr>
+									);
+								})}
 							</tbody>
 						</table>
 						<div>Total Debt: ₦{debt}</div>
