@@ -2,7 +2,12 @@ import moment from 'moment';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { notifyError } from '../../services/notify';
-import { itemRender, request } from '../../services/utilities';
+import {
+	formatCurrency,
+	itemRender,
+	parseSource,
+	request,
+} from '../../services/utilities';
 import Pagination from 'antd/lib/pagination';
 import { paginate } from '../../services/constants';
 
@@ -45,6 +50,8 @@ const Transactions = () => {
 		await fetchTransactions(nextPage);
 	};
 
+	console.log('amala', transactions);
+
 	return (
 		<div className="col-sm-12">
 			<div className="element-wrapper">
@@ -62,6 +69,49 @@ const Transactions = () => {
 								</tr>
 							</thead>
 							<tbody>
+
+								{transactions.map(transaction => {
+									const reqItem = transaction.patientRequestItem;
+									return (
+										<tr>
+											<td>{transaction.bill_source}</td>
+											<td>
+												<strong>{transaction.bill_source}</strong>
+												{(transaction?.bill_source === 'ward' ||
+													transaction?.bill_source === 'nicu-accommodation' ||
+													transaction?.bill_source === 'credit-deposit' ||
+													transaction?.bill_source === 'debit-charge') &&
+													`: ${transaction.description}`}
+												{(transaction?.bill_source === 'consultancy' ||
+													transaction?.bill_source === 'labs' ||
+													transaction?.bill_source === 'scans' ||
+													transaction?.bill_source === 'procedure' ||
+													transaction?.bill_source === 'nursing-service') &&
+												transaction.service?.item?.name
+													? `: ${transaction.service?.item?.name}`
+													: ''}
+												{transaction?.bill_source === 'drugs' && (
+													<>
+														{` : ${reqItem.fill_quantity} ${
+															reqItem.drug.unitOfMeasure
+														} of ${reqItem.drugGeneric.name} (${
+															reqItem.drug.name
+														}) at ${formatCurrency(
+															reqItem.drugBatch.unitPrice
+														)} each`}
+													</>
+												)}
+												{transaction?.bill_source === 'labs' && (
+													<>{` : ${reqItem.labTest.name} `}</>
+												)}
+												{transaction?.bill_source === 'cafeteria' ? (
+													<>{`: ${transaction?.transaction_details
+														?.map(t => `${t.name} (${t?.qty || 1})`)
+														.join(', ')}`}</>
+												) : (
+													''
+												)}
+
 								{transactions &&
 									transactions?.map(transaction => (
 										<tr>
@@ -70,6 +120,7 @@ const Transactions = () => {
 												{transaction?.transaction_details
 													?.map(t => `${t.name} (${t?.qty || 1})`)
 													.join(', ') || '-'}
+
 											</td>
 											<td>
 												{moment(transaction.createdAt).format('DD-MM-YYYY')}
@@ -94,7 +145,12 @@ const Transactions = () => {
 												{`${transaction.amount + transaction.amount_paid}`}
 											</td>
 										</tr>
+
+									);
+								})}
+
 									))}
+
 							</tbody>
 						</table>
 						<div>Total Debt: ₦{debt}</div>
