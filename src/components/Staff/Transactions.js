@@ -69,7 +69,6 @@ const Transactions = () => {
 								</tr>
 							</thead>
 							<tbody>
-
 								{transactions.map(transaction => {
 									const reqItem = transaction.patientRequestItem;
 									return (
@@ -111,21 +110,10 @@ const Transactions = () => {
 												) : (
 													''
 												)}
-
-								{transactions &&
-									transactions?.map(transaction => (
-										<tr>
-											<td>{transaction.bill_source}</td>
-											<td>
-												{transaction?.transaction_details
-													?.map(t => `${t.name} (${t?.qty || 1})`)
-													.join(', ') || '-'}
-
 											</td>
 											<td>
 												{moment(transaction.createdAt).format('DD-MM-YYYY')}
 											</td>
-
 											<td class="text-center">
 												<div
 													class={`status-pill ${
@@ -145,12 +133,8 @@ const Transactions = () => {
 												{`${transaction.amount + transaction.amount_paid}`}
 											</td>
 										</tr>
-
 									);
 								})}
-
-									))}
-
 							</tbody>
 						</table>
 						<div>Total Debt: ₦{debt}</div>
