@@ -101,6 +101,8 @@ class Lab extends Component {
 
 	render() {
 		const { filtering, loading, labs, meta, hmos } = this.state;
+		console.log('malik', labs);
+
 		return (
 			<div className="content-i">
 				<div className="content-box">
@@ -195,12 +197,14 @@ class Lab extends Component {
 																	<tr>
 																		<th>Patient Name</th>
 																		<th>ID</th>
+																		<th>HMO</th>
 																		<th className="text-left">Request Date</th>
 																		<th className="text-left">Test Name</th>
 																		<th className="text-left">Specimen</th>
 																		<th className="text-left">Filled Date</th>
 																		<th className="text-left">Amount</th>
-																		<th className="text-left">By</th>
+																		<th className="text-left">Requested By</th>
+																		<th className="text-left">Lab Attendant</th>
 																	</tr>
 																</thead>
 																<tbody>
@@ -211,6 +215,8 @@ class Lab extends Component {
 																				{lab.patient.other_names}
 																			</td>
 																			<td>{lab.patient.id}</td>
+																			<td>{lab?.hmo?.name || '--'}</td>
+
 																			<td>
 																				{moment(lab.createdAt).format(
 																					'DD-MM-YYYY h:mm a'
@@ -236,6 +242,9 @@ class Lab extends Component {
 																			</td>
 																			<td className="text-left">
 																				{lab.createdBy}
+																			</td>
+																			<td className="text-left">
+																				{lab?.patientRequestItem?.filled_by}
 																			</td>
 																		</tr>
 																	))}

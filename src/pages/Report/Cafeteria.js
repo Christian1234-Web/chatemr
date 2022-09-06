@@ -29,6 +29,10 @@ const Cafeteria = () => {
 	const [filtering, setFiltering] = useState(false);
 	const [hmos, setHMOS] = useState([]);
 	const [hmoId, setHMOId] = useState('');
+	const [customerType, setCustomerType] = useState('');
+	const [categoryType, setCategoryType] = useState('');
+	const [status, setStatus] = useState('');
+	const [category, setCategory] = useState(null);
 
 	const dateChange = e => {
 		const date = e.map(d => {
@@ -44,7 +48,7 @@ const Cafeteria = () => {
 			try {
 				const p = page || 1;
 				setLoading(true);
-				const url = `transactions/search?bill_source=cafeteria&page=${p}&limit=10&term=${searchValue}&startDate=${startDate}&endDate=${endDate}&hmo_id=${hmoId}`;
+				const url = `transactions/search?bill_source=cafeteria&page=${p}&limit=10&term=${searchValue}&startDate=${startDate}&endDate=${endDate}&hmo_id=${hmoId}&filter=${customerType}&category=${categoryType}`;
 				const rs = await request(url, 'GET', true);
 				const { result, ...meta } = rs;
 				setCafeteriaTransactions(result);
@@ -56,15 +60,18 @@ const Cafeteria = () => {
 				setLoading(false);
 			}
 		},
-		[endDate, searchValue, startDate, hmoId]
+		[endDate, searchValue, startDate, hmoId, categoryType]
 	);
 
 	const fetchHMOS = useCallback(async () => {
 		try {
 			const url = `hmos/schemes?limit=100`;
+			const urlCategory = `cafeteria/categories/get`;
 			const rs = await request(url, 'GET', true);
+			const rsCategory = await request(urlCategory, 'GET', true);
 			const { result } = rs;
 			setHMOS(result);
+			setCategory(rsCategory.result);
 		} catch (error) {
 			console.log(error);
 		}
@@ -148,19 +155,53 @@ const Cafeteria = () => {
 							</select>
 						</div>
 						<div className="form-group col-md-2">
+							<label>Customer Type</label>
+							<select
+								style={{ height: '32px' }}
+								id="category"
+								className="form-control"
+								name="category"
+								value={customerType}
+								onChange={e => setCustomerType(e.target.value)}
+							>
+								<option value="">Select Category</option>
+								<option value="staff">Staff</option>
+								<option value="patient">Patient</option>
+								<option value="walk-in">Walk-in</option>
+							</select>
+						</div>
+						<div className="form-group col-md-2">
+							<label>Status</label>
+							<select
+								style={{ height: '32px' }}
+								id="category"
+								className="form-control"
+								name="category"
+								value={status}
+								onChange={e => setStatus(e.target.value)}
+							>
+								<option value="">Status</option>
+								<option value="paid">Paid</option>
+								<option value="pending">Pending</option>
+								<option value="owing">Owing</option>
+							</select>
+						</div>
+						<div className="form-group col-md-2">
 							<label>Category</label>
 							<select
 								style={{ height: '32px' }}
 								id="category"
 								className="form-control"
 								name="category"
-								// value={category}
-								// onChange={e => setCategory(e.target.value)}
+								value={categoryType}
+								onChange={e => setCategoryType(e.target.value)}
 							>
 								<option value="">Select Category</option>
-								<option value="staff">Staff</option>
-								<option value="patient">Patient</option>
-								<option value="walk-in">Walk-in</option>
+								{category?.map((category, i) => (
+									<option value={`${category.category}`} key={i}>
+										{category.category}
+									</option>
+								))}
 							</select>
 						</div>
 						<div className="form-group col mt-4">
@@ -194,10 +235,11 @@ const Cafeteria = () => {
 													<thead>
 														<tr>
 															<th>Customer Name</th>
+															<th>HMO</th>
 															<th>Item</th>
 															<th>Date</th>
 															<th className="text-center">QTY</th>
-															<th className="text-center">UNIT PRICE</th>
+															<th className="text-center">TOTAL PRICE</th>
 															<th className="text-right">AMOUNT PAID</th>
 															<th className="text-right">PAYMENT METHOD</th>
 															<th className="text-right">CREDIT</th>
@@ -215,15 +257,13 @@ const Cafeteria = () => {
 																			? staffname(item.staff)
 																			: patient}
 																	</td>
+																	<td>{item?.hmo?.name || '--'}</td>
 																	<td>
 																		<span>
 																			{item?.transaction_details
 																				?.map(t => `${t.name}`)
 																				.join(', ') || '-'}
 																		</span>
-																		{/* {item?.transaction_details
-																			?.map(t => <span>{t.name} <span class="smaller lighter">{formatCurrency(t?.price)}</span> </span>)
-																			 || '-'} */}
 																	</td>
 																	<td>
 																		{formatDate(
@@ -237,9 +277,15 @@ const Cafeteria = () => {
 																		) || '-'}
 																	</td>
 																	<td>
-																		{item?.transaction_details?.map(
+																		{/* {item?.transaction_details?.map(
 																			t => `${formatCurrency(t?.price)}`
-																		) || '-'}
+																		) || '-'} */}
+
+																		{formatCurrency(
+																			item?.transaction_details
+																				?.map(a => a.price)
+																				.reduce((a, b) => a + b, 0)
+																		)}
 																	</td>
 																	<td>
 																		{item.transaction_type === 'credit'
