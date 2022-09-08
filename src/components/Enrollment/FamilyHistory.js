@@ -11,9 +11,9 @@ export const FamilyHistory = () => {
 					id="childHealthHistory"
 					name="childHealthHistory"
 					component={renderTextInput}
-					label="Child  health history"
+					label="Child health history"
 					type="text"
-					placeholder="Enter Child  health history"
+					placeholder="Enter Child health history"
 				/>
 			</div>
 
@@ -22,9 +22,9 @@ export const FamilyHistory = () => {
 					id="adultHealthHistory"
 					name="adultHealthHistory"
 					component={renderTextInput}
-					label="Child  health history"
+					label="Adult health history"
 					type="text"
-					placeholder="Enter Child  health history"
+					placeholder="Enter adult health history"
 				/>
 			</div>
 			<div className="col-sm-4">
@@ -34,7 +34,7 @@ export const FamilyHistory = () => {
 					component={renderTextInput}
 					label="Hereditary Disease"
 					type="text"
-					placeholder="Enter Hereditary Disease"
+					placeholder="Enter hereditary disease"
 				/>
 			</div>
 			<div className="col-sm-4">
