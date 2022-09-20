@@ -17,6 +17,7 @@ import {
 	hasViewANCNotePermission,
 	hasViewVisitNotePermission,
 } from '../../permission-utils/patient';
+import NursingService from './NursingService';
 
 const storage = new SSRStorage();
 
@@ -121,6 +122,14 @@ const Dashboard = () => {
 									Billing
 								</a>
 							</li>
+							<li className="nav-item">
+								<a
+									className={tab === 'nursing' ? 'nav-link active' : 'nav-link'}
+									onClick={() => setTab('nursing')}
+								>
+									Nursing Services
+								</a>
+							</li>
 							{appointmentId && appointmentId !== '' && (
 								<>
 									{antenatal ? (
@@ -152,6 +161,7 @@ const Dashboard = () => {
 						{tab === 'visitSummary' && <VisitSummary />}
 						{tab === 'appointment' && <AppointmentHistory />}
 						{tab === 'billing' && <PatientBills />}
+						{tab === 'nursing' && <NursingService />}
 					</div>
 				</div>
 			</div>
