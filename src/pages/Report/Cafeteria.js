@@ -145,7 +145,7 @@ const Cafeteria = () => {
 								onChange={e => setHMOId(e.target.value)}
 							>
 								{/* <option value="">Choose Hmo</option> */}
-								{hmos.map((pat, i) => {
+								{hmos?.map((pat, i) => {
 									return (
 										<option key={i} value={pat.id}>
 											{pat.name}
