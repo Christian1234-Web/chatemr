@@ -72,14 +72,22 @@ const NursingService = ({ itemId, module, can_request }) => {
 		<div className="col-sm-12">
 			<div className="element-wrapper">
 				<div className="element-actions flex-action">
-					{can_request && (
+					{/* {can_request && (
 						<a
 							className="btn btn-sm btn-secondary text-white"
 							onClick={() => newRequest()}
 						>
 							Add a Nursing Service
 						</a>
-					)}
+					)} */}
+					{
+						<a
+							className="btn btn-sm btn-secondary text-white"
+							onClick={() => newRequest()}
+						>
+							Add a Nursing Service
+						</a>
+					}
 				</div>
 				<h6 className="element-header">Nursing Service</h6>
 				<div className="element-box p-3 m-0">
