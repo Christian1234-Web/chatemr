@@ -101,7 +101,6 @@ class Lab extends Component {
 
 	render() {
 		const { filtering, loading, labs, meta, hmos } = this.state;
-		console.log('malik', labs);
 
 		return (
 			<div className="content-i">

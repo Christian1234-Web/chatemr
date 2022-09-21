@@ -48,7 +48,7 @@ const Cafeteria = () => {
 			try {
 				const p = page || 1;
 				setLoading(true);
-				const url = `transactions/search?bill_source=cafeteria&page=${p}&limit=10&term=${searchValue}&startDate=${startDate}&endDate=${endDate}&hmo_id=${hmoId}&filter=${customerType}&category=${categoryType}`;
+				const url = `transactions/search?bill_source=cafeteria&page=${p}&limit=10&term=${searchValue}&startDate=${startDate}&endDate=${endDate}&hmo_id=${hmoId}&filter=${customerType}&category=${categoryType}&status=${status}`;
 				const rs = await request(url, 'GET', true);
 				const { result, ...meta } = rs;
 				setCafeteriaTransactions(result);
@@ -60,7 +60,7 @@ const Cafeteria = () => {
 				setLoading(false);
 			}
 		},
-		[endDate, searchValue, startDate, hmoId, categoryType]
+		[endDate, searchValue, startDate, hmoId, categoryType, status]
 	);
 
 	const fetchHMOS = useCallback(async () => {
@@ -145,7 +145,7 @@ const Cafeteria = () => {
 								onChange={e => setHMOId(e.target.value)}
 							>
 								{/* <option value="">Choose Hmo</option> */}
-								{hmos.map((pat, i) => {
+								{hmos?.map((pat, i) => {
 									return (
 										<option key={i} value={pat.id}>
 											{pat.name}

@@ -7,6 +7,7 @@ import moment from 'moment';
 import { useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { FORM_ERROR } from 'final-form';
+import Switch from 'react-switch';
 
 import FormWizard from '../FormWizard';
 import {
@@ -40,6 +41,7 @@ const PatientForm = ({ patient, closeModal, history, location }) => {
 	const [nokDateOfBirth, setNokDateOfBirth] = useState(null);
 	const [staff, setStaff] = useState(null);
 	const [mother, setMother] = useState(null);
+	const [checked, setChecked] = useState(false);
 
 	const dispatch = useDispatch();
 
@@ -354,6 +356,47 @@ const PatientForm = ({ patient, closeModal, history, location }) => {
 												return errors;
 											}}
 										>
+											<div class="element-wrapper">
+												<div
+													class="element-actions"
+													style={{
+														display: 'flex',
+														justifyContent: 'space-evenly',
+														alignItems: 'center',
+													}}
+												>
+													<span>Manual Fill</span>
+													<Switch
+														onChange={() => setChecked(!checked)}
+														checked={checked}
+														height={16}
+														width={40}
+														onColor="#047bf8"
+													/>
+													<span>Auto Fill</span>
+												</div>
+
+												<h6 class="element-header">Sales Dashboard</h6>
+												{checked && (
+													<div class="element-content">
+														<div>
+															<label class="sr-only"> Phone Number</label>
+															<div class="input-group mb-2 mr-sm-2 mb-sm-0">
+																<div class="input-group-prepend">
+																	<div class="input-group-text">
+																		<div class="os-icon os-icon-phone"></div>
+																	</div>
+																</div>
+																<input
+																	class="form-control"
+																	placeholder="Phone Number"
+																/>
+																<button class="btn btn-primary"> Submit</button>
+															</div>
+														</div>
+													</div>
+												)}
+											</div>
 											<div className="row">
 												<div className="col-sm">
 													<div className="form-group">
