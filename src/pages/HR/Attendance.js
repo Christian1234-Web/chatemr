@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import waiting from '../../assets/images/waiting.gif';
 import TableLoading from '../../components/TableLoading';
 import { paginate } from '../../services/constants';
-import { itemRender, request } from '../../services/utilities';
+import { itemRender, request, staffname } from '../../services/utilities';
 
 const Attendance = () => {
 	const [filtering, setFiltering] = useState(false);
@@ -124,10 +124,10 @@ const Attendance = () => {
 													<tbody>
 														{attendance?.map((staff, index) => (
 															<tr key={index}>
-																<td>{staff.staff.staffNum}</td>
-																<td>{staff.staff.name}</td>
+																<td>{staff.staff?.id || '--'}</td>
+																<td>{staffname(staff.staff)}</td>
 																<td className="text-center">
-																	{staff.staff.department.name}{' '}
+																	{staff.staff?.department?.name || '--'}
 																</td>
 																<td className="text-center">
 																	{moment(staff.date).format('h:mm a')}
