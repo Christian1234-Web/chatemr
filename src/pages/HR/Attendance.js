@@ -117,23 +117,23 @@ const Attendance = () => {
 															<th>Staff ID</th>
 															<th>Staff Name</th>
 															<th className="text-center">Department</th>
-															<th className="text-center">Login Time</th>
+															<th className="text-center">Time</th>
 															<th className="text-center">Date</th>
 														</tr>
 													</thead>
 													<tbody>
-														{attendance?.map((staff, index) => (
+														{attendance?.map((item, index) => (
 															<tr key={index}>
-																<td>{staff.staff?.id || '--'}</td>
-																<td>{staffname(staff.staff)}</td>
+																<td>{item?.user?.id || '--'}</td>
+																<td>{staffname(item.user)}</td>
 																<td className="text-center">
-																	{staff.staff?.department?.name || '--'}
+																	{item.user?.department?.name || '--'}
 																</td>
 																<td className="text-center">
-																	{moment(staff.date).format('h:mm a')}
+																	{moment(item.date).format('h:mm a')}
 																</td>
 																<td className="text-center">
-																	{moment(staff.date).format('DD-MM-YYYY')}
+																	{moment(item.date).format('DD-MM-YYYY')}
 																</td>
 															</tr>
 														))}
