@@ -724,7 +724,7 @@ const ProfileBlock = ({
 												<tr>
 													<UserItem
 														icon="user"
-														label="Amission Room"
+														label="Admission Room"
 														value={`${admission.room?.category?.name}, Room ${admission.room?.name}`}
 													/>
 												</tr>
