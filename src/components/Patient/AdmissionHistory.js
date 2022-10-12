@@ -86,6 +86,7 @@ const AdmissionHistory = () => {
 			patient: { ...patient, admission },
 			type: 'admission',
 			item: admission,
+			isProfile: true,
 		};
 		dispatch(toggleProfile(true, info));
 	};

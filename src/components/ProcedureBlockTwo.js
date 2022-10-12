@@ -21,7 +21,7 @@ import ModalScheduleDate from './Modals/ModalScheduleDate';
 import ViewRequestNote from './Modals/ViewRequestNote';
 import Admitted from './Admitted';
 
-class ProcedureBlock extends Component {
+class ProcedureBlockTwo extends Component {
 	state = {
 		procedue: null,
 		showRSModal: false,
@@ -36,7 +36,12 @@ class ProcedureBlock extends Component {
 	};
 
 	showProcedure = (patient, procedure) => {
-		const info = { patient, type: 'procedure', item: procedure };
+		const info = {
+			patient,
+			type: 'procedure',
+			item: procedure,
+			isProfile: true,
+		};
 		this.props.toggleProfile(true, info);
 	};
 
@@ -359,5 +364,5 @@ class ProcedureBlock extends Component {
 }
 
 export default connect(null, { startBlock, stopBlock, toggleProfile })(
-	ProcedureBlock
+	ProcedureBlockTwo
 );

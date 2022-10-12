@@ -13,22 +13,22 @@ import {
 	itemRender,
 	patientname,
 	updateImmutable,
-	formatDate,
 } from '../../services/utilities';
 import waiting from '../../assets/images/waiting.gif';
 import { startBlock, stopBlock } from '../../actions/redux-block';
-import { searchAPI, antenatalAPI } from '../../services/constants';
-import { setIsProfile, toggleProfile } from '../../actions/user';
+import { searchAPI, labourAPI } from '../../services/constants';
+import { toggleProfile } from '../../actions/user';
 import TableLoading from '../../components/TableLoading';
 import ProfilePopup from '../../components/Patient/ProfilePopup';
 import { staffname } from '../../services/utilities';
 import { messageService } from '../../services/message';
+import { useSelector } from 'react-redux';
 
 const { RangePicker } = DatePicker;
 
 const limit = 12;
 
-const AntenatalPatients = ({ location }) => {
+const LabourHistory = () => {
 	const [patients, setPatients] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [filtering, setFiltering] = useState(false);
@@ -39,57 +39,48 @@ const AntenatalPatients = ({ location }) => {
 		itemsPerPage: limit,
 		totalPages: 0,
 	});
-	const [patient, setPatient] = useState('');
-	const [activePage, setActivePage] = useState('enrolled');
-
+	const patientId = useSelector(state => state.user.patient.id);
+	const patient = useSelector(state => state.user.patient);
 	const dispatch = useDispatch();
 
-	const fetchAntenatals = useCallback(
-		async (page, patientId, sDate, eDate) => {
+	const fetchLabours = useCallback(
+		async (page, sDate, eDate) => {
 			try {
 				dispatch(startBlock());
 				const p = page || 1;
-				const pid = patientId || '';
-				const sd = sDate || '';
-				const ed = eDate || '';
-				const status = activePage === 'enrolled' ? 0 : 1;
-				const url = `${antenatalAPI}?page=${p}&limit=${limit}&patient_id=${pid}&startDate=${sd}&endDate=${ed}&status=${status}`;
+				const patient_id = patientId || '';
+				const url = `${labourAPI}?page=${p}&limit=${limit}&patient_id=${patient_id}&startDate=${
+					sDate || ''
+				}&endDate=${eDate || ''}`;
 				const rs = await request(url, 'GET', true);
 				const { result, ...meta } = rs;
 				setMeta(meta);
 				window.scrollTo({ top: 0, behavior: 'smooth' });
-				setPatients([...result]);
+				const arr = [...result];
+				setPatients(arr);
 				setFiltering(false);
 				dispatch(stopBlock());
-				setLoading(false);
 			} catch (error) {
 				console.log(error);
 				notifyError('error fetching patients');
 				dispatch(stopBlock());
-				setLoading(false);
 				setFiltering(false);
 			}
 		},
-		[activePage, dispatch]
+		[dispatch]
 	);
-
-	const page = location.pathname.split('/').pop();
 
 	useEffect(() => {
 		if (loading) {
-			fetchAntenatals();
+			fetchLabours();
+			setLoading(false);
 		}
-
-		if (page !== activePage && !loading) {
-			setLoading(true);
-			setActivePage(page);
-		}
-	}, [activePage, fetchAntenatals, loading, page]);
+	}, [loading, fetchLabours]);
 
 	useEffect(() => {
 		const subscription = messageService.getMessage().subscribe(message => {
 			const { type, data } = message.text;
-			if (type === 'anc') {
+			if (type === 'labour') {
 				const enrollments = updateImmutable(patients, data);
 				setPatients(enrollments);
 			}
@@ -116,23 +107,15 @@ const AntenatalPatients = ({ location }) => {
 	const doFilter = e => {
 		e.preventDefault();
 		setFiltering(true);
-		fetchAntenatals(1, patient, startDate, endDate);
+		fetchLabours(1, startDate, endDate);
 	};
 
 	const onNavigatePage = nextPage => {
-		fetchAntenatals(nextPage, patient, startDate, endDate);
+		fetchLabours(nextPage, startDate, endDate);
 	};
 
-	const showProfile = patient => {
-		if (patient.is_active) {
-			const info = { patient, type: 'patient', isProfile: true };
-			// dispatch(setIsProfile(true));
-			dispatch(toggleProfile(true, info));
-		}
-	};
-
-	const openAntenatal = (patient, antenatal) => {
-		const info = { patient, type: 'antenatal', item: antenatal };
+	const openLabour = labour => {
+		const info = { patient, type: 'labour', item: labour, isProfile: true };
 		dispatch(toggleProfile(true, info));
 	};
 
@@ -147,28 +130,11 @@ const AntenatalPatients = ({ location }) => {
 
 	return (
 		<>
-			<div className="element-box m-0 mb-4 p-3">
+			<div className="element-box m-0 mb-4 p-3 col-xl-12">
 				<div className="col-md-12">
 					<form className="row">
 						<div className="form-group col-md-3">
-							<label htmlFor="patient_id">Patient</label>
-							<AsyncSelect
-								isClearable
-								getOptionValue={getOptionValues}
-								getOptionLabel={getOptionLabels}
-								defaultOptions
-								name="patient_id"
-								id="patient_id"
-								loadOptions={getOptions}
-								onChange={e => {
-									console.log(e);
-									setPatient(e?.id);
-								}}
-								placeholder="Search patients"
-							/>
-						</div>
-						<div className="form-group col-md-3">
-							<label>Enrolled Between - To</label>
+							<label>Admitted Between - To</label>
 							<RangePicker onChange={e => dateChange(e)} />
 						</div>
 						<div className="form-group col-md-3 mt-4">
@@ -189,7 +155,7 @@ const AntenatalPatients = ({ location }) => {
 					</form>
 				</div>
 			</div>
-			<div className="element-box m-0 mb-4 p-3">
+			<div className="element-box m-0 mb-4 p-3 col-xl-12">
 				<div className="table-responsive">
 					{loading ? (
 						<TableLoading />
@@ -199,12 +165,10 @@ const AntenatalPatients = ({ location }) => {
 								<thead>
 									<tr>
 										<th>ID</th>
-										<th>Patient Name</th>
-										<th>Date Enrolled</th>
-										<th>By</th>
+										{/* <th>Patient Name</th> */}
+										<th>Date of Enrollment</th>
+										<th>Enrolled By</th>
 										<th>Status</th>
-										{activePage === 'closed' && <th>Date Closed</th>}
-										{activePage === 'closed' && <th>By</th>}
 										<th></th>
 									</tr>
 								</thead>
@@ -213,22 +177,22 @@ const AntenatalPatients = ({ location }) => {
 										return (
 											<tr key={i}>
 												<td>{item.serial_code}</td>
+												{/* <td>
+                                                    <p className="item-title text-color m-0">
+                                                        <Tooltip
+                                                            title={<ProfilePopup patient={item.patient} />}
+                                                        >
+                                                            <a
+                                                                className="cursor"
+                                                                onClick={() => showProfile(item.patient)}
+                                                            >
+                                                                {patientname(item.patient, true)}
+                                                            </a>
+                                                        </Tooltip>
+                                                    </p>
+                                                </td> */}
 												<td>
-													<p className="item-title text-color m-0">
-														<Tooltip
-															title={<ProfilePopup patient={item.patient} />}
-														>
-															<a
-																className="cursor"
-																onClick={() => showProfile(item.patient)}
-															>
-																{patientname(item.patient, true)}
-															</a>
-														</Tooltip>
-													</p>
-												</td>
-												<td>
-													{formatDate(item.createdAt, 'DD-MMM-YYYY h:mm A')}
+													{moment(item.createdAt).format('DD-MMM-YYYY h:mm A')}
 												</td>
 												<td>{staffname(item.staff)}</td>
 												<td>
@@ -238,19 +202,9 @@ const AntenatalPatients = ({ location }) => {
 														<span className="badge badge-success">Closed</span>
 													)}
 												</td>
-												{activePage === 'closed' && (
-													<td>
-														{formatDate(item.date_closed, 'DD-MMM-YYYY h:mm A')}
-													</td>
-												)}
-												{activePage === 'closed' && (
-													<td>{staffname(item.closedBy)}</td>
-												)}
 												<td className="row-actions">
-													<Tooltip title="Open Antenatal">
-														<a
-															onClick={() => openAntenatal(item.patient, item)}
-														>
+													<Tooltip title="Open Labour Mgt">
+														<a onClick={() => openLabour(item)}>
 															<i className="os-icon os-icon-user-male-circle2" />
 														</a>
 													</Tooltip>
@@ -260,10 +214,7 @@ const AntenatalPatients = ({ location }) => {
 									})}
 									{patients.length === 0 && (
 										<tr>
-											<td
-												colSpan={activePage === 'closed' ? '8' : '6'}
-												className="text-center"
-											>
+											<td colSpan="7" className="text-center">
 												No patients found
 											</td>
 										</tr>
@@ -292,4 +243,4 @@ const AntenatalPatients = ({ location }) => {
 	);
 };
 
-export default AntenatalPatients;
+export default LabourHistory;

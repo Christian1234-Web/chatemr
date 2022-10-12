@@ -12,6 +12,7 @@ import Splash from '../components/Splash';
 import ProfileBlock from '../components/ProfileBlock';
 import { confirmAction } from '../services/utilities';
 import AncBlock from '../components/AncBlock';
+import LabourHistory from '../components/Patient/LabourHistory';
 
 const ClinicalTasks = lazy(() => import('../components/Patient/ClinicalTasks'));
 const Dashboard = lazy(() => import('../components/Patient/Dashboard'));
@@ -102,6 +103,8 @@ const Page = ({ location }) => {
 			return <IVFHistory />;
 		case 'anc-history':
 			return <AntenatalHistory />;
+		case 'labour-history':
+			return <LabourHistory />;
 		case 'admission-history':
 			return <AdmissionHistory />;
 		default:

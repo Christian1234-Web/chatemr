@@ -79,7 +79,12 @@ class AntenatalHistory extends Component {
 	};
 
 	openAntenatal = (patient, antenatal) => {
-		const info = { patient, type: 'antenatal', item: antenatal };
+		const info = {
+			patient,
+			type: 'antenatal',
+			item: antenatal,
+			isProfile: true,
+		};
 		this.props.toggleProfile(true, info);
 	};
 

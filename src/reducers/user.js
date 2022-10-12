@@ -31,6 +31,7 @@ const INITIAL_STATE = {
 	isStaffOpen: false,
 	isPatientOpen: false,
 	isProcedureOpen: false,
+	isProfile: false,
 	isAntenatalOpen: false,
 	isAdmissionOpen: false,
 	isIVFOpen: false,
@@ -131,7 +132,6 @@ const user = (state = INITIAL_STATE, action) => {
 						? { patient }
 						: { staff };
 				storage.setItem(USER_RECORD, { ...data, type, item });
-
 				return {
 					...state,
 					isStaffOpen: type === 'staff',
@@ -142,6 +142,7 @@ const user = (state = INITIAL_STATE, action) => {
 					isIVFOpen: type === 'ivf',
 					isNicuOpen: type === 'nicu',
 					isLabourOpen: type === 'labour',
+					isProfile: action.info.isProfile === true,
 					item,
 					type,
 					appointmentId: action.appointmentId,
@@ -149,12 +150,33 @@ const user = (state = INITIAL_STATE, action) => {
 					...data,
 				};
 			}
-
+			if (action.info === 'antenatal') {
+				return {
+					...state,
+					isStaffOpen: false,
+					isPatientOpen: true,
+					isProcedureOpen: false,
+					isAntenatalOpen: false,
+					isAdmissionOpen: false,
+					isIVFOpen: false,
+					isNicuOpen: false,
+					isLabourOpen: false,
+					isProfile: false,
+					userID: null,
+					// patient: null,
+					staff: null,
+					// item: null,
+					type: null,
+					appointmentId: null,
+					antenatal: null,
+				};
+			}
 			return {
 				...state,
 				isStaffOpen: false,
 				isPatientOpen: false,
 				isProcedureOpen: false,
+				isProfile: false,
 				isAntenatalOpen: false,
 				isAdmissionOpen: false,
 				isIVFOpen: false,
@@ -168,6 +190,7 @@ const user = (state = INITIAL_STATE, action) => {
 				appointmentId: null,
 				antenatal: null,
 			};
+
 		default:
 			return state;
 	}

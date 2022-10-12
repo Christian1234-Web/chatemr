@@ -133,6 +133,14 @@ const PatientMenu = ({ location }) => {
 						<span>IVF History</span>
 					</Link>
 				</li>
+				<li>
+					<Link to={`${location.pathname}#labour-history`}>
+						<div className="icon-w">
+							<div className="os-icon os-icon-layout" />
+						</div>
+						<span>Labour History</span>
+					</Link>
+				</li>
 				<li className="sub-header">
 					<span>Reports</span>
 				</li>

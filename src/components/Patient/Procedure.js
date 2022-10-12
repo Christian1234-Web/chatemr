@@ -5,7 +5,7 @@ import Pagination from 'antd/lib/pagination';
 
 import { notifyError } from '../../services/notify';
 import { request, itemRender } from '../../services/utilities';
-import ProcedureBlock from '../ProcedureBlock';
+import ProcedureBlock from '../ProcedureBlockTwo';
 import TableLoading from '../TableLoading';
 
 const Procedure = ({ location }) => {
@@ -56,7 +56,7 @@ const Procedure = ({ location }) => {
 	return (
 		<div className="col-sm-12">
 			<div className="element-wrapper">
-				<div className="element-actions">
+				<div className="element-actions d-none">
 					<Link
 						to={`${location.pathname}#procedure-request`}
 						className="btn btn-primary btn-sm"

@@ -89,11 +89,6 @@ const Page = ({ location }) => {
 };
 
 class AntenatalProfile extends Component {
-	closeProfile = () => {
-		storage.removeItem(USER_RECORD);
-		this.props.toggleProfile(false);
-	};
-
 	componentDidMount() {
 		setTimeout(() => {
 			this.props.history.push('/antenatal/enrolled#notes');
@@ -106,14 +101,23 @@ class AntenatalProfile extends Component {
 	}
 
 	render() {
-		const { location, patient, antenatal } = this.props;
+		const { location, patient, antenatal, isBackToPatientProfile } = this.props;
+
+		const closeProfile = () => {
+			storage.removeItem(USER_RECORD);
+			this.props.toggleProfile(
+				false,
+				isBackToPatientProfile === true ? 'antenatal' : null
+			);
+		};
+
 		return (
 			<div className="layout-w">
 				<button
 					aria-label="Close"
 					className="close custom-close"
 					type="button"
-					onClick={this.closeProfile}
+					onClick={closeProfile}
 				>
 					<span className="os-icon os-icon-close" />
 				</button>
@@ -164,6 +168,7 @@ const mapStateToProps = (state, ownProps) => {
 	return {
 		patient: state.user.patient,
 		antenatal: state.user.item,
+		isBackToPatientProfile: state.user.isProfile,
 	};
 };
 
