@@ -1,16 +1,15 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component, Suspense, lazy, Fragment } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { Switch, withRouter } from 'react-router-dom';
 
-import { toggleProfile } from '../actions/user';
 import IVFProfileMenu from '../components/Navigation/IVFProfileMenu';
 import SSRStorage from '../services/storage';
-import { USER_RECORD } from '../services/constants';
+import { SIDE_PANEL } from '../services/constants';
 import Splash from '../components/Splash';
 import ProfileBlock from '../components/ProfileBlock';
 import HashRoute from '../components/HashRoute';
 import ExtraBlock from '../components/ExtraBlock';
+import { toggleSidepanel } from '../actions/sidepanel';
 
 const Notes = lazy(() => import('../components/IVF/Notes'));
 const Embryology = lazy(() => import('../components/IVF/Embryology'));
@@ -25,37 +24,41 @@ const LabRequest = lazy(() => import('../components/Patient/LabRequest'));
 const storage = new SSRStorage();
 
 const Page = ({ location }) => {
-	const ivf = useSelector(state => state.user.item);
+	const ivf = useSelector(state => state.sidepanel.item);
+	const patient = useSelector(state => state.sidepanel.patient);
 	const hash = location.hash.substr(1).split('#');
 	switch (hash[0]) {
 		case 'embryology':
-			return <Embryology />;
+			return <Embryology patient={patient} />;
 		case 'freezing':
-			return <Freezing />;
+			return <Freezing patient={patient} />;
 		case 'regulation-chart':
-			return <RegulationChart />;
+			return <RegulationChart patient={patient} />;
 		case 'hcg':
-			return <HcgAdministration />;
+			return <HcgAdministration patient={patient} />;
 		case 'lab':
 			return (
 				<Lab
+					patient={patient}
 					can_request={ivf && ivf.status === 0}
 					itemId={ivf.id || ''}
 					type="ivf"
 				/>
 			);
 		case 'lab-request':
-			return <LabRequest module="ivf" itemId={ivf.id || ''} />;
+			return (
+				<LabRequest patient={patient} module="ivf" itemId={ivf.id || ''} />
+			);
 		case 'notes':
 		default:
-			return <Notes can_request={ivf && ivf.status === 0} />;
+			return <Notes patient={patient} can_request={ivf && ivf.status === 0} />;
 	}
 };
 
 class IVFProfile extends Component {
 	closeProfile = () => {
-		storage.removeItem(USER_RECORD);
-		this.props.toggleProfile(false);
+		storage.removeItem(SIDE_PANEL);
+		this.props.toggleSidepanel(false);
 	};
 
 	componentDidMount() {
@@ -67,8 +70,7 @@ class IVFProfile extends Component {
 
 	componentWillUnmount() {
 		const { location } = this.props;
-
-		this.props.history.push(location.pathname);
+		this.props.history.push(`${location.pathname}#ivf-history`);
 	}
 
 	render() {
@@ -128,11 +130,11 @@ class IVFProfile extends Component {
 
 const mapStateToProps = (state, ownProps) => {
 	return {
-		patient: state.user.patient,
-		ivf: state.user.item,
+		patient: state.sidepanel.patient,
+		ivf: state.sidepanel.item,
 	};
 };
 
 export default withRouter(
-	connect(mapStateToProps, { toggleProfile })(IVFProfile)
+	connect(mapStateToProps, { toggleSidepanel })(IVFProfile)
 );

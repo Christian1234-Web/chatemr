@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Form, Field } from 'react-final-form';
 import { FORM_ERROR } from 'final-form';
 import DatePicker from 'react-datepicker';
@@ -11,12 +11,16 @@ import { notifySuccess } from '../../services/notify';
 import { request } from '../../services/utilities';
 import ModalHeader from '../ModalHeader';
 
-const CreateGynaeNote = ({ closeModal, updateNote, type, antenatal_id }) => {
+const CreateGynaeNote = ({
+	closeModal,
+	updateNote,
+	type,
+	antenatal_id,
+	patient,
+}) => {
 	const [lmp, setLmp] = useState(null);
 
 	const dispatch = useDispatch();
-
-	const patient = useSelector(state => state.user.patient);
 
 	const onSubmit = async values => {
 		try {

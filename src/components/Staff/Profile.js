@@ -1,17 +1,18 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Card, Row, Col, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Select from 'react-select';
 import { useSelector } from 'react-redux';
+
 import { request, staffname } from '../../services/utilities';
 import { TOKEN_COOKIE } from '../../services/constants';
 import SSRStorage from '../../services/storage';
 import { notifyError, notifySuccess } from '../../services/notify';
+
 const storage = new SSRStorage();
 
-const Profile = ({ location }) => {
+const Profile = () => {
+	const [fetching, setFetching] = useState(false);
 	const [staff, setStaff] = useState(null);
-	const [count, setCount] = useState(0);
 
 	const view_profile = useRef();
 	const view_edit_profile = useRef();
@@ -24,7 +25,7 @@ const Profile = ({ location }) => {
 	const [gender, setGender] = useState('');
 	const [nationality, setNationality] = useState('');
 	const [selected_religion, setReligion] = useState('');
-	const [lga, setLga] = useState(staff === null ? '--' : staff.details.lga);
+	const [lga, setLga] = useState('--');
 	const [selected_lga, setSelected_lga] = useState('');
 	const [selected_state_of_origin, setSelected_state_of_origin] = useState('');
 	const [state_of_origin, setState_of_origin] = useState();
@@ -88,6 +89,7 @@ const Profile = ({ location }) => {
 		try {
 			const url = `hr/staffs/${staff.id}`;
 			const rs = await request(url, 'PUT', true, data);
+			console.log(rs);
 			notifySuccess('Updated Successfully!');
 			fetchStaff();
 		} catch (err) {
@@ -116,6 +118,9 @@ const Profile = ({ location }) => {
 			const url = `auth/${user.username}`;
 			const rs = await request(url, 'GET', true);
 			setStaff(rs);
+
+			setLga(rs?.details?.lga || '--');
+			setState_of_origin(rs?.details?.state_of_origin || '');
 			console.log(rs);
 		} catch (err) {
 			console.log(err);
@@ -146,20 +151,23 @@ const Profile = ({ location }) => {
 	};
 
 	useEffect(() => {
-		fetchStaff();
-		fetchDepartment();
-		fetchSpecialization();
-	}, [fetchStaff, fetchDepartment, fetchSpecialization]);
+		if (fetching) {
+			fetchStaff();
+			fetchDepartment();
+			fetchSpecialization();
+			setFetching(false);
+		}
+	}, [fetchStaff, fetchDepartment, fetchSpecialization, fetching]);
 
 	return (
 		<div className="col-sm-12">
 			<div className="element-wrapper">
 				{/* <div className="element-box p-3 m-0">&nbsp;</div> */}
 
-				<Card className="p-4" style={{ border: '1px solid #fff' }}>
-					<Card.Body>
-						<Card.Title
-							className="fs-5 mb-4 d-flex justify-content-between"
+				<div className="card p-4" style={{ border: '1px solid #fff' }}>
+					<div className="card-body">
+						<div
+							className="card-title fs-5 mb-4 d-flex justify-content-between"
 							style={{ borderBottom: '1px solid #eee' }}
 						>
 							<div className="mb-2"> Profile Details</div>
@@ -184,11 +192,11 @@ const Profile = ({ location }) => {
 									</div>
 								</div>
 							</div>
-						</Card.Title>
+						</div>
 						<div ref={view_edit_profile} style={{ display: 'none' }}>
-							<Form onSubmit={e => updateStaffProfile(e, file)}>
-								<Row>
-									<Col lg={4}>
+							<form onSubmit={e => updateStaffProfile(e, file)}>
+								<div className="row">
+									<div className="col-lg-4">
 										<div className="mb-3">
 											<label htmlFor="firstnameinput" className="form-label">
 												First Name
@@ -202,8 +210,8 @@ const Profile = ({ location }) => {
 												onChange={e => setFirst_name(e.target.value)}
 											/>
 										</div>
-									</Col>
-									<Col lg={4}>
+									</div>
+									<div className="col-lg-4">
 										<div className="mb-3">
 											<label htmlFor="firstnameinput" className="form-label">
 												Middle Name
@@ -217,8 +225,8 @@ const Profile = ({ location }) => {
 												onChange={e => setMiddle_name(e.target.value)}
 											/>
 										</div>
-									</Col>
-									<Col lg={4}>
+									</div>
+									<div className="col-lg-4">
 										<div className="mb-3">
 											<label htmlFor="lastnameinput" className="form-label">
 												Last Name
@@ -232,9 +240,9 @@ const Profile = ({ location }) => {
 												onChange={e => setLast_name(e.target.value)}
 											/>
 										</div>
-									</Col>
+									</div>
 
-									<Col lg={4}>
+									<div className="col-lg-4">
 										<div className="form-group">
 											<label className="form-label">Departments</label>
 											<Select
@@ -246,8 +254,8 @@ const Profile = ({ location }) => {
 												onChange={e => setSelected_department(e.id)}
 											/>
 										</div>
-									</Col>
-									<Col lg={4}>
+									</div>
+									<div className="col-lg-4">
 										<div className="mb-3">
 											<label htmlFor="phonenumberinput" className="form-label">
 												Phone Number
@@ -261,9 +269,9 @@ const Profile = ({ location }) => {
 												onChange={e => setPhone(e.target.value)}
 											/>
 										</div>
-									</Col>
+									</div>
 
-									<Col lg={4}>
+									<div className="col-lg-4">
 										<div className="mb-3">
 											<label htmlFor="emailinput" className="form-label">
 												Nationality
@@ -278,9 +286,9 @@ const Profile = ({ location }) => {
 												onChange={e => setNationality(e.target.value)}
 											/>
 										</div>
-									</Col>
+									</div>
 
-									<Col lg={4}>
+									<div className="col-lg-4">
 										<div className="mb-3">
 											<label htmlFor="emailinput" className="form-label">
 												Upload Image
@@ -293,8 +301,8 @@ const Profile = ({ location }) => {
 												style={{ background: '#fff' }}
 											/>
 										</div>
-									</Col>
-									<Col lg={4}>
+									</div>
+									<div className="col-lg-4">
 										<div className="mb-3">
 											<label htmlFor="emailinput" className="form-label">
 												State of Origin
@@ -308,8 +316,8 @@ const Profile = ({ location }) => {
 												onChange={e => setSelected_state_of_origin(e.name)}
 											/>
 										</div>
-									</Col>
-									<Col lg={4}>
+									</div>
+									<div className="col-lg-4">
 										<div className="mb-3">
 											<label htmlFor="emailinput" className="form-label">
 												Local Gov
@@ -323,8 +331,8 @@ const Profile = ({ location }) => {
 												onChange={e => setSelected_lga(e.name)}
 											/>
 										</div>
-									</Col>
-									<Col lg={4}>
+									</div>
+									<div className="col-lg-4">
 										<div className="mb-3">
 											<label htmlFor="emailinput" className="form-label">
 												Religion
@@ -338,8 +346,8 @@ const Profile = ({ location }) => {
 												onChange={e => setReligion(e.name)}
 											/>
 										</div>
-									</Col>
-									<Col lg={4}>
+									</div>
+									<div className="col-lg-4">
 										<div className="mb-3">
 											<label htmlFor="emailinput" className="form-label">
 												Specialization
@@ -353,8 +361,8 @@ const Profile = ({ location }) => {
 												onChange={e => setSelected_specialization(e.id)}
 											/>
 										</div>
-									</Col>
-									<Col lg={4}>
+									</div>
+									<div className="col-lg-4">
 										<div className="mb-3">
 											<label htmlFor="emailinput" className="form-label">
 												Email
@@ -369,8 +377,8 @@ const Profile = ({ location }) => {
 												onChange={e => setEmail(e.target.value)}
 											/>
 										</div>
-									</Col>
-									<Col lg={4}>
+									</div>
+									<div className="col-lg-4">
 										<div className="mb-3">
 											<label htmlFor="emailinput" className="form-label">
 												Bank Name
@@ -385,8 +393,8 @@ const Profile = ({ location }) => {
 												onChange={e => setBank_name(e.target.value)}
 											/>
 										</div>
-									</Col>
-									<Col lg={4}>
+									</div>
+									<div className="col-lg-4">
 										<div className="mb-3">
 											<label htmlFor="emailinput" className="form-label">
 												Account Number
@@ -401,8 +409,8 @@ const Profile = ({ location }) => {
 												onChange={e => setAccount_number(e.target.value)}
 											/>
 										</div>
-									</Col>
-									<Col lg={4}>
+									</div>
+									<div className="col-lg-4">
 										<div className="mb-3">
 											<label htmlFor="emailinput" className="form-label">
 												Employee Number
@@ -417,8 +425,8 @@ const Profile = ({ location }) => {
 												onChange={e => setEmployee_number(e.target.value)}
 											/>
 										</div>
-									</Col>
-									<Col lg={4}>
+									</div>
+									<div className="col-lg-4">
 										<div className="mb-3">
 											<label htmlFor="emailinput" className="form-label">
 												Job Title
@@ -433,8 +441,8 @@ const Profile = ({ location }) => {
 												onChange={e => setJob_title(e.target.value)}
 											/>
 										</div>
-									</Col>
-									<Col lg={4}>
+									</div>
+									<div className="col-lg-4">
 										<div className="mb-3">
 											<label htmlFor="emailinput" className="form-label">
 												Marital Status
@@ -448,8 +456,8 @@ const Profile = ({ location }) => {
 												onChange={e => setMarital_status(e.name)}
 											/>
 										</div>
-									</Col>
-									<Col lg={4}>
+									</div>
+									<div className="col-lg-4">
 										<div className="mb-3">
 											<label htmlFor="genderInput" className="form-label">
 												Gender
@@ -464,8 +472,8 @@ const Profile = ({ location }) => {
 												isClearable={false}
 											/>
 										</div>
-									</Col>
-									<Col lg={12}>
+									</div>
+									<div className="col-lg-4">
 										<div className="d-flex justify-content-between mt-3">
 											<Link to="#">
 												<button type="button" className="btn btn-danger">
@@ -476,216 +484,217 @@ const Profile = ({ location }) => {
 												Update Profile
 											</button>
 										</div>
-									</Col>
-								</Row>
-							</Form>
+									</div>
+								</div>
+							</form>
 						</div>
 
-						<Card.Text
+						<div
+							className="card-text"
 							ref={view_profile}
 							style={{ fontSize: '12px', display: '' }}
 						>
-							<Row>
-								<Col>
+							<div className="row">
+								<div className="col">
 									<p className="">Full Name :</p>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<h6 className="">
 										{staffname(staff === null ? '--' : staff.details)}
 									</h6>
-								</Col>
+								</div>
 
-								<Col>
+								<div className="col">
 									<p className="">Employee Number :</p>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<h6 className="">
 										{staff === null
 											? '--'
 											: staff.details?.employee_number || '--'}
 									</h6>
-								</Col>
-							</Row>
-							<Row>
-								<Col>
+								</div>
+							</div>
+							<div className="row">
+								<div className="col">
 									<p className="">Email :</p>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<h6 className="">
 										{staff === null ? '--' : staff.details?.email || '--'}
 									</h6>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<p className="">Employee Start Date :</p>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<h6 className="">
 										{staff === null
 											? '--'
 											: staff.details?.employment_start_date || '--'}
 									</h6>
-								</Col>
-							</Row>
-							<Row>
-								<Col>
+								</div>
+							</div>
+							<div className="row">
+								<div className="col">
 									<p className="">Phone Number :</p>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<h6 className="">+23480 6575 444</h6>
-								</Col>
+								</div>
 
-								<Col>
+								<div className="col">
 									<p className="">Account Number :</p>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<h6 className="">
 										{staff === null
 											? '--'
 											: staff.details?.account_number || '--'}
 									</h6>
-								</Col>
-							</Row>
-							<Row>
-								<Col>
+								</div>
+							</div>
+							<div className="row">
+								<div className="col">
 									<p className="">Nationality :</p>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<h6 className="">
 										{staff === null ? '--' : staff.details?.nationality || '--'}
 									</h6>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<p className="">Bank Name :</p>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<h6 className="">
 										{staff === null ? '--' : staff.details?.bank_name || '--'}
 									</h6>
-								</Col>
-							</Row>
-							<Row>
-								<Col>
+								</div>
+							</div>
+							<div className="row">
+								<div className="col">
 									<p className="">Gender :</p>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<h6 className="">
 										{staff === null ? '--' : staff.details?.gender || '--'}
 									</h6>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<p className="">Is Consultant</p>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<h6 className="">
 										{staff === null
 											? '--'
 											: staff.details?.is_consultant || '--'}
 									</h6>
-								</Col>
-							</Row>
-							<Row>
-								<Col>
+								</div>
+							</div>
+							<div className="row">
+								<div className="col">
 									<p className="">Department :</p>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<h6 className="">
 										{staff === null
 											? '--'
 											: staff.details?.department?.name || '--'}
 									</h6>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<p className="">Contract Type :</p>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<h6 className="">
 										{staff === null
 											? '--'
 											: staff.details?.contract_type || '--'}
 									</h6>
-								</Col>
-							</Row>
-							<Row>
-								<Col>
+								</div>
+							</div>
+							<div className="row">
+								<div className="col">
 									<p className="">Marital Status :</p>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<h6 className="">
 										{staff === null
 											? '--'
 											: staff.details?.marital_status || '--'}
 									</h6>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<p className="">Job Title :</p>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<h6 className="">
 										{staff === null ? '--' : staff.details?.job_title || '--'}
 									</h6>
-								</Col>
-							</Row>
-							<Row>
-								<Col>
+								</div>
+							</div>
+							<div className="row">
+								<div className="col">
 									<p className="">Local Gov :</p>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<h6 className="">
 										{staff === null ? '--' : staff.details?.lga || '--'}
 									</h6>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<p className="">Specialization :</p>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<h6 className="">
 										{staff === null
 											? '--'
 											: staff.details?.specialization || '--'}
 									</h6>
-								</Col>
-							</Row>
-							<Row>
-								<Col>
+								</div>
+							</div>
+							<div className="row">
+								<div className="col">
 									<p className="">State Of Origin :</p>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<h6 className="">
 										{staff === null
 											? '--'
 											: staff.details?.state_of_origin || '--'}
 									</h6>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<p className="">Profession :</p>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<h6 className="">
 										{staff === null ? '--' : staff.details?.profession || '--'}
 									</h6>
-								</Col>
-							</Row>
-							<Row>
-								<Col>
+								</div>
+							</div>
+							<div className="row">
+								<div className="col">
 									<p className="">Religion :</p>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<h6 className="">
 										{staff === null ? '--' : staff.details?.religion || '--'}
 									</h6>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<p className="">Address :</p>
-								</Col>
-								<Col>
+								</div>
+								<div className="col">
 									<h6 className="">
 										{staff === null ? '--' : staff.details?.address || '--'}
 									</h6>
-								</Col>
-							</Row>
-						</Card.Text>
-					</Card.Body>
-				</Card>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	);

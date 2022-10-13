@@ -174,7 +174,7 @@ PatientAdmission = reduxForm({
 
 const mapStateToProps = (state, ownProps) => {
 	return {
-		patient: state.user.patient,
+		patient: ownProps.patient,
 	};
 };
 

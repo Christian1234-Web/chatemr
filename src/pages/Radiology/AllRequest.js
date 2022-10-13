@@ -58,7 +58,6 @@ class AllRequest extends Component {
 	};
 
 	doFilter = e => {
-		if (e) e.preventDefault();
 		this.setState({ filtering: true });
 		this.fetchRequests();
 	};

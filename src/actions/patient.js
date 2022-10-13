@@ -1,22 +1,13 @@
 import {
 	LOAD_VITALS,
 	UPDATE_VITALS,
-	PATIENT_REGULATION_TABLE,
 	PATIENT_IVF,
 	READING_DONE,
-	SET_IVF,
 	UPDATE_ENCOUNTER_DATA,
 	RESET_ENCOUNTER_DATA,
 	UPDATE_SOAP_DATA,
 	UPDATE_ASSESSMENT_DATA,
 } from './types';
-
-export const setIVF = data => {
-	return {
-		type: SET_IVF,
-		payload: data,
-	};
-};
 
 export const readingDone = data => {
 	return {
@@ -43,13 +34,6 @@ export const updateVitals = data => {
 export const loadPatientIVFForm = data => {
 	return {
 		type: PATIENT_IVF,
-		payload: data,
-	};
-};
-
-export const loadPatientRegulationTable = data => {
-	return {
-		type: PATIENT_REGULATION_TABLE,
 		payload: data,
 	};
 };

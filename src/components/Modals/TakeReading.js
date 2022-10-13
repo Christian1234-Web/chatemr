@@ -28,57 +28,57 @@ const Temperature = lazy(() => import('../Vitals/Temperature'));
 const Urine = lazy(() => import('../Vitals/Urine'));
 const Weight = lazy(() => import('../Vitals/Weight'));
 
-const Page = ({ type, task }) => {
+const Page = ({ type, task, patient }) => {
 	switch (type) {
 		case 'Urine':
-			return <Urine task={task} />;
+			return <Urine task={task} patient={patient} />;
 		case 'Weight':
-			return <Weight task={task} />;
+			return <Weight task={task} patient={patient} />;
 		case 'Temperature':
-			return <Temperature task={task} />;
+			return <Temperature task={task} patient={patient} />;
 		case 'Surface Area':
-			return <SurfaceArea task={task} />;
+			return <SurfaceArea task={task} patient={patient} />;
 		case 'SpO2':
-			return <SPO task={task} />;
+			return <SPO task={task} patient={patient} />;
 		case 'Respiration':
-			return <Respiration task={task} />;
+			return <Respiration task={task} patient={patient} />;
 		case 'Pulse':
-			return <Pulse task={task} />;
+			return <Pulse task={task} patient={patient} />;
 		case 'Protein':
-			return <Protein task={task} />;
+			return <Protein task={task} patient={patient} />;
 		case 'PCV':
-			return <PCV task={task} />;
+			return <PCV task={task} patient={patient} />;
 		case 'Pain Scale':
-			return <PainScale task={task} />;
+			return <PainScale task={task} patient={patient} />;
 		case 'MUAC':
-			return <MUAC task={task} />;
+			return <MUAC task={task} patient={patient} />;
 		case 'Mid-Arm Circumference':
-			return <MidArmCircumference task={task} />;
+			return <MidArmCircumference task={task} patient={patient} />;
 		case 'Length of Arm':
-			return <LengthOfArm task={task} />;
+			return <LengthOfArm task={task} patient={patient} />;
 		case 'Height':
-			return <Height task={task} />;
+			return <Height task={task} patient={patient} />;
 		case 'Head Circumference':
-			return <HeadCircumference task={task} />;
+			return <HeadCircumference task={task} patient={patient} />;
 		case 'Glucose':
-			return <Glucose task={task} />;
+			return <Glucose task={task} patient={patient} />;
 		case 'Dilation':
-			return <Dilation task={task} />;
+			return <Dilation task={task} patient={patient} />;
 		case 'Fetal Heart Rate':
-			return <FetalHeartRate task={task} />;
+			return <FetalHeartRate task={task} patient={patient} />;
 		case 'Fundus Height':
-			return <FundusHeight task={task} />;
+			return <FundusHeight task={task} patient={patient} />;
 		case 'Blood Pressure':
-			return <BloodPressure task={task} />;
+			return <BloodPressure task={task} patient={patient} />;
 		case 'BSA':
-			return <BSA task={task} />;
+			return <BSA task={task} patient={patient} />;
 		case 'BMI':
 		default:
-			return <BMI task={task} />;
+			return <BMI task={task} patient={patient} />;
 	}
 };
 
-const TakeReading = ({ closeModal, taskItem }) => {
+const TakeReading = ({ closeModal, taskItem, patient }) => {
 	const [loaded, setLoaded] = useState(false);
 
 	const dispatch = useDispatch();
@@ -128,7 +128,11 @@ const TakeReading = ({ closeModal, taskItem }) => {
 							<div className="row">
 								<div className="col-sm-12">
 									<div className="element-box mb-3">
-										<Page type={taskItem.task} task={taskItem} />
+										<Page
+											type={taskItem.task}
+											task={taskItem}
+											patient={patient}
+										/>
 									</div>
 								</div>
 							</div>

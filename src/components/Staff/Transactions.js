@@ -1,13 +1,9 @@
 import moment from 'moment';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+
 import { notifyError } from '../../services/notify';
-import {
-	formatCurrency,
-	itemRender,
-	parseSource,
-	request,
-} from '../../services/utilities';
+import { formatCurrency, itemRender, request } from '../../services/utilities';
 import Pagination from 'antd/lib/pagination';
 import { paginate } from '../../services/constants';
 

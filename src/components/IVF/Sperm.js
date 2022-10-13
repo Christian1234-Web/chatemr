@@ -9,9 +9,9 @@ import {
 	ErrorBlock,
 	ReactSelectAdapter,
 	request,
-	updateImmutable,
 } from '../../services/utilities';
 import FormWizard from '../FormWizard';
+
 const { TimePicker } = DatePicker;
 
 const Sperm = ({ closeModal }) => {
@@ -121,7 +121,7 @@ const Sperm = ({ closeModal }) => {
 		try {
 			const url = `freezing/sperm/save`;
 			const rs = await request(url, 'POST', true, data);
-			// console.log(rs);
+			console.log(rs);
 			notifySuccess('Save Successful!');
 			closeModal();
 		} catch (err) {

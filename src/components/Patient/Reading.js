@@ -4,7 +4,7 @@ import moment from 'moment';
 
 import TakeReadings from '../Vitals/TakeReadings';
 
-const Reading = ({ vital, visible, info, setVisible, unit, task }) => {
+const Reading = ({ patient, vital, visible, info, setVisible, unit, task }) => {
 	return (
 		<div className="col-4">
 			<div className="text-center">
@@ -27,6 +27,7 @@ const Reading = ({ vital, visible, info, setVisible, unit, task }) => {
 						overlayClassName="vitals"
 						content={
 							<TakeReadings
+								patient={patient}
 								info={info}
 								doHide={() => setVisible(false)}
 								task={task}

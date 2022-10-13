@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import Select from 'react-select';
 import { useForm } from 'react-hook-form';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 import { request } from '../../services/utilities';
@@ -10,15 +10,13 @@ import waiting from '../../assets/images/waiting.gif';
 import { notifySuccess, notifyError } from '../../services/notify';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 
-const AllergyRequest = ({ history, location }) => {
+const AllergyRequest = ({ history, location, patient }) => {
 	const { register, handleSubmit, setValue } = useForm();
 
 	const [submitting, setSubmitting] = useState(false);
 	const [generic, setGeneric] = useState(null);
 	const [loaded, setLoaded] = useState(false);
 	const [genericDrugs, setGenericDrugs] = useState([]);
-
-	const currentPatient = useSelector(state => state.user.patient);
 
 	const dispatch = useDispatch();
 
@@ -43,7 +41,7 @@ const AllergyRequest = ({ history, location }) => {
 
 	const onSubmit = async values => {
 		try {
-			if (!currentPatient) {
+			if (!patient) {
 				notifyError('Please select a patient');
 				return;
 			}
@@ -54,7 +52,7 @@ const AllergyRequest = ({ history, location }) => {
 				allergy: values.allergy,
 				severity: values.severity,
 				reaction: values.reaction,
-				patient_id: currentPatient.id,
+				patient_id: patient.id,
 				generic_id: generic?.id || '',
 			};
 

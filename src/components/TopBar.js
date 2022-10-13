@@ -18,7 +18,12 @@ import { setConnection } from '../actions/general';
 import SearchPatient from './SearchPatient';
 import { staffname, parseAvatar, request } from '../services/utilities';
 import SSRStorage from '../services/storage';
-import { TOKEN_COOKIE, USER_RECORD, CK_ENCOUNTER } from '../services/constants';
+import {
+	TOKEN_COOKIE,
+	USER_RECORD,
+	CK_ENCOUNTER,
+	SIDE_PANEL,
+} from '../services/constants';
 import { disconnectSocket } from '../services/socket';
 
 const storage = new SSRStorage();
@@ -89,6 +94,7 @@ class TopBar extends Component {
 		}
 
 		storage.removeItem(USER_RECORD);
+		storage.removeItem(SIDE_PANEL);
 		storage.removeItem(TOKEN_COOKIE);
 		storage.removeItem(CK_ENCOUNTER);
 

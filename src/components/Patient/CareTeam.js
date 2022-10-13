@@ -1,6 +1,5 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
 
 import TableLoading from '../TableLoading';
@@ -10,7 +9,7 @@ import { startBlock, stopBlock } from '../../actions/redux-block';
 import AddEditTeam from './Modals/AddEditTeam';
 import { staffname } from '../../services/utilities';
 
-const CareTeam = ({ can_request, type, itemId }) => {
+const CareTeam = ({ can_request, type, itemId, patient }) => {
 	const [loading, setLoading] = useState(true);
 	const [members, setMembers] = useState([]);
 	const [meta, setMeta] = useState({
@@ -21,7 +20,6 @@ const CareTeam = ({ can_request, type, itemId }) => {
 	const [showModal, setShowModal] = useState(false);
 
 	const dispatch = useDispatch();
-	const patient = useSelector(state => state.user.patient);
 
 	const fetchMembers = useCallback(
 		async page => {

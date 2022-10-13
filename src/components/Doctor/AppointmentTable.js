@@ -5,7 +5,6 @@ import Tooltip from 'antd/lib/tooltip';
 import { useSelector } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import startCase from 'lodash.startcase';
-import { Button } from 'react-bootstrap';
 
 import {
 	confirmAction,
@@ -167,8 +166,7 @@ const AppointmentTable = ({ appointments, loading, updateAppointment }) => {
 																{appointment.status}
 															</span>
 														) : (
-															<Button
-																variant="default"
+															<button
 																disabled={
 																	updating && updating === appointment.id
 																}
@@ -178,7 +176,7 @@ const AppointmentTable = ({ appointments, loading, updateAppointment }) => {
 																className="btn btn-sm btn-primary"
 															>
 																Accept
-															</Button>
+															</button>
 														)}
 													</>
 												) : (

@@ -22,6 +22,7 @@ import TableLoading from '../../components/TableLoading';
 import ProfilePopup from '../../components/Patient/ProfilePopup';
 import { staffname } from '../../services/utilities';
 import { messageService } from '../../services/message';
+import { toggleSidepanel } from '../../actions/sidepanel';
 
 const { RangePicker } = DatePicker;
 
@@ -122,7 +123,7 @@ const LabourPatients = () => {
 
 	const openLabour = (patient, labour) => {
 		const info = { patient, type: 'labour', item: labour };
-		dispatch(toggleProfile(true, info));
+		dispatch(toggleSidepanel(true, info));
 	};
 
 	const dateChange = e => {

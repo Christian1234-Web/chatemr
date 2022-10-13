@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import SunEditor from 'suneditor-react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Select from 'react-select';
 import startCase from 'lodash.startcase';
 
@@ -19,14 +19,13 @@ const CreateNote = ({
 	antenatal_id,
 	procedure_id,
 	labour_id,
+	patient,
 }) => {
 	const [note, setNote] = useState('');
 	const [noteType, setNoteType] = useState('');
 	const [specialty, setSpecialty] = useState('');
 
 	const dispatch = useDispatch();
-
-	const patient = useSelector(state => state.user.patient);
 
 	const onSubmit = async e => {
 		try {

@@ -22,7 +22,7 @@ const info = {
 	inputs: [{ name: 'pain_scale', title: 'Pain Scale', weight: '' }],
 };
 
-const PainScale = ({ vitals, task }) => {
+const PainScale = ({ vitals, task, patient }) => {
 	const [visible, setVisible] = useState(false);
 	const [currentVitals, setCurrentVitals] = useState(null);
 	const [data, setData] = useState([]);
@@ -78,6 +78,7 @@ const PainScale = ({ vitals, task }) => {
 				</div>
 			</div>
 			<Reading
+				patient={patient}
 				visible={visible}
 				vital={currentVitals}
 				info={info}
@@ -91,7 +92,6 @@ const PainScale = ({ vitals, task }) => {
 
 const mapStateToProps = (state, ownProps) => {
 	return {
-		patient: state.user.patient,
 		vitals: state.patient.vitals.filter(c => c.readingType === info.title),
 	};
 };

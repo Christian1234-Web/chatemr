@@ -1,6 +1,5 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
 import moment from 'moment';
 import DatePicker from 'antd/lib/date-picker';
@@ -35,7 +34,7 @@ const paymentStatus = [
 	{ value: 1, label: 'Paid' },
 ];
 
-const PatientBills = () => {
+const PatientBills = ({ patient }) => {
 	const [loading, setLoading] = useState(true);
 	const [bills, setBills] = useState([]);
 	const [meta, setMeta] = useState({
@@ -61,8 +60,6 @@ const PatientBills = () => {
 	const [service, setService] = useState('');
 
 	const dispatch = useDispatch();
-
-	const patient = useSelector(state => state.user.patient);
 
 	const fetchBills = useCallback(
 		async (page, start, end, status, service) => {

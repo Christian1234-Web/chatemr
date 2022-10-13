@@ -1,6 +1,5 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useCallback, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
 
 import { notifyError } from '../../services/notify';
@@ -18,13 +17,11 @@ import RecordProblem from '../Modals/RecordProblem';
 import { messageService } from '../../services/message';
 import { paginate, patientAPI } from '../../services/constants';
 
-const ProblemList = () => {
+const ProblemList = ({ patient }) => {
 	const [loaded, setLoaded] = useState(false);
 	const [list, setList] = useState([]);
 	const [meta, setMeta] = useState({ ...paginate, itemsPerPage: 10 });
 	const [showModal, setShowModal] = useState(false);
-
-	const patient = useSelector(state => state.user.patient);
 
 	const dispatch = useDispatch();
 
@@ -184,7 +181,11 @@ const ProblemList = () => {
 					)}
 				</div>
 				{showModal && (
-					<RecordProblem closeModal={closeModal} update={updateList} />
+					<RecordProblem
+						patient={patient}
+						closeModal={closeModal}
+						update={updateList}
+					/>
 				)}
 			</div>
 		</div>

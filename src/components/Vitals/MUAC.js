@@ -22,7 +22,7 @@ const info = {
 	inputs: [{ name: 'muac', title: 'MUAC', weight: '' }],
 };
 
-const MUAC = ({ vitals, task }) => {
+const MUAC = ({ vitals, task, patient }) => {
 	const [visible, setVisible] = useState(false);
 	const [currentVitals, setCurrentVitals] = useState(null);
 	const [data, setData] = useState([]);
@@ -77,6 +77,7 @@ const MUAC = ({ vitals, task }) => {
 			</div>
 			<Reading
 				visible={visible}
+				patient={patient}
 				vital={currentVitals}
 				info={info}
 				setVisible={setVisible}
@@ -89,7 +90,6 @@ const MUAC = ({ vitals, task }) => {
 
 const mapStateToProps = (state, ownProps) => {
 	return {
-		patient: state.user.patient,
 		vitals: state.patient.vitals.filter(c => c.readingType === info.title),
 	};
 };

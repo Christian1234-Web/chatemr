@@ -101,8 +101,7 @@ class AllTransactions extends Component {
 			this.setState({ loading: true });
 			const url = `hmos/schemes?limit=100`;
 			const rs = await request(url, 'GET', true);
-			const { result, ...meta } = rs;
-			const arr = [...result];
+			const { result } = rs;
 			this.setState({ loading: false, filtering: false, hmos: result });
 			this.props.stopBlock();
 		} catch (error) {

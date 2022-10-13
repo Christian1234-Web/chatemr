@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import Select from 'react-select';
-import { Table } from 'react-bootstrap';
 import AsyncSelect from 'react-select/async';
 import { withRouter } from 'react-router-dom';
 import { confirmAlert } from 'react-confirm-alert';
@@ -605,7 +604,7 @@ const PrescriptionForm = ({ patient, history, module, location, itemId }) => {
 				</div>
 			</form>
 			<div>
-				<Table>
+				<table className="table table-striped">
 					<thead>
 						<tr>
 							<th>Generic Name</th>
@@ -675,7 +674,7 @@ const PrescriptionForm = ({ patient, history, module, location, itemId }) => {
 							);
 						})}
 					</tbody>
-				</Table>
+				</table>
 			</div>
 			<div className="row mt-4">
 				<div className="form-group col-sm-12">

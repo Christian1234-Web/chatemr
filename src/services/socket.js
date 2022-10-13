@@ -61,7 +61,9 @@ export const emit = (event, data) => {
 };
 
 export const disconnectSocket = () => {
-	if (socket) socket.disconnect();
+	if (socket) {
+		socket.disconnect();
+	}
 };
 
 export const getSocket = () => socket;

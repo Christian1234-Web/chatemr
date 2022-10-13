@@ -73,12 +73,10 @@ const General = ({
 							}}
 						/>
 					)}
-
 					{location.hash ? null : (
 						<div className="row">
 							<div className="form-group col-sm-12">
 								<label>Patient</label>
-
 								<AsyncSelect
 									isClearable
 									getOptionValue={getOptionValues}

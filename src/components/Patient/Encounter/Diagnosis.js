@@ -1,10 +1,8 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState, useCallback } from 'react';
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async/dist/react-select.esm';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
-import { Table } from 'react-bootstrap';
 
 import { updateEncounterData } from '../../../actions/patient';
 import {
@@ -247,7 +245,7 @@ const Diagnosis = ({ previous, next, patient }) => {
 
 			<div className="row">
 				<div className="element-box p-3 m-0 mt-3 w-100">
-					<Table>
+					<table className="table table-striped">
 						<thead>
 							<tr>
 								<th>Diagnosis</th>
@@ -281,7 +279,7 @@ const Diagnosis = ({ previous, next, patient }) => {
 								);
 							})}
 						</tbody>
-					</Table>
+					</table>
 				</div>
 			</div>
 

@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -9,14 +8,14 @@ import { startBlock, stopBlock } from '../../actions/redux-block';
 import RecordDelivery from '../Modals/RecordDelivery';
 import { labourAPI } from '../../services/constants';
 
-const Delivery = () => {
+const Delivery = ({ patient }) => {
 	const [loading, setLoading] = useState(true);
 	const [deliveryItem, setDeliveryItem] = useState(null);
 	const [showModal, setShowModal] = useState(false);
 
 	const dispatch = useDispatch();
 
-	const labour = useSelector(state => state.user.item);
+	const labour = useSelector(state => state.sidepanel.item);
 
 	const fetchDelivery = useCallback(async () => {
 		try {
@@ -167,6 +166,7 @@ const Delivery = () => {
 				<RecordDelivery
 					closeModal={closeModal}
 					labour_id={labour.id}
+					patient={patient}
 					update={item => setDeliveryItem(item)}
 				/>
 			)}

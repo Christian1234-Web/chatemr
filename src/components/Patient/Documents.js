@@ -1,6 +1,5 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Tooltip from 'antd/lib/tooltip';
 import Popover from 'antd/lib/popover';
 import Pagination from 'antd/lib/pagination';
@@ -17,7 +16,7 @@ import { API_URI, patientAPI, documentType } from '../../services/constants';
 import UploadDocument from './UploadDocument';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 
-const Documents = () => {
+const Documents = ({ patient }) => {
 	const [loading, setLoading] = useState(true);
 	const [documentList, setDocumentList] = useState([]);
 	const [uploading, setUploading] = useState(false);
@@ -25,8 +24,6 @@ const Documents = () => {
 	const [meta, setMeta] = useState(null);
 
 	const dispatch = useDispatch();
-
-	const patient = useSelector(state => state.user.patient);
 
 	const fetchDocuments = useCallback(
 		async page => {

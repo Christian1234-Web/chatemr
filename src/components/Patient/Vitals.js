@@ -1,7 +1,6 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { lazy, useCallback, useEffect, useState } from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { patientAPI, allVitalItems } from '../../services/constants';
 import { request } from '../../services/utilities';
@@ -32,73 +31,78 @@ const Temperature = lazy(() => import('../Vitals/Temperature'));
 const Urine = lazy(() => import('../Vitals/Urine'));
 const Weight = lazy(() => import('../Vitals/Weight'));
 
-const Page = ({ type }) => {
+const Page = ({ patient, type }) => {
 	switch (type) {
 		case 'Urine':
-			return <Urine />;
+			return <Urine patient={patient} />;
 		case 'Contractions':
-			return <Contractions />;
+			return <Contractions patient={patient} />;
 		case 'Weight':
-			return <Weight />;
+			return <Weight patient={patient} />;
 		case 'Temperature':
-			return <Temperature />;
+			return <Temperature patient={patient} />;
 		case 'Surface Area':
-			return <SurfaceArea />;
+			return <SurfaceArea patient={patient} />;
 		case 'SpO2':
-			return <SPO />;
+			return <SPO patient={patient} />;
 		case 'Respiration Rate':
-			return <Respiration />;
+			return <Respiration patient={patient} />;
 		case 'Pulse':
-			return <Pulse />;
+			return <Pulse patient={patient} />;
 		case 'Protein':
-			return <Protein />;
+			return <Protein patient={patient} />;
 		case 'PCV':
-			return <PCV />;
+			return <PCV patient={patient} />;
 		case 'Pain Scale':
-			return <PainScale />;
+			return <PainScale patient={patient} />;
 		case 'MUAC':
-			return <MUAC />;
+			return <MUAC patient={patient} />;
 		case 'Mid-Arm Circumference':
-			return <MidArmCircumference />;
+			return <MidArmCircumference patient={patient} />;
 		case 'Length of Arm':
-			return <LengthOfArm />;
+			return <LengthOfArm patient={patient} />;
 		case 'Height':
-			return <Height />;
+			return <Height patient={patient} />;
 		case 'Head Circumference':
-			return <HeadCircumference />;
+			return <HeadCircumference patient={patient} />;
 		case 'Glucose':
-			return <Glucose />;
+			return <Glucose patient={patient} />;
 		case 'Dilation':
-			return <Dilation />;
+			return <Dilation patient={patient} />;
 		case 'Fetal Heart Rate':
-			return <FetalHeartRate />;
+			return <FetalHeartRate patient={patient} />;
 		case 'Fundus Height':
-			return <FundusHeight />;
+			return <FundusHeight patient={patient} />;
 		case 'Blood Pressure':
-			return <BloodPressure />;
+			return <BloodPressure patient={patient} />;
 		case 'BSA':
-			return <BSA />;
+			return <BSA patient={patient} />;
 		case 'Servico Graph':
-			return <ServicoGraph />;
+			return <ServicoGraph patient={patient} />;
 		case 'BMI':
 		default:
-			return <BMI />;
+			return <BMI patient={patient} />;
 	}
 };
 
-const Vitals = props => {
-	const { type, location, patient, category, labour } = props;
+const Vitals = ({ type, location, patient, category }) => {
 	const _category = category === 'general' ? 'vitals' : 'partograph';
 
 	const [loaded, setLoaded] = useState(false);
+
+	const dispatch = useDispatch();
+
+	const labour = useSelector(state => state.sidepanel.item);
 
 	const fetchVitals = useCallback(async () => {
 		const labour_id = labour?.id || '';
 		const url = `${patientAPI}/${patient.id}/vitals?labour_id=${labour_id}`;
 		const rs = await request(url, 'GET', true);
-		props.loadVitals(rs.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1)));
+		dispatch(
+			loadVitals(rs.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1)))
+		);
 		setLoaded(true);
-	}, [labour, patient, props]);
+	}, [dispatch, labour?.id, patient.id]);
 
 	useEffect(() => {
 		if (!loaded) {
@@ -130,18 +134,11 @@ const Vitals = props => {
 				</div>
 				<h6 className="element-header text-center">{type}</h6>
 				<div className="element-box p-3 m-0">
-					<Page type={type} />
+					<Page patient={patient} type={type} />
 				</div>
 			</div>
 		</div>
 	);
 };
 
-const mapStateToProps = (state, ownProps) => {
-	return {
-		patient: state.user.patient,
-		labour: state.user.item,
-	};
-};
-
-export default connect(mapStateToProps, { loadVitals })(withRouter(Vitals));
+export default withRouter(Vitals);

@@ -1,6 +1,5 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
 
 import TableLoading from '../TableLoading';
@@ -9,7 +8,7 @@ import { notifyError } from '../../services/notify';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import RequestService from '../Modals/RequestService';
 
-const NursingService = ({ itemId, module, can_request }) => {
+const NursingService = ({ itemId, module, patient }) => {
 	const [loading, setLoading] = useState(true);
 	const [services, setServices] = useState([]);
 	const [meta, setMeta] = useState({
@@ -20,8 +19,6 @@ const NursingService = ({ itemId, module, can_request }) => {
 	const [showModal, setShowModal] = useState(false);
 
 	const dispatch = useDispatch();
-
-	const patient = useSelector(state => state.user.patient);
 
 	const fetchServices = useCallback(
 		async page => {
@@ -140,6 +137,7 @@ const NursingService = ({ itemId, module, can_request }) => {
 					refresh={refresh}
 					module={module}
 					itemId={itemId}
+					patient={patient}
 				/>
 			)}
 		</div>

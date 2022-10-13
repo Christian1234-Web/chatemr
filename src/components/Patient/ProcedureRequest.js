@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import AsyncSelect from 'react-select/async/dist/react-select.esm';
+import Select from 'react-select';
 
 import { searchAPI, diagnosisAPI } from '../../services/constants';
 import waiting from '../../assets/images/waiting.gif';
@@ -16,6 +17,11 @@ const defaultValues = {
 	bill: 'later',
 };
 
+const options = [
+	{ value: 'immediate', label: 'Immediate' },
+	{ value: 'schedule', label: 'Schedule' },
+];
+
 const SendButton = ({ submitting }) => {
 	return (
 		<div className="col-sm-6 text-right">
@@ -26,24 +32,24 @@ const SendButton = ({ submitting }) => {
 	);
 };
 
-const ProcedureRequest = ({ module, history, location }) => {
+const ProcedureRequest = ({ module, history, location, patient }) => {
 	const { register, handleSubmit, setValue } = useForm({ defaultValues });
 
 	const [submitting, setSubmitting] = useState(false);
 	const [loadedPatient, setLoadedPatient] = useState(false);
 	const [chosenPatient, setChosenPatient] = useState(null);
 	const [service, setService] = useState(null);
-
-	const currentPatient = useSelector(state => state.user.patient);
+	const [selectedOption, setSelectedOption] = useState(null);
+	const [resources, setResources] = useState([]);
 
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		if (!loadedPatient && currentPatient) {
-			setChosenPatient(currentPatient);
+		if (!loadedPatient && patient) {
+			setChosenPatient(patient);
 		}
 		setLoadedPatient(true);
-	}, [currentPatient, loadedPatient]);
+	}, [loadedPatient, patient]);
 
 	const getPatients = async q => {
 		if (!q || q.length < 1) {
@@ -75,6 +81,10 @@ const ProcedureRequest = ({ module, history, location }) => {
 				urgent: false,
 				diagnosis: data.diagnosis || [],
 				bill: data.bill === 'later' ? -1 : 0,
+				isImmediate: selectedOption === 'immediate',
+				scheduleData: {
+					resources: JSON.stringify(resources.map(resource => resource.value)),
+				},
 			};
 
 			dispatch(startBlock());
@@ -120,6 +130,10 @@ const ProcedureRequest = ({ module, history, location }) => {
 		return res;
 	};
 
+	const handleSelectChange = selectedOption => {
+		setSelectedOption(selectedOption.value);
+	};
+
 	return (
 		<div className={!module || (module && module === '') ? '' : 'col-sm-12'}>
 			<div className="element-box m-0 p-3">
@@ -133,7 +147,7 @@ const ProcedureRequest = ({ module, history, location }) => {
 						</div>
 					)}
 					<form onSubmit={handleSubmit(onSubmit)}>
-						{!currentPatient && (
+						{!patient && (
 							<div className="row">
 								<div className="form-group col-sm-12">
 									<label htmlFor="patient">Patient Name</label>
@@ -158,6 +172,16 @@ const ProcedureRequest = ({ module, history, location }) => {
 							</div>
 						)}
 						<div className="row">
+							<div className="form-group col-sm-6 relative">
+								<label>Type</label>
+								<Select
+									options={options}
+									onChange={handleSelectChange}
+									value={selectedOption?.label}
+									defaultOptions
+									label="Single select"
+								/>
+							</div>
 							<div className="form-group col-sm-6 relative">
 								<label>Procedure</label>
 								{service && (
@@ -193,6 +217,45 @@ const ProcedureRequest = ({ module, history, location }) => {
 								/>
 							</div>
 						</div>
+						{selectedOption === 'immediate' && (
+							<div className="row">
+								<div className="form-group col-sm-12">
+									<label>Resources</label>
+									<Select
+										isMulti
+										name="resources"
+										placeholder="Select Resources"
+										value={resources}
+										options={[
+											{
+												label: 'Anesthetic Machine',
+												value: 'Anesthetic Machine',
+											},
+											{ label: 'SPO2 Monitor', value: 'SPO2 Monitor' },
+											{
+												label: 'Hysteroscopic Monitor',
+												value: 'Hysteroscopic Monitor',
+											},
+											{
+												label: 'Hysteroscopic Machine',
+												value: 'Hysteroscopic Machine',
+											},
+											{
+												label: 'Hysteroscopic DVD Recorder',
+												value: 'Hysteroscopic DVD Recorder',
+											},
+											{
+												label: 'Diathermy Machine',
+												value: 'Diathermy Machine',
+											},
+											{ label: 'Suction Machine', value: 'Suction Machine' },
+										]}
+										onChange={e => setResources(e)}
+										required
+									/>
+								</div>
+							</div>
+						)}
 						<div className="row">
 							<div className="form-group col-sm-12">
 								<label>Primary diagnoses</label>

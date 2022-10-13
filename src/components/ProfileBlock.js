@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useCallback, useEffect, useState } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -30,6 +29,7 @@ import ModalFinishDischarge from './Modals/ModalFinishDischarge';
 import PatientForm from './Modals/PatientForm';
 import DischargeBlock from './DischargeBlock';
 import { setPatientRecord, toggleProfile } from '../actions/user';
+import { setPatientData } from '../actions/sidepanel';
 import SSRStorage from '../services/storage';
 import { hasCloseAncPermission } from '../permission-utils/antenatal';
 import CreateNote from './Modals/CreateNote';
@@ -238,7 +238,7 @@ const ProfileBlock = ({
 					admission: type === 'admission' ? result : null,
 					nicu: type === 'nicu' ? result : null,
 				};
-				dispatch(setPatientRecord(newPatient));
+				dispatch(setPatientData(newPatient));
 
 				messageService.sendMessage({
 					type: 'update-patient',
@@ -872,7 +872,7 @@ const ProfileBlock = ({
 					</div>
 				</div>
 			</div>
-			{showModal && <ViewAlerts closeModal={closeModal} />}
+			{showModal && <ViewAlerts patient={patient} closeModal={closeModal} />}
 			{(admissionDischarge || nicuDischarge) && patient && (
 				<ModalDischargePatient
 					admissionId={admissionId}

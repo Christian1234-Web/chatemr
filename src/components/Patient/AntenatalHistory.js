@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import Tooltip from 'antd/lib/tooltip';
@@ -13,7 +12,7 @@ import { startBlock, stopBlock } from '../../actions/redux-block';
 import { request, itemRender, formatDate } from '../../services/utilities';
 import TableLoading from '../TableLoading';
 import { staffname } from '../../services/utilities';
-import { toggleProfile } from '../../actions/user';
+import { toggleSidepanel } from '../../actions/sidepanel';
 
 const { RangePicker } = DatePicker;
 
@@ -79,13 +78,8 @@ class AntenatalHistory extends Component {
 	};
 
 	openAntenatal = (patient, antenatal) => {
-		const info = {
-			patient,
-			type: 'antenatal',
-			item: antenatal,
-			isProfile: true,
-		};
-		this.props.toggleProfile(true, info);
+		const info = { patient, type: 'antenatal', item: antenatal };
+		this.props.toggleSidepanel(true, info);
 	};
 
 	render() {
@@ -209,14 +203,6 @@ class AntenatalHistory extends Component {
 	}
 }
 
-const mapStateToProps = state => {
-	return {
-		patient: state.user.patient,
-	};
-};
-
 export default withRouter(
-	connect(mapStateToProps, { startBlock, stopBlock, toggleProfile })(
-		AntenatalHistory
-	)
+	connect(null, { startBlock, stopBlock, toggleSidepanel })(AntenatalHistory)
 );

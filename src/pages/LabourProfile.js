@@ -1,16 +1,15 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component, Suspense, lazy, Fragment } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { Switch, withRouter } from 'react-router-dom';
 
-import { toggleProfile } from '../actions/user';
 import LabourProfileMenu from '../components/Navigation/LabourProfileMenu';
 import SSRStorage from '../services/storage';
-import { USER_RECORD } from '../services/constants';
+import { SIDE_PANEL } from '../services/constants';
 import Splash from '../components/Splash';
 import ProfileBlock from '../components/ProfileBlock';
 import HashRoute from '../components/HashRoute';
 import AncBlock from '../components/AncBlock';
+import { toggleSidepanel } from '../actions/sidepanel';
 
 const Notes = lazy(() => import('../components/Labour/Notes'));
 const Measurements = lazy(() => import('../components/Labour/Measurements'));
@@ -25,62 +24,79 @@ const Delivery = lazy(() => import('../components/Labour/Delivery'));
 const storage = new SSRStorage();
 
 const Page = ({ location }) => {
-	const labour = useSelector(state => state.user.item);
+	const labour = useSelector(state => state.sidepanel.item);
+	const patient = useSelector(state => state.sidepanel.patient);
 	const hash = location.hash.substr(1).split('#');
 	switch (hash[0]) {
 		case 'measurements':
-			return <Measurements can_request={labour && labour.status === 0} />;
+			return (
+				<Measurements
+					patient={patient}
+					can_request={labour && labour.status === 0}
+				/>
+			);
 		case 'lab':
 			return (
 				<Lab
+					patient={patient}
 					can_request={labour && labour.status === 0}
 					itemId={labour.id || ''}
 					type="labour"
 				/>
 			);
 		case 'lab-request':
-			return <LabRequest module="labour" itemId={labour.id || ''} />;
+			return (
+				<LabRequest
+					patient={patient}
+					module="labour"
+					itemId={labour.id || ''}
+				/>
+			);
 		case 'partograph':
-			return <Vitals type={hash[1].split('%20').join(' ')} category="labour" />;
+			return (
+				<Vitals
+					patient={patient}
+					type={hash[1].split('%20').join(' ')}
+					category="labour"
+				/>
+			);
 		case 'risk-assessments':
-			return <RiskAssessments />;
+			return <RiskAssessments patient={patient} />;
 		case 'delivery':
-			return <Delivery />;
+			return <Delivery patient={patient} />;
 		case 'notes':
 		default:
-			return <Notes can_request={labour && labour.status === 0} />;
+			return (
+				<Notes patient={patient} can_request={labour && labour.status === 0} />
+			);
 	}
 };
 
 class LabourProfile extends Component {
+	closeProfile = () => {
+		storage.removeItem(SIDE_PANEL);
+		this.props.toggleSidepanel(false);
+	};
+
 	componentDidMount() {
 		const { location } = this.props;
-		if (!location.hash) {
-			this.props.history.push(`${location.pathname}#notes`);
-		}
+		this.props.history.push(`${location.pathname}#notes`);
 	}
 
 	componentWillUnmount() {
 		const { location } = this.props;
-		this.props.history.push(location.pathname);
+		this.props.history.push(`${location.pathname}#labour-history`);
 	}
 
 	render() {
-		const { location, patient, isBackToPatientProfile } = this.props;
-		const closeProfile = () => {
-			storage.removeItem(USER_RECORD);
-			this.props.toggleProfile(
-				false,
-				isBackToPatientProfile === true ? 'antenatal' : null
-			);
-		};
+		const { location, patient } = this.props;
 		return (
 			<div className="layout-w">
 				<button
 					aria-label="Close"
 					className="close custom-close"
 					type="button"
-					onClick={closeProfile}
+					onClick={this.closeProfile}
 				>
 					<span className="os-icon os-icon-close" />
 				</button>
@@ -134,11 +150,10 @@ class LabourProfile extends Component {
 
 const mapStateToProps = (state, ownProps) => {
 	return {
-		patient: state.user.patient,
-		isBackToPatientProfile: state.user.isProfile,
+		patient: state.sidepanel.patient,
 	};
 };
 
 export default withRouter(
-	connect(mapStateToProps, { toggleProfile })(LabourProfile)
+	connect(mapStateToProps, { toggleSidepanel })(LabourProfile)
 );

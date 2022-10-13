@@ -1,7 +1,6 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useCallback, useEffect } from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
 import Tooltip from 'antd/lib/tooltip';
 
@@ -16,7 +15,7 @@ import {
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import TableLoading from '../TableLoading';
 
-const ExcuseDuty = ({ location }) => {
+const ExcuseDuty = ({ location, patient }) => {
 	const [loaded, setLoaded] = useState(false);
 	const [duties, setDuties] = useState([]);
 	const [meta, setMeta] = useState({
@@ -26,8 +25,6 @@ const ExcuseDuty = ({ location }) => {
 	});
 
 	const dispatch = useDispatch();
-
-	const patient = useSelector(state => state.user.patient);
 
 	const fetch = useCallback(
 		async page => {

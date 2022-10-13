@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -10,7 +9,7 @@ import LabBlock from '../LabBlock';
 import TableLoading from '../TableLoading';
 import { hasCreateLabPermission } from '../../permission-utils/lab';
 
-const Lab = ({ location, itemId, type, can_request = true }) => {
+const Lab = ({ location, itemId, type, can_request, patient }) => {
 	const [loaded, setLoaded] = useState(false);
 	const [labs, setLabs] = useState([]);
 	const [meta, setMeta] = useState({
@@ -22,7 +21,6 @@ const Lab = ({ location, itemId, type, can_request = true }) => {
 	const startDate = '';
 	const endDate = '';
 
-	const patient = useSelector(state => state.user.patient);
 	const staff = useSelector(state => state.user.profile);
 
 	const fetch = useCallback(

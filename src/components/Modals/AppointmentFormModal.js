@@ -1,7 +1,6 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState } from 'react';
+
 import 'react-datepicker/dist/react-datepicker.css';
-import Image from 'react-bootstrap/Image';
 
 import consultingImage from '../../assets/images/icon-consultatio-1.png';
 import inPatientImg from '../../assets/images/in-patient.png';
@@ -18,7 +17,7 @@ function SelectAppointment({ setView }) {
 						onClick={() => setView('consultation-form')}
 					>
 						<div className="p-4">
-							<Image src={consultingImage} width={60} />
+							<img alt="" src={consultingImage} width={60} />
 						</div>
 						<div className="label">
 							Create an appointment for a patient who wants to see a doctor
@@ -34,7 +33,7 @@ function SelectAppointment({ setView }) {
 						onClick={() => setView('outpatient-form')}
 					>
 						<div className="p-4">
-							<Image src={inPatientImg} width={60} />
+							<img alt="" src={inPatientImg} width={60} />
 						</div>
 						<div className="label">
 							Create appointment for OPD patients to Paypoint

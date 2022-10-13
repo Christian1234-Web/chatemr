@@ -15,7 +15,7 @@ import { startBlock, stopBlock } from '../../actions/redux-block';
 import CreateObstNote from '../Modals/CreateObstNote';
 import { staffname } from '../../services/utilities';
 
-const ObstHistory = ({ can_request = true }) => {
+const ObstHistory = ({ patient, can_request = true }) => {
 	const [loading, setLoading] = useState(true);
 	const [notes, setNotes] = useState([]);
 	const [meta, setMeta] = useState({
@@ -26,7 +26,8 @@ const ObstHistory = ({ can_request = true }) => {
 	const [showModal, setShowModal] = useState(false);
 
 	const dispatch = useDispatch();
-	const antenatal = useSelector(state => state.user.item);
+
+	const antenatal = useSelector(state => state.sidepanel.item);
 
 	const fetchNotes = useCallback(
 		async page => {
@@ -147,6 +148,7 @@ const ObstHistory = ({ can_request = true }) => {
 					closeModal={closeModal}
 					updateNote={updateNote}
 					antenatal_id={antenatal.id}
+					patient={patient}
 					type="patient-history"
 				/>
 			)}

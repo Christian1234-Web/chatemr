@@ -1,6 +1,5 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component, Suspense, lazy, Fragment } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { Switch, withRouter } from 'react-router-dom';
 
 import { toggleProfile } from '../actions/user';
@@ -12,7 +11,6 @@ import Splash from '../components/Splash';
 import ProfileBlock from '../components/ProfileBlock';
 import { confirmAction } from '../services/utilities';
 import AncBlock from '../components/AncBlock';
-import LabourHistory from '../components/Patient/LabourHistory';
 
 const ClinicalTasks = lazy(() => import('../components/Patient/ClinicalTasks'));
 const Dashboard = lazy(() => import('../components/Patient/Dashboard'));
@@ -53,62 +51,68 @@ const Documents = lazy(() => import('../components/Patient/Documents'));
 const AdmissionHistory = lazy(() =>
 	import('../components/Patient/AdmissionHistory')
 );
+const LabourHistory = lazy(() => import('../components/Patient/LabourHistory'));
 
 const storage = new SSRStorage();
 
 const Page = ({ location }) => {
 	const hash = location.hash.substr(1).split('#');
+	const patient = useSelector(state => state.user.patient);
 	switch (hash[0]) {
 		case 'encounters':
-			return <Encounters />;
+			return <Encounters patient={patient} />;
 		case 'lab':
-			return <Lab />;
+			return <Lab patient={patient} />;
 		case 'lab-request':
-			return <LabRequest module="patient" />;
+			return <LabRequest module="patient" patient={patient} />;
 		case 'pharmacy':
-			return <Pharmacy />;
+			return <Pharmacy patient={patient} />;
 		case 'pharmacy-request':
-			return <PharmacyRequest module="patient" />;
+			return <PharmacyRequest module="patient" patient={patient} />;
 		case 'problem-list':
-			return <ProblemList />;
+			return <ProblemList patient={patient} />;
 		case 'documents':
-			return <Documents />;
+			return <Documents patient={patient} />;
 		case 'vitals':
 			return (
-				<Vitals type={hash[1].split('%20').join(' ')} category="general" />
+				<Vitals
+					patient={patient}
+					type={hash[1].split('%20').join(' ')}
+					category="general"
+				/>
 			);
 		case 'allergens':
-			return <Allergies />;
+			return <Allergies patient={patient} />;
 		case 'clinical-tasks':
-			return <ClinicalTasks />;
+			return <ClinicalTasks patient={patient} />;
 		case 'radiology':
-			return <Radiology />;
+			return <Radiology patient={patient} />;
 		case 'radiology-request':
-			return <RadiologyRequest module="patient" />;
+			return <RadiologyRequest module="patient" patient={patient} />;
 		case 'procedure':
-			return <Procedure />;
+			return <Procedure patient={patient} />;
 		case 'procedure-request':
-			return <ProcedureRequest module="patient" />;
+			return <ProcedureRequest module="patient" patient={patient} />;
 		case 'allergy-request':
-			return <AllergyRequest />;
+			return <AllergyRequest patient={patient} />;
 		case 'start-admission':
-			return <PatientAdmission />;
+			return <PatientAdmission patient={patient} />;
 		case 'immunization-chart':
-			return <ImmunizationChart />;
+			return <ImmunizationChart patient={patient} />;
 		case 'excuse-duty':
-			return <ExcuseDuty />;
+			return <ExcuseDuty patient={patient} />;
 		case 'new-excuse-duty':
-			return <CreateExcuseDuty />;
+			return <CreateExcuseDuty patient={patient} />;
 		case 'ivf-history':
-			return <IVFHistory />;
+			return <IVFHistory patient={patient} />;
 		case 'anc-history':
-			return <AntenatalHistory />;
+			return <AntenatalHistory patient={patient} />;
 		case 'labour-history':
-			return <LabourHistory />;
+			return <LabourHistory patient={patient} />;
 		case 'admission-history':
-			return <AdmissionHistory />;
+			return <AdmissionHistory patient={patient} />;
 		default:
-			return <Dashboard />;
+			return <Dashboard patient={patient} />;
 	}
 };
 

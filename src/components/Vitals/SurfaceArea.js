@@ -22,7 +22,7 @@ const info = {
 	inputs: [{ name: 'surface_area', title: 'Surface Area', weight: 'kg' }],
 };
 
-const SurfaceArea = ({ vitals, task }) => {
+const SurfaceArea = ({ vitals, task, patient }) => {
 	const [visible, setVisible] = useState(false);
 	const [currentVitals, setCurrentVitals] = useState(null);
 	const [data, setData] = useState([]);
@@ -82,6 +82,7 @@ const SurfaceArea = ({ vitals, task }) => {
 				</div>
 			</div>
 			<Reading
+				patient={patient}
 				visible={visible}
 				vital={currentVitals}
 				info={info}
@@ -95,7 +96,6 @@ const SurfaceArea = ({ vitals, task }) => {
 
 const mapStateToProps = (state, ownProps) => {
 	return {
-		patient: state.user.patient,
 		vitals: state.patient.vitals.filter(c => c.readingType === info.title),
 	};
 };

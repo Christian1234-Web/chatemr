@@ -1,7 +1,5 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component, Fragment } from 'react';
 import Tooltip from 'antd/lib/tooltip';
-import { Image } from 'react-bootstrap';
 import capitalize from 'lodash.capitalize';
 import { connect } from 'react-redux';
 
@@ -112,7 +110,7 @@ class StaffItem extends Component {
 							<tr>
 								<td onClick={this.toggle(item.id)} className="user-avatar-w">
 									<div className="user-avatar">
-										<Image
+										<img
 											alt=""
 											src={parseAvatar(item?.profile_pic)}
 											width={50}

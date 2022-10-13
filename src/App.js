@@ -19,6 +19,7 @@ import {
 	USER_RECORD,
 	CK_ENCOUNTER,
 	TIMEOUT,
+	SIDE_PANEL,
 } from './services/constants';
 import { toggleProfile, signOut } from './actions/user';
 import { setConnection, toggleChat } from './actions/general';
@@ -142,6 +143,7 @@ class App extends Component {
 		}
 
 		storage.removeItem(USER_RECORD);
+		storage.removeItem(SIDE_PANEL);
 		storage.removeItem(TOKEN_COOKIE);
 		storage.removeItem(CK_ENCOUNTER);
 
@@ -312,12 +314,12 @@ const mapStateToProps = state => {
 		profile: state.user?.profile,
 		isStaffOpen: state.user?.isStaffOpen,
 		isPatientOpen: state.user?.isPatientOpen,
-		isProcedureOpen: state.user?.isProcedureOpen,
-		isAntenatalOpen: state.user?.isAntenatalOpen,
-		isAdmissionOpen: state.user?.isAdmissionOpen,
-		isIVFOpen: state.user?.isIVFOpen,
-		isNicuOpen: state.user?.isNicuOpen,
-		isLabourOpen: state.user?.isLabourOpen,
+		isProcedureOpen: state.sidepanel?.isProcedureOpen,
+		isAntenatalOpen: state.sidepanel?.isAntenatalOpen,
+		isAdmissionOpen: state.sidepanel?.isAdmissionOpen,
+		isIVFOpen: state.sidepanel?.isIVFOpen,
+		isNicuOpen: state.sidepanel?.isNicuOpen,
+		isLabourOpen: state.sidepanel?.isLabourOpen,
 		theme_mode: state.user?.theme_mode,
 		menu_mode: state.user?.menu_mode,
 		fullscreen: state.user?.fullscreen,

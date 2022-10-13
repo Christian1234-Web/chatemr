@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Field } from 'react-final-form';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { FORM_ERROR } from 'final-form';
 import DatePicker from 'react-datepicker';
 import { format, isValid } from 'date-fns';
@@ -26,14 +26,12 @@ function formatTime(date) {
 	return moment(date, 'h:mm A').format('HH:mm:ss');
 }
 
-const RecordDelivery = ({ closeModal, labour_id, update }) => {
+const RecordDelivery = ({ closeModal, labour_id, update, patient }) => {
 	const [dateOfBirth, setDateOfBirth] = useState(null);
 	const [timeOfBirth, setTimeOfBirth] = useState(null);
 	const [pediatrician, setPediatrician] = useState(null);
 
 	const dispatch = useDispatch();
-
-	const patient = useSelector(state => state.user.patient);
 
 	const getStaffs = async q => {
 		if (!q || q.length <= 1) {

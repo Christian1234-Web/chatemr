@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState, useCallback } from 'react';
 import moment from 'moment';
 import Tooltip from 'antd/lib/tooltip';
@@ -18,11 +17,12 @@ import {
 import waiting from '../../assets/images/waiting.gif';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import { searchAPI, antenatalAPI } from '../../services/constants';
-import { setIsProfile, toggleProfile } from '../../actions/user';
+import { toggleProfile } from '../../actions/user';
 import TableLoading from '../../components/TableLoading';
 import ProfilePopup from '../../components/Patient/ProfilePopup';
 import { staffname } from '../../services/utilities';
 import { messageService } from '../../services/message';
+import { toggleSidepanel } from '../../actions/sidepanel';
 
 const { RangePicker } = DatePicker;
 
@@ -125,15 +125,14 @@ const AntenatalPatients = ({ location }) => {
 
 	const showProfile = patient => {
 		if (patient.is_active) {
-			const info = { patient, type: 'patient', isProfile: true };
-			// dispatch(setIsProfile(true));
+			const info = { patient, type: 'patient' };
 			dispatch(toggleProfile(true, info));
 		}
 	};
 
 	const openAntenatal = (patient, antenatal) => {
 		const info = { patient, type: 'antenatal', item: antenatal };
-		dispatch(toggleProfile(true, info));
+		dispatch(toggleSidepanel(true, info));
 	};
 
 	const dateChange = e => {

@@ -13,6 +13,7 @@ import {
 	TOKEN_COOKIE,
 	USER_RECORD,
 	CK_ENCOUNTER,
+	SIDE_PANEL,
 } from '../services/constants';
 import { signOut } from '../actions/user';
 import { setConnection } from '../actions/general';
@@ -121,6 +122,7 @@ const ChangePassword = ({ location, history, error, handleSubmit }) => {
 		}
 
 		storage.removeItem(USER_RECORD);
+		storage.removeItem(SIDE_PANEL);
 		storage.removeItem(TOKEN_COOKIE);
 		storage.removeItem(CK_ENCOUNTER);
 

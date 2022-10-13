@@ -1,34 +1,25 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState, useCallback } from 'react';
 import moment from 'moment';
 import Tooltip from 'antd/lib/tooltip';
 import { useDispatch } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
 import DatePicker from 'antd/lib/date-picker';
-import AsyncSelect from 'react-select/async/dist/react-select.esm';
 
 import { notifyError } from '../../services/notify';
-import {
-	request,
-	itemRender,
-	patientname,
-	updateImmutable,
-} from '../../services/utilities';
+import { request, itemRender, updateImmutable } from '../../services/utilities';
 import waiting from '../../assets/images/waiting.gif';
 import { startBlock, stopBlock } from '../../actions/redux-block';
-import { searchAPI, labourAPI } from '../../services/constants';
-import { toggleProfile } from '../../actions/user';
+import { labourAPI } from '../../services/constants';
 import TableLoading from '../../components/TableLoading';
-import ProfilePopup from '../../components/Patient/ProfilePopup';
 import { staffname } from '../../services/utilities';
 import { messageService } from '../../services/message';
-import { useSelector } from 'react-redux';
+import { toggleSidepanel } from '../../actions/sidepanel';
 
 const { RangePicker } = DatePicker;
 
 const limit = 12;
 
-const LabourHistory = () => {
+const LabourHistory = ({ patient }) => {
 	const [patients, setPatients] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [filtering, setFiltering] = useState(false);
@@ -39,8 +30,7 @@ const LabourHistory = () => {
 		itemsPerPage: limit,
 		totalPages: 0,
 	});
-	const patientId = useSelector(state => state.user.patient.id);
-	const patient = useSelector(state => state.user.patient);
+
 	const dispatch = useDispatch();
 
 	const fetchLabours = useCallback(
@@ -48,7 +38,7 @@ const LabourHistory = () => {
 			try {
 				dispatch(startBlock());
 				const p = page || 1;
-				const patient_id = patientId || '';
+				const patient_id = patient.id || '';
 				const url = `${labourAPI}?page=${p}&limit=${limit}&patient_id=${patient_id}&startDate=${
 					sDate || ''
 				}&endDate=${eDate || ''}`;
@@ -56,8 +46,7 @@ const LabourHistory = () => {
 				const { result, ...meta } = rs;
 				setMeta(meta);
 				window.scrollTo({ top: 0, behavior: 'smooth' });
-				const arr = [...result];
-				setPatients(arr);
+				setPatients([...result]);
 				setFiltering(false);
 				dispatch(stopBlock());
 			} catch (error) {
@@ -67,7 +56,7 @@ const LabourHistory = () => {
 				setFiltering(false);
 			}
 		},
-		[dispatch]
+		[dispatch, patient.id]
 	);
 
 	useEffect(() => {
@@ -91,19 +80,6 @@ const LabourHistory = () => {
 		};
 	});
 
-	const getOptionValues = option => option.id;
-	const getOptionLabels = option => patientname(option, true);
-
-	const getOptions = async q => {
-		if (!q || q.length < 1) {
-			return [];
-		}
-
-		const url = `${searchAPI}?q=${q}`;
-		const res = await request(url, 'GET', true);
-		return res;
-	};
-
 	const doFilter = e => {
 		e.preventDefault();
 		setFiltering(true);
@@ -115,8 +91,8 @@ const LabourHistory = () => {
 	};
 
 	const openLabour = labour => {
-		const info = { patient, type: 'labour', item: labour, isProfile: true };
-		dispatch(toggleProfile(true, info));
+		const info = { patient, type: 'labour', item: labour };
+		dispatch(toggleSidepanel(true, info));
 	};
 
 	const dateChange = e => {
@@ -165,9 +141,10 @@ const LabourHistory = () => {
 								<thead>
 									<tr>
 										<th>ID</th>
-										{/* <th>Patient Name</th> */}
 										<th>Date of Enrollment</th>
 										<th>Enrolled By</th>
+										<th>Date Closed</th>
+										<th>Closed By</th>
 										<th>Status</th>
 										<th></th>
 									</tr>
@@ -177,24 +154,16 @@ const LabourHistory = () => {
 										return (
 											<tr key={i}>
 												<td>{item.serial_code}</td>
-												{/* <td>
-                                                    <p className="item-title text-color m-0">
-                                                        <Tooltip
-                                                            title={<ProfilePopup patient={item.patient} />}
-                                                        >
-                                                            <a
-                                                                className="cursor"
-                                                                onClick={() => showProfile(item.patient)}
-                                                            >
-                                                                {patientname(item.patient, true)}
-                                                            </a>
-                                                        </Tooltip>
-                                                    </p>
-                                                </td> */}
 												<td>
 													{moment(item.createdAt).format('DD-MMM-YYYY h:mm A')}
 												</td>
 												<td>{staffname(item.staff)}</td>
+												<td>
+													{moment(item.date_closed).format(
+														'DD-MMM-YYYY h:mm A'
+													)}
+												</td>
+												<td>{staffname(item.closedBy)}</td>
 												<td>
 													{item.status === 0 ? (
 														<span className="badge badge-secondary">Open</span>

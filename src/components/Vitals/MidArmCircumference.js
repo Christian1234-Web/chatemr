@@ -28,7 +28,7 @@ const info = {
 	],
 };
 
-const MidArmCircumference = ({ vitals, task }) => {
+const MidArmCircumference = ({ vitals, task, patient }) => {
 	const [visible, setVisible] = useState(false);
 	const [currentVitals, setCurrentVitals] = useState(null);
 	const [data, setData] = useState([]);
@@ -87,6 +87,7 @@ const MidArmCircumference = ({ vitals, task }) => {
 				</div>
 			</div>
 			<Reading
+				patient={patient}
 				visible={visible}
 				vital={currentVitals}
 				info={info}
@@ -99,7 +100,6 @@ const MidArmCircumference = ({ vitals, task }) => {
 };
 const mapStateToProps = (state, ownProps) => {
 	return {
-		patient: state.user.patient,
 		vitals: state.patient.vitals.filter(c => c.readingType === info.title),
 	};
 };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { reduxForm, SubmissionError } from 'redux-form';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import AsyncSelect from 'react-select/async/dist/react-select.esm';
 
 import { request } from '../../../services/utilities';
@@ -18,6 +18,7 @@ const AddEditTeam = ({
 	item_id,
 	type,
 	members,
+	patient,
 }) => {
 	const [submitting, setSubmitting] = useState(false);
 	const [loaded, setLoaded] = useState(false);
@@ -25,8 +26,6 @@ const AddEditTeam = ({
 	const [primaryStaff, setPrimaryStaff] = useState(null);
 
 	const dispatch = useDispatch();
-
-	const patient = useSelector(state => state.user.patient);
 
 	useEffect(() => {
 		if (!loaded) {

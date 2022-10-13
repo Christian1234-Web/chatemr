@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
 import SunEditor from 'suneditor-react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { startBlock, stopBlock } from '../../../actions/redux-block';
 import { notifySuccess, notifyError } from '../../../services/notify';
 import { request } from '../../../services/utilities';
 
-const CreateObservation = ({ closeModal, updateNote, item_id, type }) => {
+const CreateObservation = ({
+	closeModal,
+	updateNote,
+	item_id,
+	type,
+	patient,
+}) => {
 	const [observation, setObservation] = useState('');
 
 	const dispatch = useDispatch();
-
-	const patient = useSelector(state => state.user.patient);
 
 	const onSubmit = async e => {
 		try {

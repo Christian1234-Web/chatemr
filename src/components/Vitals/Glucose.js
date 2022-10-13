@@ -22,7 +22,7 @@ const info = {
 	inputs: [{ name: 'glucose', title: 'Glucose', weight: 'mg/dL' }],
 };
 
-const Glucose = ({ vitals, task }) => {
+const Glucose = ({ vitals, task, patient }) => {
 	const [visible, setVisible] = useState(false);
 	const [currentVitals, setCurrentVitals] = useState(null);
 	const [data, setData] = useState([]);
@@ -82,6 +82,7 @@ const Glucose = ({ vitals, task }) => {
 				</div>
 			</div>
 			<Reading
+				patient={patient}
 				visible={visible}
 				vital={currentVitals}
 				info={info}
@@ -95,7 +96,6 @@ const Glucose = ({ vitals, task }) => {
 
 const mapStateToProps = (state, ownProps) => {
 	return {
-		patient: state.user.patient,
 		vitals: state.patient.vitals.filter(c => c.readingType === info.title),
 	};
 };

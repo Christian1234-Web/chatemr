@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
 
 import { notifyError } from '../../services/notify';
 import { request, itemRender } from '../../services/utilities';
-import ProcedureBlock from '../ProcedureBlockTwo';
+import ProcedureBlock from '../ProcedureBlock';
 import TableLoading from '../TableLoading';
 
-const Procedure = ({ location }) => {
+const Procedure = ({ location, patient }) => {
 	const [loaded, setLoaded] = useState(false);
 	const [procedures, setProcedures] = useState([]);
 	const [meta, setMeta] = useState({
@@ -19,8 +18,6 @@ const Procedure = ({ location }) => {
 
 	const startDate = '';
 	const endDate = '';
-
-	const patient = useSelector(state => state.user.patient);
 
 	const fetchProcedures = useCallback(
 		async page => {
@@ -56,7 +53,7 @@ const Procedure = ({ location }) => {
 	return (
 		<div className="col-sm-12">
 			<div className="element-wrapper">
-				<div className="element-actions d-none">
+				<div className="element-actions">
 					<Link
 						to={`${location.pathname}#procedure-request`}
 						className="btn btn-primary btn-sm"

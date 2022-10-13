@@ -1,16 +1,15 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component, Suspense, lazy, Fragment } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { Switch, withRouter } from 'react-router-dom';
 
-import { toggleProfile } from '../actions/user';
 import AdmissionMenu from '../components/Navigation/AdmissionMenu';
 import SSRStorage from '../services/storage';
-import { USER_RECORD } from '../services/constants';
+import { SIDE_PANEL } from '../services/constants';
 import Splash from '../components/Splash';
 import ProfileBlock from '../components/ProfileBlock';
 import HashRoute from '../components/HashRoute';
 import AncBlock from '../components/AncBlock';
+import { toggleSidepanel } from '../actions/sidepanel';
 
 const ClinicalTasks = lazy(() => import('../components/Patient/ClinicalTasks'));
 const InPatientNote = lazy(() => import('../components/Patient/InPatientNote'));
@@ -32,16 +31,22 @@ const DischargeNote = lazy(() => import('../components/DischargeNote'));
 const storage = new SSRStorage();
 
 const Page = ({ location }) => {
-	const nicu = useSelector(state => state.user.item);
+	const nicu = useSelector(state => state.sidepanel.item);
+	const patient = useSelector(state => state.sidepanel.patient);
 	const hash = location.hash.substr(1).split('#');
 	switch (hash[0]) {
 		case 'vitals':
 			return (
-				<Vitals type={hash[1].split('%20').join(' ')} category="general" />
+				<Vitals
+					patient={patient}
+					type={hash[1].split('%20').join(' ')}
+					category="general"
+				/>
 			);
 		case 'clinical-tasks':
 			return (
 				<ClinicalTasks
+					patient={patient}
 					can_request={nicu && nicu.status === 0}
 					itemId={nicu.id || ''}
 					type="nicu"
@@ -50,18 +55,24 @@ const Page = ({ location }) => {
 		case 'nurse-observations':
 			return (
 				<NurseObservation
+					patient={patient}
 					can_request={nicu && nicu.status === 0}
 					itemId={nicu.id || ''}
 					type="nicu"
 				/>
 			);
 		case 'discharge-note':
-			return <DischargeNote itemId={nicu.id || ''} type="nicu" />;
+			return (
+				<DischargeNote patient={patient} itemId={nicu.id || ''} type="nicu" />
+			);
 		case 'fluid-chart':
-			return <FluidChart itemId={nicu.id || ''} type="nicu" />;
+			return (
+				<FluidChart patient={patient} itemId={nicu.id || ''} type="nicu" />
+			);
 		case 'care-team':
 			return (
 				<CareTeam
+					patient={patient}
 					can_request={nicu && nicu.status === 0}
 					itemId={nicu.id || ''}
 					type="nicu"
@@ -70,16 +81,24 @@ const Page = ({ location }) => {
 		case 'regimen':
 			return (
 				<Pharmacy
+					patient={patient}
 					can_request={nicu && nicu.status === 0}
 					itemId={nicu.id || ''}
 					type="nicu"
 				/>
 			);
 		case 'pharmacy-request':
-			return <PharmacyRequest module="nicu" itemId={nicu.id || ''} />;
+			return (
+				<PharmacyRequest
+					patient={patient}
+					module="nicu"
+					itemId={nicu.id || ''}
+				/>
+			);
 		case 'nursing-service':
 			return (
 				<NursingService
+					patient={patient}
 					can_request={nicu && nicu.status === 0}
 					itemId={nicu.id || ''}
 					module="nicu"
@@ -89,6 +108,7 @@ const Page = ({ location }) => {
 		default:
 			return (
 				<InPatientNote
+					patient={patient}
 					can_request={nicu && nicu.status === 0}
 					itemId={nicu.id || ''}
 					type="nicu"
@@ -99,15 +119,13 @@ const Page = ({ location }) => {
 
 class NicuProfile extends Component {
 	closeProfile = () => {
-		storage.removeItem(USER_RECORD);
-		this.props.toggleProfile(false);
+		storage.removeItem(SIDE_PANEL);
+		this.props.toggleSidepanel(false);
 	};
 
 	componentDidMount() {
 		const { location } = this.props;
-		if (!location.hash) {
-			this.props.history.push(`${location.pathname}#clinical-tasks`);
-		}
+		this.props.history.push(`${location.pathname}#clinical-tasks`);
 	}
 
 	componentWillUnmount() {
@@ -179,10 +197,10 @@ class NicuProfile extends Component {
 
 const mapStateToProps = (state, ownProps) => {
 	return {
-		patient: state.user.patient,
+		patient: state.sidepanel.patient,
 	};
 };
 
 export default withRouter(
-	connect(mapStateToProps, { toggleProfile })(NicuProfile)
+	connect(mapStateToProps, { toggleSidepanel })(NicuProfile)
 );

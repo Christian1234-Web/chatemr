@@ -1,11 +1,8 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 
 import PrescriptionForm from '../Pharmacy/PrescriptionForm';
 
-const PharmacyRequest = ({ module, itemId }) => {
-	const patient = useSelector(state => state.user.patient);
-
+const PharmacyRequest = ({ module, itemId, patient }) => {
 	return (
 		<div className="col-sm-12">
 			<div className="element-wrapper">

@@ -9,14 +9,13 @@ import { criticalList } from '../../services/constants';
 import { messageService } from '../../services/message';
 import ModalHeader from '../ModalHeader';
 
-const ViewAlerts = ({ closeModal }) => {
+const ViewAlerts = ({ closeModal, patient }) => {
 	const [loading, setLoading] = useState(true);
 	const [alerts, setAlerts] = useState([]);
 	const [criticalAlerts, setCriticalAlerts] = useState([]);
 
 	const dispatch = useDispatch();
 
-	const patient = useSelector(state => state.user.patient);
 	const user = useSelector(state => state.user.profile);
 
 	const fetchAlerts = useCallback(async () => {

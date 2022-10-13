@@ -1,6 +1,5 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import AsyncSelect from 'react-select/async/dist/react-select.esm';
 import { Form, Field } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
@@ -23,10 +22,8 @@ import {
 
 const required = value => (value ? undefined : 'Required');
 
-const RecordProblem = ({ closeModal, update }) => {
+const RecordProblem = ({ closeModal, update, patient }) => {
 	const dispatch = useDispatch();
-
-	const patient = useSelector(state => state.user.patient);
 
 	const getDiagnoses = async q => {
 		if (!q || (q && q.length <= 1)) {

@@ -1,6 +1,5 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
 import startCase from 'lodash.startcase';
 
@@ -12,7 +11,7 @@ import VisitNote from '../Admission/VisitNote';
 import { staffname } from '../../services/utilities';
 import { admissionAPI } from '../../services/constants';
 
-const InPatientNote = ({ itemId, type, can_request }) => {
+const InPatientNote = ({ itemId, type, can_request, patient }) => {
 	const [loading, setLoading] = useState(true);
 	const [notes, setNotes] = useState([]);
 	const [meta, setMeta] = useState({
@@ -23,8 +22,6 @@ const InPatientNote = ({ itemId, type, can_request }) => {
 	const [showModal, setShowModal] = useState(false);
 
 	const dispatch = useDispatch();
-
-	const patient = useSelector(state => state.user.patient);
 
 	const fetchNotes = useCallback(
 		async page => {

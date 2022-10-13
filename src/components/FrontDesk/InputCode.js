@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { reduxForm, SubmissionError } from 'redux-form';
-import Modal from 'react-bootstrap/Modal';
 
 import { request, updateImmutable } from '../../services/utilities';
 import waiting from '../../assets/images/waiting.gif';
 import { notifySuccess, notifyError } from '../../services/notify';
+import ModalHeader from '../ModalHeader';
 
 class InputCode extends Component {
 	state = {
@@ -60,13 +60,10 @@ class InputCode extends Component {
 				<div className="modal-centered">
 					<div className="modal-content text-center">
 						<div className="onboarding-content with-gradient">
-							<Modal.Header
-								className="center-header"
-								closeButton
-								onClick={() => this.props.doHide()}
-							>
-								<h4 className="onboarding-title">{`Input Code`}</h4>
-							</Modal.Header>
+							<ModalHeader
+								title="Input Code"
+								closeModal={() => this.props.doHide()}
+							/>
 							<div className="form-block">
 								<form onSubmit={handleSubmit(this.asignCode)}>
 									{error && (

@@ -12,6 +12,7 @@ import patient from './patient';
 import transaction from './transaction';
 import utility from './utility';
 import department from './department';
+import sidepanel from './sidepanel';
 
 const reducers = combineReducers({
 	form: formReducer,
@@ -26,6 +27,7 @@ const reducers = combineReducers({
 	patient,
 	transaction,
 	department,
+	sidepanel,
 });
 
 export default reducers;

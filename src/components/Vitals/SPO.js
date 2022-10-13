@@ -22,7 +22,7 @@ const info = {
 	inputs: [{ name: 'spo', title: 'SpO2', weight: '%' }],
 };
 
-const SPO = ({ vitals, task }) => {
+const SPO = ({ vitals, task, patient }) => {
 	const [visible, setVisible] = useState(false);
 	const [currentVitals, setCurrentVitals] = useState(null);
 	const [data, setData] = useState([]);
@@ -78,6 +78,7 @@ const SPO = ({ vitals, task }) => {
 				</div>
 			</div>
 			<Reading
+				patient={patient}
 				visible={visible}
 				vital={currentVitals}
 				info={info}
@@ -91,7 +92,6 @@ const SPO = ({ vitals, task }) => {
 
 const mapStateToProps = (state, ownProps) => {
 	return {
-		patient: state.user.patient,
 		vitals: state.patient.vitals.filter(c => c.readingType === info.title),
 	};
 };

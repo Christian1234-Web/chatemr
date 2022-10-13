@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import Select from 'react-select';
 import { confirmAlert } from 'react-confirm-alert';
-import { Table } from 'react-bootstrap';
 import AsyncSelect from 'react-select/async/dist/react-select.esm';
 
 import { updateEncounterData } from '../../../actions/patient';
@@ -632,7 +631,7 @@ const PlanForm = ({ previous, next, patient }) => {
 				<div className="row">
 					<div className="col-md-12">
 						<div className="element-box p-3 m-0 mt-3 w-100">
-							<Table>
+							<table className="table table-striped">
 								<thead>
 									<tr>
 										<th>Generic Name</th>
@@ -706,7 +705,7 @@ const PlanForm = ({ previous, next, patient }) => {
 										);
 									})}
 								</tbody>
-							</Table>
+							</table>
 						</div>
 					</div>
 				</div>
