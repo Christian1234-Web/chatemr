@@ -60,7 +60,7 @@ const Cafeteria = () => {
 				setLoading(false);
 			}
 		},
-		[endDate, searchValue, startDate, hmoId, categoryType, status]
+		[categoryType, customerType, endDate, hmoId, searchValue, startDate, status]
 	);
 
 	const fetchHMOS = useCallback(async () => {

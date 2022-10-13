@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,7 +20,7 @@ import NursingService from './NursingService';
 
 const storage = new SSRStorage();
 
-const Dashboard = () => {
+const Dashboard = ({ patient }) => {
 	const [tab, setTab] = useState('');
 	const [encounterModal, setEncounterModal] = useState(false);
 	const [assessmentModal, setAssessmentModal] = useState(false);
@@ -29,7 +28,6 @@ const Dashboard = () => {
 	const dispatch = useDispatch();
 
 	const staff = useSelector(state => state.user.profile);
-	const patient = useSelector(state => state.user.patient);
 	const appointmentId = useSelector(state => state.user.appointmentId);
 	const antenatal = useSelector(state => state.user.antenatal);
 
@@ -156,12 +154,12 @@ const Dashboard = () => {
 						</ul>
 					</div>
 					<div className="tab-content">
-						{tab === 'visitNotes' && <VisitNotesTable />}
-						{tab === 'ancVisitNotes' && <AncVisitNotes />}
-						{tab === 'visitSummary' && <VisitSummary />}
-						{tab === 'appointment' && <AppointmentHistory />}
-						{tab === 'billing' && <PatientBills />}
-						{tab === 'nursing' && <NursingService />}
+						{tab === 'visitNotes' && <VisitNotesTable patient={patient} />}
+						{tab === 'ancVisitNotes' && <AncVisitNotes patient={patient} />}
+						{tab === 'visitSummary' && <VisitSummary patient={patient} />}
+						{tab === 'appointment' && <AppointmentHistory patient={patient} />}
+						{tab === 'billing' && <PatientBills patient={patient} />}
+						{tab === 'nursing' && <NursingService patient={patient} />}
 					</div>
 				</div>
 			</div>

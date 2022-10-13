@@ -1,8 +1,6 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
-import { Table } from 'react-bootstrap';
 import { confirmAlert } from 'react-confirm-alert';
 import startCase from 'lodash.startcase';
 
@@ -450,7 +448,7 @@ const Prescription = ({ previous, next, patient }) => {
 				<div className="row">
 					<div className="col-md-12">
 						<div className="element-box p-3 m-0 mt-3 w-100">
-							<Table>
+							<table className="table table-striped">
 								<thead>
 									<tr>
 										<th>Generic Name</th>
@@ -514,7 +512,7 @@ const Prescription = ({ previous, next, patient }) => {
 										);
 									})}
 								</tbody>
-							</Table>
+							</table>
 						</div>
 					</div>
 				</div>

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import AsyncSelect from 'react-select/async/dist/react-select.esm';
@@ -24,7 +23,7 @@ const SendButton = ({ submitting }) => {
 	);
 };
 
-const RadiologyRequest = ({ module, history, location, itemId }) => {
+const RadiologyRequest = ({ module, history, location, itemId, patient }) => {
 	const { register, handleSubmit } = useForm({ defaultValues });
 
 	const [submitting, setSubmitting] = useState(false);
@@ -35,14 +34,12 @@ const RadiologyRequest = ({ module, history, location, itemId }) => {
 	// selected radiology
 	const [tests, setTests] = useState([]);
 
-	const currentPatient = useSelector(state => state.user.patient);
-
 	useEffect(() => {
-		if (!loadedPatient && currentPatient) {
-			setChosenPatient(currentPatient);
+		if (!loadedPatient && patient) {
+			setChosenPatient(patient);
 			setLoadedPatient(true);
 		}
-	}, [currentPatient, loadedPatient]);
+	}, [loadedPatient, patient]);
 
 	const getPatients = async q => {
 		if (!q || q.length < 1) {
@@ -114,7 +111,7 @@ const RadiologyRequest = ({ module, history, location, itemId }) => {
 						</div>
 					)}
 					<form onSubmit={handleSubmit(onSubmit)}>
-						{!currentPatient && (
+						{!patient && (
 							<div className="row">
 								<div className="form-group col-sm-12">
 									<label htmlFor="patient">Patient Name</label>

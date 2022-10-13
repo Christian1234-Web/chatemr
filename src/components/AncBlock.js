@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, forwardRef, useCallback, useEffect } from 'react';
 import moment from 'moment';
 import DatePicker from 'react-datepicker';
@@ -14,7 +13,7 @@ import { notifySuccess, notifyError } from '../services/notify';
 import { antenatalAPI } from '../services/constants';
 import { useDispatch } from 'react-redux';
 import { startBlock, stopBlock } from '../actions/redux-block';
-import { toggleProfile } from '../actions/user';
+import { toggleSidepanel } from '../actions/sidepanel';
 
 const AncBlock = ({ patient, enrollmentId }) => {
 	const [loaded, isLoaded] = useState(false);
@@ -74,7 +73,7 @@ const AncBlock = ({ patient, enrollmentId }) => {
 				const enrollment = { ...item, lmp: data.lmp, edd: data.edd };
 				const info = { patient, type: 'antenatal', item: enrollment };
 				messageService.sendMessage({ type: 'anc', data: enrollment });
-				dispatch(toggleProfile(true, info));
+				dispatch(toggleSidepanel(true, info));
 				setItem(enrollment);
 				notifySuccess('LMP saved!');
 			} else {

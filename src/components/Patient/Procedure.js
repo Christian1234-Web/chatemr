@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
 
 import { notifyError } from '../../services/notify';
@@ -8,7 +7,7 @@ import { request, itemRender } from '../../services/utilities';
 import ProcedureBlock from '../ProcedureBlock';
 import TableLoading from '../TableLoading';
 
-const Procedure = ({ location }) => {
+const Procedure = ({ location, patient }) => {
 	const [loaded, setLoaded] = useState(false);
 	const [procedures, setProcedures] = useState([]);
 	const [meta, setMeta] = useState({
@@ -19,8 +18,6 @@ const Procedure = ({ location }) => {
 
 	const startDate = '';
 	const endDate = '';
-
-	const patient = useSelector(state => state.user.patient);
 
 	const fetchProcedures = useCallback(
 		async page => {

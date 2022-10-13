@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
@@ -17,7 +16,7 @@ import { startBlock, stopBlock } from '../../actions/redux-block';
 import { notifySuccess, notifyError } from '../../services/notify';
 import CreateChart from './Modals/CreateChart';
 
-const ClinicalTasks = ({ itemId, type, can_request = true }) => {
+const ClinicalTasks = ({ patient, itemId, type, can_request = true }) => {
 	const [showTaskModal, setShowTaskModal] = useState(false);
 	const [showModal, setShowModal] = useState(false);
 	const [meta, setMeta] = useState({
@@ -31,20 +30,19 @@ const ClinicalTasks = ({ itemId, type, can_request = true }) => {
 	const [showMedication, setShowMedication] = useState(false);
 	const [showChartModal, setShowChartModal] = useState(false);
 
-	const patient = useSelector(state => state.user.patient);
 	const done = useSelector(state => state.patient.reading_done);
 
 	const dispatch = useDispatch();
 
 	const fetchTasks = useCallback(
-		async page => {
+		async (patient, page) => {
 			try {
 				dispatch(startBlock());
 				const p = page || 1;
 				const item_id = itemId || '';
 				const block = type || '';
 				const admission_id = block === '' ? patient?.admission?.id || '' : '';
-				const url = `${admissionAPI}/tasks?patient_id=${patient.id}&page=${p}&limit=12&item_id=${item_id}&admission_id=${admission_id}&type=${block}`;
+				const url = `${admissionAPI}/tasks?patient_id=${patient?.id}&page=${p}&limit=12&item_id=${item_id}&admission_id=${admission_id}&type=${block}`;
 				const rs = await request(url, 'GET', true);
 				const { result, ...paginate } = rs;
 				setMeta(paginate);
@@ -57,21 +55,21 @@ const ClinicalTasks = ({ itemId, type, can_request = true }) => {
 				notifyError(e.message || 'could not fetch tasks');
 			}
 		},
-		[dispatch, itemId, patient, type]
+		[dispatch, itemId, type]
 	);
 
 	useEffect(() => {
-		if (!loaded) {
-			fetchTasks();
+		if (!loaded && patient) {
+			fetchTasks(patient);
 		}
-	}, [fetchTasks, loaded]);
+	}, [fetchTasks, loaded, patient]);
 
 	useEffect(() => {
 		if (done) {
-			fetchTasks();
+			fetchTasks(patient);
 			dispatch(readingDone(null));
 		}
-	}, [dispatch, done, fetchTasks]);
+	}, [dispatch, done, fetchTasks, patient]);
 
 	const deleteTask = async data => {
 		try {
@@ -118,11 +116,11 @@ const ClinicalTasks = ({ itemId, type, can_request = true }) => {
 	};
 
 	const onNavigatePage = async nextPage => {
-		await fetchTasks(nextPage);
+		await fetchTasks(patient, nextPage);
 	};
 
 	const refreshTasks = async () => {
-		await fetchTasks();
+		await fetchTasks(patient);
 	};
 
 	const recordMedication = item => {
@@ -339,9 +337,16 @@ const ClinicalTasks = ({ itemId, type, can_request = true }) => {
 				<CreateTask
 					closeModal={closeModal}
 					refreshTasks={() => refreshTasks()}
+					patient={patient}
 				/>
 			)}
-			{showModal && <TakeReading closeModal={closeModal} taskItem={taskItem} />}
+			{showModal && (
+				<TakeReading
+					closeModal={closeModal}
+					taskItem={taskItem}
+					patient={patient}
+				/>
+			)}
 			{showMedication && (
 				<GiveMedication closeModal={closeModal} taskItem={taskItem} />
 			)}

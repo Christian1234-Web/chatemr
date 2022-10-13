@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
@@ -10,7 +9,7 @@ import { startBlock, stopBlock } from '../../actions/redux-block';
 import CreateNote from '../Modals/CreateNote';
 import { staffname } from '../../services/utilities';
 
-const Notes = () => {
+const Notes = ({ patient }) => {
 	const [loading, setLoading] = useState(true);
 	const [notes, setNotes] = useState([]);
 	const [meta, setMeta] = useState({
@@ -21,7 +20,8 @@ const Notes = () => {
 	const [showModal, setShowModal] = useState(false);
 
 	const dispatch = useDispatch();
-	const ivf = useSelector(state => state.user.item);
+
+	const ivf = useSelector(state => state.sidepanel.item);
 
 	const fetchNotes = useCallback(
 		async page => {
@@ -144,6 +144,7 @@ const Notes = () => {
 					closeModal={closeModal}
 					updateNote={updateNote}
 					ivf_id={ivf.id}
+					patient={patient}
 					type="ivf"
 				/>
 			)}

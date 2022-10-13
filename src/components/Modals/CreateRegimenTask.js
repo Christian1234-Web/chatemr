@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import Select from 'react-select';
-import { Table } from 'react-bootstrap';
 import { confirmAlert } from 'react-confirm-alert';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 
@@ -21,7 +20,7 @@ const defaultValues = {
 	taskCount: '',
 };
 
-const CreateRegimenTask = ({ closeModal, setMedicalTask }) => {
+const CreateRegimenTask = ({ closeModal, setMedicalTask, patient }) => {
 	const { register, handleSubmit, setValue, reset } = useForm({
 		defaultValues,
 	});
@@ -36,8 +35,6 @@ const CreateRegimenTask = ({ closeModal, setMedicalTask }) => {
 
 	const [generic, setGeneric] = useState(null);
 	const [frequencyType, setFrequencyType] = useState(null);
-
-	const patient = useSelector(state => state.user.patient);
 
 	const dispatch = useDispatch();
 
@@ -472,7 +469,7 @@ const CreateRegimenTask = ({ closeModal, setMedicalTask }) => {
 							</form>
 
 							<div>
-								<Table>
+								<table className="table table-striped">
 									<thead>
 										<tr>
 											<th>Prescription</th>
@@ -525,7 +522,7 @@ const CreateRegimenTask = ({ closeModal, setMedicalTask }) => {
 											);
 										})}
 									</tbody>
-								</Table>
+								</table>
 							</div>
 							{drugsSelected.length > 0 && (
 								<div>

@@ -1,5 +1,4 @@
 /* eslint-disable no-sparse-arrays */
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import numeral from 'numeral';
 import uppercase from 'lodash.uppercase';
@@ -613,7 +612,9 @@ export const findByID = (array, id) => {
 };
 
 export const getAge = dob => {
-	if (!dob) return 0;
+	if (!dob) {
+		return 0;
+	}
 
 	const date = moment(new Date(dob));
 

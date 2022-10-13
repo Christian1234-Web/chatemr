@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
 import Tooltip from 'antd/lib/tooltip';
 import moment from 'moment';
@@ -20,6 +19,7 @@ import { notifySuccess, notifyError } from '../services/notify';
 import ModalScheduleDate from './Modals/ModalScheduleDate';
 import ViewRequestNote from './Modals/ViewRequestNote';
 import Admitted from './Admitted';
+import { toggleSidepanel } from '../actions/sidepanel';
 
 class ProcedureBlock extends Component {
 	state = {
@@ -37,7 +37,7 @@ class ProcedureBlock extends Component {
 
 	showProcedure = (patient, procedure) => {
 		const info = { patient, type: 'procedure', item: procedure };
-		this.props.toggleProfile(true, info);
+		this.props.toggleSidepanel(true, info);
 	};
 
 	cancelProcedureTest = async data => {
@@ -360,6 +360,9 @@ class ProcedureBlock extends Component {
 	}
 }
 
-export default connect(null, { startBlock, stopBlock, toggleProfile })(
-	ProcedureBlock
-);
+export default connect(null, {
+	startBlock,
+	stopBlock,
+	toggleSidepanel,
+	toggleProfile,
+})(ProcedureBlock);

@@ -3,7 +3,6 @@ import {
 	LOAD_PAYROLL,
 	LOAD_UNPAID_PAYROLL,
 	LOAD_PAYROLL_HISTORY,
-	LOAD_STAFF_TRANSACTION,
 	ADD_PERFORMANCE_PERIOD,
 	LOAD_PERFORMANCE_PERIOD,
 	SET_PERFORMANCE_PERIOD,
@@ -35,13 +34,6 @@ export const loadPayrollHistory = data => {
 	return {
 		type: LOAD_PAYROLL_HISTORY,
 		payload: data,
-	};
-};
-
-export const loadStaffTransaction = payload => {
-	return {
-		type: LOAD_STAFF_TRANSACTION,
-		payload,
 	};
 };
 

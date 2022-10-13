@@ -12,6 +12,7 @@ export const MODE_COOKIE = 'EMR:MODE_COOKIE';
 export const FULLSCREEN_COOKIE = 'EMR:FULLSCREEN_COOKIE';
 export const MENU_COOKE = 'EMR:MENU_COOKIE';
 export const USER_RECORD = 'EMR:USER_RECORD';
+export const SIDE_PANEL = 'EMR:SIDE_PANEL';
 
 export const CK_ENCOUNTER = 'E:ENCOUNTER';
 export const CK_ASSESSMENT = 'E:ASSESSMENT';

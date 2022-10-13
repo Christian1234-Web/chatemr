@@ -1,7 +1,5 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
 
 import searching from '../../assets/images/searching.gif';
@@ -9,7 +7,7 @@ import { notifyError } from '../../services/notify';
 import { request, itemRender } from '../../services/utilities';
 import RadiologyBlock from '../RadiologyBlock';
 
-const Radiology = ({ location, itemId, type, can_request = true }) => {
+const Radiology = ({ location, itemId, type, can_request = true, patient }) => {
 	const [loaded, setLoaded] = useState(false);
 	const [scans, setScans] = useState([]);
 	const [meta, setMeta] = useState({
@@ -20,8 +18,6 @@ const Radiology = ({ location, itemId, type, can_request = true }) => {
 
 	const startDate = '';
 	const endDate = '';
-
-	const patient = useSelector(state => state.user.patient);
 
 	const fetchScans = useCallback(
 		async page => {

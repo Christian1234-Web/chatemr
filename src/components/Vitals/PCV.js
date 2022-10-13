@@ -22,7 +22,7 @@ const info = {
 	inputs: [{ name: 'pcv', title: 'PCV', weight: '%' }],
 };
 
-const PCV = ({ vitals, task }) => {
+const PCV = ({ vitals, task, patient }) => {
 	const [visible, setVisible] = useState(false);
 	const [currentVitals, setCurrentVitals] = useState(null);
 	const [data, setData] = useState([]);
@@ -78,6 +78,7 @@ const PCV = ({ vitals, task }) => {
 				</div>
 			</div>
 			<Reading
+				patient={patient}
 				visible={visible}
 				vital={currentVitals}
 				info={info}
@@ -91,7 +92,6 @@ const PCV = ({ vitals, task }) => {
 
 const mapStateToProps = (state, ownProps) => {
 	return {
-		patient: state.user.patient,
 		vitals: state.patient.vitals.filter(c => c.readingType === info.title),
 	};
 };

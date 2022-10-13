@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { reduxForm, SubmissionError, Field } from 'redux-form';
 import Select from 'react-select';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { request, renderTextInput } from '../../services/utilities';
 import waiting from '../../assets/images/waiting.gif';
@@ -23,6 +23,7 @@ const RequestConsumable = ({
 	handleSubmit,
 	module,
 	itemId,
+	patient,
 }) => {
 	const [loaded, setLoaded] = useState(false);
 	const [submitting, setSubmitting] = useState(false);
@@ -31,8 +32,6 @@ const RequestConsumable = ({
 	const [requestNote, setRequestNote] = useState('');
 
 	const dispatch = useDispatch();
-
-	const patient = useSelector(state => state.user.patient);
 
 	const fetchConsumables = useCallback(async () => {
 		try {

@@ -30,7 +30,7 @@ const AntenatalAssessment = ({ can_request = true }) => {
 
 	const dispatch = useDispatch();
 
-	const antenatal = useSelector(state => state.user.item);
+	const antenatal = useSelector(state => state.sidepanel.item);
 
 	const fetchAssessments = useCallback(
 		async page => {

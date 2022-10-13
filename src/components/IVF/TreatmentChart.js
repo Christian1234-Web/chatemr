@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
 import DatePicker from 'antd/lib/date-picker';
+
 import { request } from '../../services/utilities';
 import { notifyError, notifySuccess } from '../../services/notify';
-import { useSelector } from 'react-redux';
+
 const { TimePicker } = DatePicker;
 
-const TreatmentChart = ({ closeModal }) => {
-	const patient = useSelector(state => state.user.patient);
-
+const TreatmentChart = ({ closeModal, patient }) => {
 	const [fsh, setFsh] = useState('');
 	const [tsh, setTsh] = useState('');
 	const [lh, setLh] = useState('');
@@ -89,6 +88,7 @@ const TreatmentChart = ({ closeModal }) => {
 		try {
 			const url = `embryology/treatment/create`;
 			const rs = await request(url, 'POST', true, data);
+			console.log(rs);
 			// setFsh('');
 			// setTsh('');
 			// setLh('');

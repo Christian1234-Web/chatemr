@@ -3,7 +3,7 @@ import { Form, Field } from 'react-final-form';
 import DatePicker from 'react-datepicker';
 import { format, isValid } from 'date-fns';
 import moment from 'moment';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { FORM_ERROR } from 'final-form';
 import { withRouter } from 'react-router-dom';
 import AsyncSelect from 'react-select/async/dist/react-select.esm';
@@ -14,12 +14,10 @@ import { startBlock, stopBlock } from '../actions/redux-block';
 import { notifySuccess } from '../services/notify';
 import waiting from '../assets/images/waiting.gif';
 
-const CreateExcuseDuty = ({ location, history }) => {
+const CreateExcuseDuty = ({ location, history, patient }) => {
 	const [startDate, setStartDate] = useState(null);
 	const [endDate, setEndDate] = useState(null);
 	const [diagnoses, setDiagnoses] = useState([]);
-
-	const patient = useSelector(state => state.user.patient);
 
 	const dispatch = useDispatch();
 

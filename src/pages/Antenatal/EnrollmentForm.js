@@ -207,12 +207,7 @@ EnrollmentForm = reduxForm({
 	destroyOnUnmount: false,
 	forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
 })(EnrollmentForm);
-const mapStateToProps = state => {
-	return {
-		patient: state.user.patient,
-	};
-};
 
 export default withRouter(
-	connect(mapStateToProps, { startBlock, stopBlock })(EnrollmentForm)
+	connect(null, { startBlock, stopBlock })(EnrollmentForm)
 );

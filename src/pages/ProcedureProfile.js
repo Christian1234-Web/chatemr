@@ -1,16 +1,15 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component, Suspense, lazy, Fragment } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { Switch, withRouter } from 'react-router-dom';
 
-import { toggleProfile } from '../actions/user';
 import ProcedureMenu from '../components/Navigation/ProcedureProfileMenu';
 import SSRStorage from '../services/storage';
-import { USER_RECORD } from '../services/constants';
+import { SIDE_PANEL } from '../services/constants';
 import Splash from '../components/Splash';
 import ProfileBlock from '../components/ProfileBlock';
 import HashRoute from '../components/HashRoute';
 import AncBlock from '../components/AncBlock';
+import { toggleSidepanel } from '../actions/sidepanel';
 
 const Notes = lazy(() => import('../components/Procedures/Notes'));
 const Attachments = lazy(() => import('../components/Procedures/Attachments'));
@@ -30,34 +29,49 @@ const NursingService = lazy(() =>
 const storage = new SSRStorage();
 
 const Page = ({ location }) => {
-	const procedure = useSelector(state => state.user.item);
+	const procedure = useSelector(state => state.sidepanel.item);
+	const patient = useSelector(state => state.sidepanel.patient);
 	const hash = location.hash.substr(1).split('#');
 	switch (hash[0]) {
 		case 'attachments':
-			return <Attachments can_request={procedure && !procedure.finishedDate} />;
+			return (
+				<Attachments
+					patient={patient}
+					can_request={procedure && !procedure.finishedDate}
+				/>
+			);
 		case 'consumables':
 			return (
 				<Consumables
+					patient={patient}
 					can_request={procedure && !procedure.finishedDate}
 					itemId={procedure.id || ''}
 					type="procedure"
 				/>
 			);
 		case 'medical-report':
-			return <MedicalReport />;
+			return <MedicalReport patient={patient} />;
 		case 'regimen':
 			return (
 				<Pharmacy
+					patient={patient}
 					can_request={procedure && !procedure.finishedDate}
 					itemId={procedure.id || ''}
 					type="procedure"
 				/>
 			);
 		case 'pharmacy-request':
-			return <PharmacyRequest module="procedure" itemId={procedure.id || ''} />;
+			return (
+				<PharmacyRequest
+					patient={patient}
+					module="procedure"
+					itemId={procedure.id || ''}
+				/>
+			);
 		case 'nursing-service':
 			return (
 				<NursingService
+					patient={patient}
 					module="procedure"
 					can_request={procedure && !procedure.finishedDate}
 					itemId={procedure.id || ''}
@@ -65,18 +79,27 @@ const Page = ({ location }) => {
 			);
 		case 'vitals':
 			return (
-				<Vitals type={hash[1].split('%20').join(' ')} category="general" />
+				<Vitals
+					patient={patient}
+					type={hash[1].split('%20').join(' ')}
+					category="general"
+				/>
 			);
 		case 'notes':
 		default:
-			return <Notes can_request={procedure && !procedure.finishedDate} />;
+			return (
+				<Notes
+					patient={patient}
+					can_request={procedure && !procedure.finishedDate}
+				/>
+			);
 	}
 };
 
 class ProcedureProfile extends Component {
 	closeProfile = () => {
-		storage.removeItem(USER_RECORD);
-		this.props.toggleProfile(false);
+		storage.removeItem(SIDE_PANEL);
+		this.props.toggleSidepanel(false);
 	};
 
 	componentDidMount() {
@@ -153,10 +176,10 @@ class ProcedureProfile extends Component {
 
 const mapStateToProps = (state, ownProps) => {
 	return {
-		patient: state.user.patient,
+		patient: state.sidepanel.patient,
 	};
 };
 
 export default withRouter(
-	connect(mapStateToProps, { toggleProfile })(ProcedureProfile)
+	connect(mapStateToProps, { toggleSidepanel })(ProcedureProfile)
 );

@@ -1,15 +1,8 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Field, reduxForm } from 'redux-form';
 
-import {
-	renderSelect,
-	renderTextInput,
-	request,
-} from '../../services/utilities';
-import { notifySuccess, notifyError } from '../../services/notify';
-import IVFRegulationTable from './IVFRegulationTable';
+import { renderSelect, renderTextInput } from '../../services/utilities';
 
 const agents = [
 	{
@@ -36,35 +29,31 @@ class RegulationChart extends Component {
 	};
 
 	onSubmitForm = async data => {
-		const { regulationTable } = this.props;
-
-		const hcgDown = regulationTable.map(value => {
-			return {
-				date: value.date,
-				day: value.day,
-				dose: value.dose,
-				otherTreatment: value.other_treatment,
-				comment: value.comment,
-			};
-		});
-
-		const dataToSave = {
-			ivf_enrollment_id: data.name,
-			agent: data.agents,
-			cycle: data.cycle,
-			charts: hcgDown,
-		};
-
-		try {
-			const url = 'ivf/save/down-regulation';
-			await request(url, 'POST', true, dataToSave);
-			notifySuccess('Down Regulation Chart created successfully');
-			this.setState({ loading: false });
-		} catch (error) {
-			console.log(error);
-			notifyError('Down Regulation Chart creation failed');
-			this.setState({ loading: false });
-		}
+		// const hcgDown = regulationTable.map(value => {
+		// 	return {
+		// 		date: value.date,
+		// 		day: value.day,
+		// 		dose: value.dose,
+		// 		otherTreatment: value.other_treatment,
+		// 		comment: value.comment,
+		// 	};
+		// });
+		// const dataToSave = {
+		// 	ivf_enrollment_id: data.name,
+		// 	agent: data.agents,
+		// 	cycle: data.cycle,
+		// 	charts: hcgDown,
+		// };
+		// try {
+		// 	const url = 'ivf/save/down-regulation';
+		// 	await request(url, 'POST', true, dataToSave);
+		// 	notifySuccess('Down Regulation Chart created successfully');
+		// 	this.setState({ loading: false });
+		// } catch (error) {
+		// 	console.log(error);
+		// 	notifyError('Down Regulation Chart creation failed');
+		// 	this.setState({ loading: false });
+		// }
 	};
 
 	render() {
@@ -111,9 +100,7 @@ class RegulationChart extends Component {
 								<div className="col-sm-12">
 									<div className="element-wrapper">
 										<div className="element-box">
-											<div className="table table-responsive">
-												<IVFRegulationTable />
-											</div>
+											<div className="table table-responsive"></div>
 										</div>
 									</div>
 								</div>
@@ -140,11 +127,4 @@ RegulationChart = reduxForm({
 	forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
 })(RegulationChart);
 
-const mapStateToProps = state => {
-	return {
-		patient: state.user.patient,
-		regulationTable: state.patient.regulationTable,
-	};
-};
-
-export default withRouter(connect(mapStateToProps)(RegulationChart));
+export default withRouter(RegulationChart);

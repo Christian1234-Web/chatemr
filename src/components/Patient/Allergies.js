@@ -1,6 +1,4 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import Tooltip from 'antd/lib/tooltip';
 
@@ -129,10 +127,4 @@ class Allergies extends Component {
 	}
 }
 
-const mapStateToProps = (state, ownProps) => {
-	return {
-		patient: state.user.patient,
-	};
-};
-
-export default withRouter(connect(mapStateToProps)(Allergies));
+export default withRouter(Allergies);

@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
@@ -241,12 +240,4 @@ class AppointmentHistory extends Component {
 	}
 }
 
-const mapStateToProps = state => {
-	return {
-		patient: state.user.patient,
-	};
-};
-
-export default connect(mapStateToProps, { startBlock, stopBlock })(
-	AppointmentHistory
-);
+export default connect(null, { startBlock, stopBlock })(AppointmentHistory);

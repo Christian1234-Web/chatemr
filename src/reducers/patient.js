@@ -3,13 +3,8 @@ import { CK_ASSESSMENT, CK_ENCOUNTER } from '../services/constants';
 import {
 	LOAD_VITALS,
 	UPDATE_VITALS,
-	GET_LAB_REQUESTS,
-	GET_PHARMACY_REQUESTS,
-	GET_ALL_REQUESTS,
-	PATIENT_REGULATION_TABLE,
 	PATIENT_IVF,
 	READING_DONE,
-	SET_IVF,
 	UPDATE_ENCOUNTER_DATA,
 	RESET_ENCOUNTER_DATA,
 	UPDATE_SOAP_DATA,
@@ -29,9 +24,6 @@ const soapData = {
 const INITIAL_STATE = {
 	vitals: [],
 	ivfDetails: {},
-	labRequests: [],
-	pharmacyRequests: [],
-	allRequests: [],
 	ivf: {},
 	encounterData: {
 		complaints:
@@ -78,13 +70,8 @@ const INITIAL_STATE = {
 
 const patient = (state = INITIAL_STATE, action) => {
 	switch (action.type) {
-		case SET_IVF:
-			console.log(SET_IVF);
-			return { ...state, ivfDetails: action.payload };
 		case PATIENT_IVF:
 			return { ...state, ivf: action.payload };
-		case PATIENT_REGULATION_TABLE:
-			return { ...state, regulationTable: action.payload };
 		case UPDATE_ENCOUNTER_DATA:
 			storage.setLocalStorage(CK_ENCOUNTER, {
 				patient_id: action.patient_id,
@@ -118,12 +105,6 @@ const patient = (state = INITIAL_STATE, action) => {
 			return { ...state, vitals: [...action.payload] };
 		case UPDATE_VITALS:
 			return { ...state, vitals: [action.payload, ...state.vitals] };
-		case GET_LAB_REQUESTS:
-			return { ...state, labRequests: action.payload };
-		case GET_PHARMACY_REQUESTS:
-			return { ...state, pharmacyRequests: action.payload };
-		case GET_ALL_REQUESTS:
-			return { ...state, allRequests: action.payload };
 		case READING_DONE:
 			return { ...state, reading_done: action.payload };
 		default:

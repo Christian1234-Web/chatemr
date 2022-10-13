@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
 import startCase from 'lodash.startcase';
 
@@ -15,14 +15,12 @@ import { startBlock, stopBlock } from '../../actions/redux-block';
 
 import TableLoading from '../TableLoading';
 
-const AncVisitNotes = () => {
+const AncVisitNotes = ({ patient }) => {
 	const [loading, setLoading] = useState(true);
 	const [notes, setNotes] = useState([]);
 	const [meta, setMeta] = useState(null);
 
 	const dispatch = useDispatch();
-
-	const patient = useSelector(state => state.user.patient);
 
 	const fetchNotes = useCallback(
 		async page => {

@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState, useCallback } from 'react';
 import moment from 'moment';
 import Tooltip from 'antd/lib/tooltip';
@@ -24,6 +23,7 @@ import TableLoading from '../../components/TableLoading';
 import ProfilePopup from '../../components/Patient/ProfilePopup';
 import AssignAccommodation from './AssignAccommodation';
 import { messageService } from '../../services/message';
+import { toggleSidepanel } from '../../actions/sidepanel';
 
 const statuses = [
 	{ label: 'All', value: '' },
@@ -136,7 +136,7 @@ const NicuPatients = () => {
 
 	const openNicu = (patient, nicu) => {
 		const info = { patient, type: 'nicu', item: nicu };
-		dispatch(toggleProfile(true, info));
+		dispatch(toggleSidepanel(true, info));
 	};
 
 	const dateChange = e => {

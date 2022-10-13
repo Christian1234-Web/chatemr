@@ -1,21 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-	formatCurrency,
-	formatDate,
-	itemRender,
-	patientname,
-	request,
-	staffname,
-} from '../../services/utilities';
 import moment from 'moment';
-import Pagination from 'antd/lib/pagination';
+import DatePicker from 'antd/lib/date-picker';
+
+import { request } from '../../services/utilities';
 import TableLoading from '../../components/TableLoading';
 import { paginate } from '../../services/constants';
-import DatePicker from 'antd/lib/date-picker';
 import waiting from '../../assets/images/waiting.gif';
-import { Tooltip } from 'react-bootstrap';
-import startCase from 'lodash.startcase';
 
 const { RangePicker } = DatePicker;
 
@@ -23,10 +14,8 @@ const Payable = () => {
 	const [loading, setLoading] = useState(true);
 	const [display, setDisplay] = useState(false);
 
-	const [cafeteriaTransactions, setCafeteriaTransactions] = useState([]);
-	const [meta, setMeta] = useState({ ...paginate });
-
-	// eslint-disable-next-line no-unused-vars
+	const [, setCafeteriaTransactions] = useState([]);
+	const [, setMeta] = useState({ ...paginate });
 
 	const [startDate, setStartDate] = useState('');
 	const [endDate, setEndDate] = useState('');
@@ -72,10 +61,6 @@ const Payable = () => {
 		setFiltering(true);
 		await fetchCafeteriaTransactions();
 		setFiltering(false);
-	};
-
-	const onNavigatePage = pageNumber => {
-		fetchCafeteriaTransactions(pageNumber);
 	};
 
 	const handleDisplay = () => {

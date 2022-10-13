@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import DatePicker from 'antd/lib/date-picker';
 import { Field } from 'react-final-form';
-import Select from 'react-select';
-import { format, isValid } from 'date-fns';
 import moment from 'moment';
 
 import { notifyError, notifySuccess } from '../../services/notify';
@@ -11,14 +9,11 @@ import {
 	ErrorBlock,
 	ReactSelectAdapter,
 	request,
-	updateImmutable,
 } from '../../services/utilities';
 import FormWizard from '../FormWizard';
 
 const Oocyte = ({ closeModal }) => {
-	const [time_deliver, setTime_deliver] = useState('');
 	const [date, setDate] = useState('');
-	const [, setNo_of_vitals] = useState('');
 
 	const no_of_vitals = [
 		{ name: '1', id: 1 },
@@ -221,7 +216,7 @@ const Oocyte = ({ closeModal }) => {
 		try {
 			const url = `freezing/oocyte/save`;
 			const rs = await request(url, 'POST', true, data);
-			// console.log(rs)
+			console.log(rs);
 			notifySuccess('Save Successful!');
 			closeModal();
 		} catch (err) {

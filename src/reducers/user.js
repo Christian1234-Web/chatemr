@@ -30,12 +30,6 @@ const INITIAL_STATE = {
 	staff: null,
 	isStaffOpen: false,
 	isPatientOpen: false,
-	isProcedureOpen: false,
-	isAntenatalOpen: false,
-	isAdmissionOpen: false,
-	isIVFOpen: false,
-	isNicuOpen: false,
-	isLabourOpen: false,
 	menu_mode: 'menu-layout-compact',
 	menu_mini: false,
 	item: null,
@@ -60,13 +54,9 @@ const user = (state = INITIAL_STATE, action) => {
 				staff: null,
 				item: null,
 				isPatientOpen: false,
-				isProcedureOpen: false,
 				isAntenatalOpen: false,
 				isAdmissionOpen: false,
 				isStaffOpen: false,
-				isIVFOpen: false,
-				isNicuOpen: false,
-				isLabourOpen: false,
 				appointmentId: null,
 				antenatal: null,
 			};
@@ -120,28 +110,13 @@ const user = (state = INITIAL_STATE, action) => {
 				const item = action.info.item;
 				const type = action.info.type;
 				const { patient, staff } = action.info;
-				const data =
-					type === 'patient' ||
-					type === 'procedure' ||
-					type === 'antenatal' ||
-					type === 'admission' ||
-					type === 'ivf' ||
-					type === 'nicu' ||
-					type === 'labour'
-						? { patient }
-						: { staff };
+				const data = type === 'patient' ? { patient } : { staff };
 				storage.setItem(USER_RECORD, { ...data, type, item });
 
 				return {
 					...state,
 					isStaffOpen: type === 'staff',
 					isPatientOpen: type === 'patient',
-					isProcedureOpen: type === 'procedure',
-					isAntenatalOpen: type === 'antenatal',
-					isAdmissionOpen: type === 'admission',
-					isIVFOpen: type === 'ivf',
-					isNicuOpen: type === 'nicu',
-					isLabourOpen: type === 'labour',
 					item,
 					type,
 					appointmentId: action.appointmentId,
@@ -154,12 +129,6 @@ const user = (state = INITIAL_STATE, action) => {
 				...state,
 				isStaffOpen: false,
 				isPatientOpen: false,
-				isProcedureOpen: false,
-				isAntenatalOpen: false,
-				isAdmissionOpen: false,
-				isIVFOpen: false,
-				isNicuOpen: false,
-				isLabourOpen: false,
 				userID: null,
 				patient: null,
 				staff: null,

@@ -1,5 +1,4 @@
 import React, { Component, lazy, Suspense } from 'react';
-import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { reduxForm } from 'redux-form';
 
@@ -94,10 +93,4 @@ EnrollmentForm = reduxForm({
 	forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
 })(EnrollmentForm);
 
-const mapStateToProps = state => {
-	return {
-		patient: state.user.patient,
-	};
-};
-
-export default withRouter(connect(mapStateToProps, null)(EnrollmentForm));
+export default withRouter(EnrollmentForm);

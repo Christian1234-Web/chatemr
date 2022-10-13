@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import AsyncSelect from 'react-select/async/dist/react-select.esm';
@@ -32,7 +32,7 @@ const SendButton = ({ submitting }) => {
 	);
 };
 
-const ProcedureRequest = ({ module, history, location }) => {
+const ProcedureRequest = ({ module, history, location, patient }) => {
 	const { register, handleSubmit, setValue } = useForm({ defaultValues });
 
 	const [submitting, setSubmitting] = useState(false);
@@ -42,16 +42,14 @@ const ProcedureRequest = ({ module, history, location }) => {
 	const [selectedOption, setSelectedOption] = useState(null);
 	const [resources, setResources] = useState([]);
 
-	const currentPatient = useSelector(state => state.user.patient);
-
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		if (!loadedPatient && currentPatient) {
-			setChosenPatient(currentPatient);
+		if (!loadedPatient && patient) {
+			setChosenPatient(patient);
 		}
 		setLoadedPatient(true);
-	}, [currentPatient, loadedPatient]);
+	}, [loadedPatient, patient]);
 
 	const getPatients = async q => {
 		if (!q || q.length < 1) {
@@ -136,8 +134,6 @@ const ProcedureRequest = ({ module, history, location }) => {
 		setSelectedOption(selectedOption.value);
 	};
 
-	console.log('Malik', resources);
-
 	return (
 		<div className={!module || (module && module === '') ? '' : 'col-sm-12'}>
 			<div className="element-box m-0 p-3">
@@ -151,7 +147,7 @@ const ProcedureRequest = ({ module, history, location }) => {
 						</div>
 					)}
 					<form onSubmit={handleSubmit(onSubmit)}>
-						{!currentPatient && (
+						{!patient && (
 							<div className="row">
 								<div className="form-group col-sm-12">
 									<label htmlFor="patient">Patient Name</label>

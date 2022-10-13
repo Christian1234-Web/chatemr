@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState, useCallback } from 'react';
 import moment from 'moment';
 import Tooltip from 'antd/lib/tooltip';
@@ -15,6 +14,7 @@ import { toggleProfile } from '../../actions/user';
 import TableLoading from '../../components/TableLoading';
 import ProfilePopup from '../../components/Patient/ProfilePopup';
 import { staffname } from '../../services/utilities';
+import { toggleSidepanel } from '../../actions/sidepanel';
 
 const { RangePicker } = DatePicker;
 
@@ -100,7 +100,7 @@ const IvfPatients = () => {
 
 	const openIVF = (patient, ivf) => {
 		const info = { patient, type: 'ivf', item: ivf };
-		dispatch(toggleProfile(true, info));
+		dispatch(toggleSidepanel(true, info));
 	};
 
 	const dateChange = e => {
@@ -177,7 +177,7 @@ const IvfPatients = () => {
 									{ivfPatients.map((item, i) => {
 										return (
 											<tr key={i}>
-												<td>{item.serial_code}</td>
+												<td>{item.serial_code || '--'}</td>
 												<td>
 													<p className="item-title text-color m-0">
 														<Tooltip

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Form, Field } from 'react-final-form';
 import { FORM_ERROR } from 'final-form';
 import DatePicker from 'react-datepicker';
@@ -12,12 +12,16 @@ import { ReactSelectAdapter, request } from '../../services/utilities';
 import ModalHeader from '../ModalHeader';
 import { genders } from '../../services/constants';
 
-const CreateObstNote = ({ closeModal, updateNote, type, antenatal_id }) => {
+const CreateObstNote = ({
+	closeModal,
+	updateNote,
+	type,
+	antenatal_id,
+	patient,
+}) => {
 	const [dob, setDob] = useState(null);
 
 	const dispatch = useDispatch();
-
-	const patient = useSelector(state => state.user.patient);
 
 	const onSubmit = async values => {
 		try {

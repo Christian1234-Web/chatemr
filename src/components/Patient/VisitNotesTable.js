@@ -133,13 +133,4 @@ class VisitNotesTable extends Component {
 	}
 }
 
-const mapStateToProps = state => {
-	return {
-		patient: state.user.patient,
-	};
-};
-
-export default connect(mapStateToProps, {
-	startBlock,
-	stopBlock,
-})(VisitNotesTable);
+export default connect(null, { startBlock, stopBlock })(VisitNotesTable);

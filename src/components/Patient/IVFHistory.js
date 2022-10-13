@@ -1,17 +1,22 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
 import moment from 'moment';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import DatePicker from 'antd/lib/date-picker';
 import Pagination from 'antd/lib/pagination';
+import Tooltip from 'antd/lib/tooltip';
 
 import waiting from '../../assets/images/waiting.gif';
-import { request, itemRender, confirmAction } from '../../services/utilities';
-import { setIVF } from '../../actions/patient';
+import {
+	request,
+	itemRender,
+	confirmAction,
+	staffname,
+} from '../../services/utilities';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import { notifyError, notifySuccess } from '../../services/notify';
 import TableLoading from '../TableLoading';
+import { toggleSidepanel } from '../../actions/sidepanel';
 
 const { RangePicker } = DatePicker;
 
@@ -44,12 +49,6 @@ class IVFHistory extends Component {
 
 	confirmDelete = data => {
 		confirmAction(this.cancelRequest, data);
-	};
-
-	viewDetails = data => {
-		const { location, history, setIVF } = this.props;
-		setIVF(data);
-		history.push(`${location.pathname}/ivf-details`);
 	};
 
 	fetchIVF = async page => {
@@ -98,6 +97,12 @@ class IVFHistory extends Component {
 		});
 	};
 
+	openIvf = ivf => {
+		const { patient } = this.props;
+		const info = { patient, type: 'ivf', item: ivf };
+		this.props.toggleSidepanel(true, info);
+	};
+
 	render() {
 		const { filtering, loading, meta, ivfs } = this.state;
 		return (
@@ -134,53 +139,54 @@ class IVFHistory extends Component {
 								<table className="table table-striped">
 									<thead>
 										<tr>
-											<th>DATE ENROLLED</th>
-											<th>Assessment Comments</th>
-											<th>PROGNOSIS</th>
-											<th>TREATMENT PLAN</th>
-											<th>INDICATION</th>
-											<th>DATE OF COMMENCEMENT</th>
-											<th>DATE OF TREATMENT</th>
-											<th>RESULT</th>
-											<th>INDICATION</th>
-											<th>MEDICATION USED</th>
+											<th>ID</th>
+											<th>Date of Enrollment</th>
+											<th>Enrolled By</th>
+											<th>Date Closed</th>
+											<th>Closed By</th>
+											<th>Status</th>
+											<th></th>
 										</tr>
 									</thead>
 									<tbody>
 										{ivfs.map((ivf, index) => {
 											return (
 												<tr key={index}>
+													<td>{ivf.serial_code || '--'}</td>
 													<td>
 														{moment(ivf.createdAt).format('DD-MM-YYYY H:mma')}
 													</td>
-													<td>{ivf.assessmentComments}</td>
-													<td>{ivf?.prognosis}</td>
+													<td>{staffname(ivf.staff)}</td>
 													<td>
-														<span className="text-capitalize">
-															{ivf.treatmentPlan}
-														</span>
-													</td>
-													<td>{ivf.indication}</td>
-													<td>
-														{moment(ivf.dateOfCommencement).format(
-															'DD-MM-YYYY H:mma'
+														{moment(ivf.date_closed).format(
+															'DD-MMM-YYYY h:mm A'
 														)}
 													</td>
-
+													<td>{staffname(ivf.closedBy)}</td>
 													<td>
-														{moment(ivf.dateOfTreatment).format(
-															'DD-MM-YYYY H:mma'
+														{ivf.status === 0 ? (
+															<span className="badge badge-secondary">
+																Open
+															</span>
+														) : (
+															<span className="badge badge-success">
+																Closed
+															</span>
 														)}
 													</td>
-													<td>{ivf.result}</td>
-													<td>{ivf.indication}</td>
-													<td>{ivf.meducationUsed}</td>
+													<td className="row-actions">
+														<Tooltip title="Open IVF">
+															<a onClick={() => this.openIvf(ivf)}>
+																<i className="os-icon os-icon-user-male-circle2" />
+															</a>
+														</Tooltip>
+													</td>
 												</tr>
 											);
 										})}
 										{ivfs.length === 0 && (
 											<tr className="text-center">
-												<td colSpan="10">No ivf</td>
+												<td colSpan="7">No ivf requests found!</td>
 											</tr>
 										)}
 									</tbody>
@@ -207,13 +213,6 @@ class IVFHistory extends Component {
 	}
 }
 
-const mapStateToProps = state => {
-	return {
-		antenatal: state.patient.antenatal,
-		patient: state.user.patient,
-	};
-};
-
 export default withRouter(
-	connect(mapStateToProps, { setIVF, startBlock, stopBlock })(IVFHistory)
+	connect(null, { startBlock, stopBlock, toggleSidepanel })(IVFHistory)
 );

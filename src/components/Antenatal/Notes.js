@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
@@ -10,7 +9,7 @@ import { startBlock, stopBlock } from '../../actions/redux-block';
 import CreateNote from '../Modals/CreateNote';
 import { staffname } from '../../services/utilities';
 
-const Notes = ({ can_request = true }) => {
+const Notes = ({ can_request = true, patient }) => {
 	const [loading, setLoading] = useState(true);
 	const [notes, setNotes] = useState([]);
 	const [meta, setMeta] = useState({
@@ -22,7 +21,7 @@ const Notes = ({ can_request = true }) => {
 
 	const dispatch = useDispatch();
 
-	const antenatal = useSelector(state => state.user.item);
+	const antenatal = useSelector(state => state.sidepanel.item);
 
 	const fetchNotes = useCallback(
 		async page => {
@@ -144,6 +143,7 @@ const Notes = ({ can_request = true }) => {
 					updateNote={updateNote}
 					antenatal_id={antenatal.id}
 					type="antenatal"
+					patient={patient}
 				/>
 			)}
 		</div>

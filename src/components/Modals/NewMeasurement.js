@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Field } from 'react-final-form';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { FORM_ERROR } from 'final-form';
 
 import { startBlock, stopBlock } from '../../actions/redux-block';
@@ -9,10 +9,8 @@ import { notifySuccess } from '../../services/notify';
 import { request } from '../../services/utilities';
 import ModalHeader from '../ModalHeader';
 
-const NewMeasurement = ({ closeModal, labour_id, update }) => {
+const NewMeasurement = ({ closeModal, labour_id, update, patient }) => {
 	const dispatch = useDispatch();
-
-	const patient = useSelector(state => state.user.patient);
 
 	const onSubmit = async values => {
 		try {

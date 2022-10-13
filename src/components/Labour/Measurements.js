@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
@@ -12,7 +11,7 @@ import NewMeasurement from '../Modals/NewMeasurement';
 import Measurement from '../Modals/Measurement';
 import { labourAPI } from '../../services/constants';
 
-const Measurements = ({ can_request }) => {
+const Measurements = ({ can_request, patient }) => {
 	const [loading, setLoading] = useState(true);
 	const [list, setList] = useState([]);
 	const [meta, setMeta] = useState({
@@ -25,7 +24,8 @@ const Measurements = ({ can_request }) => {
 	const [measureItem, setMeasureItem] = useState(null);
 
 	const dispatch = useDispatch();
-	const labour = useSelector(state => state.user.item);
+
+	const labour = useSelector(state => state.sidepanel.item);
 
 	const fetchMeasurements = useCallback(
 		async page => {
@@ -169,6 +169,7 @@ const Measurements = ({ can_request }) => {
 				<NewMeasurement
 					closeModal={closeModal}
 					labour_id={labour.id}
+					patient={patient}
 					update={item => setList([item, ...list])}
 				/>
 			)}

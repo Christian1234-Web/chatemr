@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Field } from 'react-final-form';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { FORM_ERROR } from 'final-form';
 
 import { startBlock, stopBlock } from '../../actions/redux-block';
@@ -29,10 +29,8 @@ const plainOptions = [
 	'Traditional birth attendant/Outside interference',
 ];
 
-const NewAssessment = ({ closeModal, labour_id, update }) => {
+const NewAssessment = ({ closeModal, labour_id, update, patient }) => {
 	const dispatch = useDispatch();
-
-	const patient = useSelector(state => state.user.patient);
 
 	const onSubmit = async values => {
 		try {

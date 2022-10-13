@@ -1,6 +1,5 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Select from 'react-select';
 import Tooltip from 'antd/lib/tooltip';
 import DatePicker from 'react-datepicker';
@@ -20,15 +19,13 @@ const allOptions = [
 	{ label: 'months', value: 'months' },
 ];
 
-const CreateTask = ({ closeModal, refreshTasks }) => {
+const CreateTask = ({ closeModal, refreshTasks, patient }) => {
 	const [submitting, setSubmitting] = useState(false);
 	const [options, setOptions] = useState([]);
 	const [clinicalTasks, setClinicalTasks] = useState([]);
 	const [showModal, setShowModal] = useState(false);
 
 	const dispatch = useDispatch();
-
-	const patient = useSelector(state => state.user.patient);
 
 	const setTask = type => {
 		const q = clinicalTasks.find(t => t.name === type);
@@ -353,6 +350,7 @@ const CreateTask = ({ closeModal, refreshTasks }) => {
 			</div>
 			{showModal && (
 				<CreateRegimenTask
+					patient={patient}
 					closeModal={closeCreateRegimen}
 					setMedicalTask={setMedicalTask}
 				/>

@@ -36,6 +36,7 @@ const ClinicalTasks = () => {
 	const [showModal, setShowModal] = useState(false);
 	const [showMedication, setShowMedication] = useState(false);
 	const [taskItem, setTaskItem] = useState(null);
+	const [patient, setPatient] = useState(null);
 	const [showChartModal, setShowChartModal] = useState(false);
 
 	const done = useSelector(state => state.patient.reading_done);
@@ -98,10 +99,10 @@ const ClinicalTasks = () => {
 		document.body.classList.add('modal-open');
 		setShowModal(true);
 		setTaskItem(item);
+		setPatient(item.patient);
 	};
 
 	const recordFluid = item => {
-		console.log(item);
 		document.body.classList.add('modal-open');
 		setShowChartModal(true);
 		setTaskItem(item);
@@ -113,6 +114,7 @@ const ClinicalTasks = () => {
 		setShowMedication(false);
 		setShowChartModal(false);
 		setTaskItem(null);
+		setPatient(null);
 	};
 
 	const recordMedication = item => {
@@ -334,7 +336,13 @@ const ClinicalTasks = () => {
 					</div>
 				)}
 			</div>
-			{showModal && <TakeReading closeModal={closeModal} taskItem={taskItem} />}
+			{showModal && (
+				<TakeReading
+					closeModal={closeModal}
+					taskItem={taskItem}
+					patient={patient}
+				/>
+			)}
 			{showMedication && (
 				<GiveMedication closeModal={closeModal} taskItem={taskItem} />
 			)}

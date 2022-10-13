@@ -3,7 +3,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import Select from 'react-select';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
-import { Table } from 'react-bootstrap';
 
 import { updateEncounterData } from '../../../actions/patient';
 import { allergyCategories, severities } from '../../../services/constants';
@@ -254,7 +253,7 @@ const Allergies = ({ previous, next, patient }) => {
 			</div>
 			<div className="row">
 				<div className="element-box p-3 m-0 mt-3 w-100">
-					<Table>
+					<table className="table table-striped">
 						<thead>
 							<tr>
 								<th>Category</th>
@@ -292,7 +291,7 @@ const Allergies = ({ previous, next, patient }) => {
 								);
 							})}
 						</tbody>
-					</Table>
+					</table>
 				</div>
 			</div>
 			<div className="row mt-5">

@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -9,13 +8,14 @@ import { startBlock, stopBlock } from '../../actions/redux-block';
 import NewAssessment from '../Modals/NewAssessment';
 import { labourAPI } from '../../services/constants';
 
-const RiskAssessments = () => {
+const RiskAssessments = ({ patient }) => {
 	const [loading, setLoading] = useState(true);
 	const [assessment, setAssessment] = useState(null);
 	const [showModal, setShowModal] = useState(false);
 
 	const dispatch = useDispatch();
-	const labour = useSelector(state => state.user.item);
+
+	const labour = useSelector(state => state.sidepanel.item);
 
 	const fetchAssessments = useCallback(async () => {
 		try {
@@ -115,6 +115,7 @@ const RiskAssessments = () => {
 				<NewAssessment
 					closeModal={closeModal}
 					labour_id={labour.id}
+					patient={patient}
 					update={item => setAssessment(item)}
 				/>
 			)}

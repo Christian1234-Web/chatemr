@@ -1,15 +1,8 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from 'react';
 
-import EmbryoTransfer from './EmbryoTransfer';
-import EmbryoAssessment from './EmbryoAssessment';
-import IcsiRecord from './IcsiRecord';
-import SpermPreparation from './SpermPreparation';
-import TreatmentChart from './TreatmentChart';
 import CreateEmbryology from '../Modals/CreateEmbryology';
 
-const Embryology = () => {
-	const [tab, setTab] = useState('chart');
+const Embryology = ({ patient }) => {
 	const [showModal, setShowModal] = useState(false);
 
 	const newEntry = () => {
@@ -32,7 +25,9 @@ const Embryology = () => {
 					>
 						New Embryology
 					</a>
-					{showModal && <CreateEmbryology closeModal={closeModal} />}
+					{showModal && (
+						<CreateEmbryology patient={patient} closeModal={closeModal} />
+					)}
 				</div>
 			</div>
 		</div>

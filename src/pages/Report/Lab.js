@@ -52,7 +52,7 @@ class Lab extends Component {
 			this.setState({ loading: true });
 			const url = `hmos/schemes?limit=100`;
 			const rs = await request(url, 'GET', true);
-			const { result, ...meta } = rs;
+			const { result } = rs;
 			this.setState({ loading: false, filtering: false, hmos: result });
 			this.props.stopBlock();
 		} catch (error) {
@@ -62,7 +62,6 @@ class Lab extends Component {
 	};
 
 	doFilter = e => {
-		if (e) e.preventDefault();
 		this.setState({ filtering: true });
 		this.fetchLabs();
 	};

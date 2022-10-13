@@ -1,7 +1,6 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useCallback, useEffect, useState } from 'react';
 import Tooltip from 'antd/lib/tooltip';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import moment from 'moment';
 import DatePicker from 'antd/lib/date-picker';
 import Pagination from 'antd/lib/pagination';
@@ -12,19 +11,17 @@ import { startBlock, stopBlock } from '../../actions/redux-block';
 import { request, itemRender, formatDate } from '../../services/utilities';
 import TableLoading from '../TableLoading';
 import { staffname } from '../../services/utilities';
-import { toggleProfile } from '../../actions/user';
+import { toggleSidepanel } from '../../actions/sidepanel';
 
 const { RangePicker } = DatePicker;
 
-const AdmissionHistory = () => {
+const AdmissionHistory = ({ patient }) => {
 	const [loading, setLoading] = useState(true);
 	const [filtering, setFiltering] = useState(false);
 	const [enrollments, setEnrollments] = useState([]);
 	const [meta, setMeta] = useState(null);
 	const [startDate, setStartDate] = useState('');
 	const [endDate, setEndDate] = useState('');
-
-	const patient = useSelector(state => state.user.patient);
 
 	const dispatch = useDispatch();
 
@@ -87,7 +84,7 @@ const AdmissionHistory = () => {
 			type: 'admission',
 			item: admission,
 		};
-		dispatch(toggleProfile(true, info));
+		dispatch(toggleSidepanel(true, info));
 	};
 
 	return (
@@ -160,7 +157,7 @@ const AdmissionHistory = () => {
 														)}
 													</td>
 													<td className="row-actions">
-														<Tooltip title="Open Antenatal">
+														<Tooltip title="Open Admission">
 															<a
 																onClick={() =>
 																	openAdmission(item.patient, item)

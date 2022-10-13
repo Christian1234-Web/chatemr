@@ -1,25 +1,16 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState, useCallback } from 'react';
 import moment from 'moment';
 import Tooltip from 'antd/lib/tooltip';
 import { useDispatch } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
 import DatePicker from 'antd/lib/date-picker';
-import AsyncSelect from 'react-select/async/dist/react-select.esm';
 
 import { notifyError } from '../../services/notify';
-import {
-	request,
-	itemRender,
-	patientname,
-	updateImmutable,
-} from '../../services/utilities';
+import { request, itemRender, updateImmutable } from '../../services/utilities';
 import waiting from '../../assets/images/waiting.gif';
 import { startBlock, stopBlock } from '../../actions/redux-block';
-import { searchAPI, labourAPI } from '../../services/constants';
-import { toggleProfile } from '../../actions/user';
+import { labourAPI } from '../../services/constants';
 import TableLoading from '../../components/TableLoading';
-import ProfilePopup from '../../components/Patient/ProfilePopup';
 import { staffname } from '../../services/utilities';
 import { messageService } from '../../services/message';
 import { toggleSidepanel } from '../../actions/sidepanel';
@@ -28,7 +19,7 @@ const { RangePicker } = DatePicker;
 
 const limit = 12;
 
-const LabourPatients = () => {
+const LabourHistory = ({ patient }) => {
 	const [patients, setPatients] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [filtering, setFiltering] = useState(false);
@@ -39,16 +30,15 @@ const LabourPatients = () => {
 		itemsPerPage: limit,
 		totalPages: 0,
 	});
-	const [patient, setPatient] = useState('');
 
 	const dispatch = useDispatch();
 
 	const fetchLabours = useCallback(
-		async (page, patientId, sDate, eDate) => {
+		async (page, sDate, eDate) => {
 			try {
 				dispatch(startBlock());
 				const p = page || 1;
-				const patient_id = patientId || '';
+				const patient_id = patient.id || '';
 				const url = `${labourAPI}?page=${p}&limit=${limit}&patient_id=${patient_id}&startDate=${
 					sDate || ''
 				}&endDate=${eDate || ''}`;
@@ -56,8 +46,7 @@ const LabourPatients = () => {
 				const { result, ...meta } = rs;
 				setMeta(meta);
 				window.scrollTo({ top: 0, behavior: 'smooth' });
-				const arr = [...result];
-				setPatients(arr);
+				setPatients([...result]);
 				setFiltering(false);
 				dispatch(stopBlock());
 			} catch (error) {
@@ -67,7 +56,7 @@ const LabourPatients = () => {
 				setFiltering(false);
 			}
 		},
-		[dispatch]
+		[dispatch, patient.id]
 	);
 
 	useEffect(() => {
@@ -91,37 +80,17 @@ const LabourPatients = () => {
 		};
 	});
 
-	const getOptionValues = option => option.id;
-	const getOptionLabels = option => patientname(option, true);
-
-	const getOptions = async q => {
-		if (!q || q.length < 1) {
-			return [];
-		}
-
-		const url = `${searchAPI}?q=${q}`;
-		const res = await request(url, 'GET', true);
-		return res;
-	};
-
 	const doFilter = e => {
 		e.preventDefault();
 		setFiltering(true);
-		fetchLabours(1, patient, startDate, endDate);
+		fetchLabours(1, startDate, endDate);
 	};
 
 	const onNavigatePage = nextPage => {
-		fetchLabours(nextPage, patient, startDate, endDate);
+		fetchLabours(nextPage, startDate, endDate);
 	};
 
-	const showProfile = patient => {
-		if (patient.is_active) {
-			const info = { patient, type: 'patient' };
-			dispatch(toggleProfile(true, info));
-		}
-	};
-
-	const openLabour = (patient, labour) => {
+	const openLabour = labour => {
 		const info = { patient, type: 'labour', item: labour };
 		dispatch(toggleSidepanel(true, info));
 	};
@@ -137,26 +106,9 @@ const LabourPatients = () => {
 
 	return (
 		<>
-			<div className="element-box m-0 mb-4 p-3">
+			<div className="element-box m-0 mb-4 p-3 col-xl-12">
 				<div className="col-md-12">
 					<form className="row">
-						<div className="form-group col-md-3">
-							<label htmlFor="patient_id">Patient</label>
-							<AsyncSelect
-								isClearable
-								getOptionValue={getOptionValues}
-								getOptionLabel={getOptionLabels}
-								defaultOptions
-								name="patient_id"
-								id="patient_id"
-								loadOptions={getOptions}
-								onChange={e => {
-									console.log(e);
-									setPatient(e?.id);
-								}}
-								placeholder="Search patients"
-							/>
-						</div>
 						<div className="form-group col-md-3">
 							<label>Admitted Between - To</label>
 							<RangePicker onChange={e => dateChange(e)} />
@@ -179,7 +131,7 @@ const LabourPatients = () => {
 					</form>
 				</div>
 			</div>
-			<div className="element-box m-0 mb-4 p-3">
+			<div className="element-box m-0 mb-4 p-3 col-xl-12">
 				<div className="table-responsive">
 					{loading ? (
 						<TableLoading />
@@ -189,9 +141,10 @@ const LabourPatients = () => {
 								<thead>
 									<tr>
 										<th>ID</th>
-										<th>Patient Name</th>
 										<th>Date of Enrollment</th>
 										<th>Enrolled By</th>
+										<th>Date Closed</th>
+										<th>Closed By</th>
 										<th>Status</th>
 										<th></th>
 									</tr>
@@ -202,23 +155,15 @@ const LabourPatients = () => {
 											<tr key={i}>
 												<td>{item.serial_code}</td>
 												<td>
-													<p className="item-title text-color m-0">
-														<Tooltip
-															title={<ProfilePopup patient={item.patient} />}
-														>
-															<a
-																className="cursor"
-																onClick={() => showProfile(item.patient)}
-															>
-																{patientname(item.patient, true)}
-															</a>
-														</Tooltip>
-													</p>
-												</td>
-												<td>
 													{moment(item.createdAt).format('DD-MMM-YYYY h:mm A')}
 												</td>
 												<td>{staffname(item.staff)}</td>
+												<td>
+													{moment(item.date_closed).format(
+														'DD-MMM-YYYY h:mm A'
+													)}
+												</td>
+												<td>{staffname(item.closedBy)}</td>
 												<td>
 													{item.status === 0 ? (
 														<span className="badge badge-secondary">Open</span>
@@ -228,7 +173,7 @@ const LabourPatients = () => {
 												</td>
 												<td className="row-actions">
 													<Tooltip title="Open Labour Mgt">
-														<a onClick={() => openLabour(item.patient, item)}>
+														<a onClick={() => openLabour(item)}>
 															<i className="os-icon os-icon-user-male-circle2" />
 														</a>
 													</Tooltip>
@@ -267,4 +212,4 @@ const LabourPatients = () => {
 	);
 };
 
-export default LabourPatients;
+export default LabourHistory;

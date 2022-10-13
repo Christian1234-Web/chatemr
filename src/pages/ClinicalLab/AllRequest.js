@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
 import moment from 'moment';
 import DatePicker from 'antd/lib/date-picker';
@@ -46,7 +45,6 @@ class AllRequest extends Component {
 	};
 
 	doFilter = e => {
-		if (e) e.preventDefault();
 		this.setState({ filtering: true });
 		this.fetchLabs();
 	};

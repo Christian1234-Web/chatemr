@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
 import Popover from 'antd/lib/popover';
 
-import { useSelector } from 'react-redux';
 import { notifyError } from '../../services/notify';
 import { request, groupBy, checkVaccine } from '../../services/utilities';
 import { patientAPI } from '../../services/constants';
@@ -28,12 +27,10 @@ const dates = [
 	'10 years',
 ];
 
-const ImmunizationChart = () => {
+const ImmunizationChart = ({ patient }) => {
 	const [loading, setLoading] = useState(false);
 	const [records, setRecords] = useState([]);
 	const [visible, setVisible] = useState(null);
-
-	const patient = useSelector(state => state.user.patient);
 
 	useEffect(() => {
 		const fetchImmunization = async () => {

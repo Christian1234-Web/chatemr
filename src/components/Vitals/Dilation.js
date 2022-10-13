@@ -22,7 +22,7 @@ const info = {
 	inputs: [{ name: 'dilation', title: 'Dilation', weight: 'cm' }],
 };
 
-const Dilation = ({ vitals, task }) => {
+const Dilation = ({ vitals, task, patient }) => {
 	const [visible, setVisible] = useState(false);
 	const [currentVitals, setCurrentVitals] = useState(null);
 	const [data, setData] = useState([]);
@@ -82,6 +82,7 @@ const Dilation = ({ vitals, task }) => {
 				</div>
 			</div>
 			<Reading
+				patient={patient}
 				visible={visible}
 				vital={currentVitals}
 				info={info}
@@ -94,7 +95,6 @@ const Dilation = ({ vitals, task }) => {
 };
 const mapStateToProps = (state, ownProps) => {
 	return {
-		patient: state.user.patient,
 		vitals: state.patient.vitals.filter(c => c.readingType === info.title),
 	};
 };

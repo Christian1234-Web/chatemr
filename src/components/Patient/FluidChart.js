@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
 
 import TableLoading from '../TableLoading';
@@ -8,7 +8,7 @@ import { request, itemRender, formatDate } from '../../services/utilities';
 import { notifyError } from '../../services/notify';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 
-const FluidChart = ({ type, itemId }) => {
+const FluidChart = ({ type, itemId, patient }) => {
 	const [loading, setLoading] = useState(true);
 	const [charts, setCharts] = useState([]);
 	const [meta, setMeta] = useState({
@@ -20,8 +20,6 @@ const FluidChart = ({ type, itemId }) => {
 	const [sumOutputs, setSumOutputs] = useState(0);
 
 	const dispatch = useDispatch();
-
-	const patient = useSelector(state => state.user.patient);
 
 	const fetchCharts = useCallback(
 		async page => {

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
 
 import TableLoading from '../TableLoading';
@@ -8,7 +8,7 @@ import { notifyError } from '../../services/notify';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import { allVitalItems } from '../../services/constants';
 
-const VisitSummary = () => {
+const VisitSummary = ({ patient }) => {
 	const [loading, setLoading] = useState(true);
 	const [summary, setSummary] = useState(null);
 	const [meta, setMeta] = useState({
@@ -20,8 +20,6 @@ const VisitSummary = () => {
 	const [diagnoses, setDiagnoses] = useState(null);
 
 	const dispatch = useDispatch();
-
-	const patient = useSelector(state => state.user.patient);
 
 	const fetchSummary = useCallback(async () => {
 		try {

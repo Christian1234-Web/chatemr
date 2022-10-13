@@ -1,22 +1,12 @@
 import React, { useState } from 'react';
-import SunEditor from 'suneditor-react';
-import { useSelector, useDispatch } from 'react-redux';
-import Select from 'react-select';
-import startCase from 'lodash.startcase';
 
-import { startBlock, stopBlock } from '../../actions/redux-block';
-import { notifySuccess, notifyError } from '../../services/notify';
-import { request } from '../../services/utilities';
-import { noteTypes, specialties } from '../../services/constants';
-import { messageService } from '../../services/message';
-import ModalHeader from '../ModalHeader';
 import EmbryoAssessment from '../IVF/EmbryoAssessment';
 import EmbryoTransfer from '../IVF/EmbryoTransfer';
 import IcsiRecord from '../IVF/IcsiRecord';
 import SpermPreparation from '../IVF/SpermPreparation';
 import TreatmentChart from '../IVF/TreatmentChart';
 
-const CreateEmbryology = ({ closeModal }) => {
+const CreateEmbryology = ({ closeModal, patient }) => {
 	const [tab, setTab] = useState('chart');
 
 	return (
@@ -100,7 +90,7 @@ const CreateEmbryology = ({ closeModal }) => {
 									{tab === 'icsi' && <IcsiRecord />}
 									{tab === 'sperm-preparation' && <SpermPreparation />}
 									{tab === 'chart' && (
-										<TreatmentChart closeModal={closeModal} />
+										<TreatmentChart closeModal={closeModal} patient={patient} />
 									)}
 								</div>
 							</div>

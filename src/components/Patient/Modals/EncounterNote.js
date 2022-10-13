@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 import SunEditor from 'suneditor-react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { startBlock, stopBlock } from '../../../actions/redux-block';
 import { notifySuccess, notifyError } from '../../../services/notify';
 import { request } from '../../../services/utilities';
 
-const EncounterNote = ({ closeModal, encounter, updateItems }) => {
+const EncounterNote = ({ closeModal, encounter, updateItems, patient }) => {
 	const [note, setNote] = useState('');
 
 	const dispatch = useDispatch();
-
-	const patient = useSelector(state => state.user.patient);
 
 	const onSubmit = async e => {
 		try {

@@ -1,6 +1,5 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import Select from 'react-select';
 import { useForm } from 'react-hook-form';
@@ -28,7 +27,7 @@ const SendButton = ({ submitting }) => {
 	);
 };
 
-const LabRequest = ({ module, history, location, itemId }) => {
+const LabRequest = ({ module, history, location, itemId, patient }) => {
 	const { register, handleSubmit } = useForm({
 		defaultValues,
 	});
@@ -45,8 +44,6 @@ const LabRequest = ({ module, history, location, itemId }) => {
 	const [labTests, setLabTests] = useState([]);
 
 	const [urgent, setUrgent] = useState(false);
-
-	const currentPatient = useSelector(state => state.user.patient);
 
 	const dispatch = useDispatch();
 
@@ -75,11 +72,11 @@ const LabRequest = ({ module, history, location, itemId }) => {
 			fetchLabCombo();
 			setLoaded(true);
 		}
-		if (!loadedPatient && currentPatient) {
-			setChosenPatient(currentPatient);
+		if (!loadedPatient && patient) {
+			setChosenPatient(patient);
 			setLoadedPatient(true);
 		}
-	}, [currentPatient, fetchLabCombo, loaded, loadedPatient]);
+	}, [fetchLabCombo, loaded, loadedPatient, patient]);
 
 	const getPatients = async q => {
 		if (!q || q.length < 1) {
@@ -156,7 +153,7 @@ const LabRequest = ({ module, history, location, itemId }) => {
 						</div>
 					)}
 					<form onSubmit={handleSubmit(onSubmit)}>
-						{!currentPatient && (
+						{!patient && (
 							<div className="row">
 								<div className="form-group col-sm-12">
 									<label htmlFor="patient">Patient Name</label>

@@ -1,14 +1,12 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import Pagination from 'antd/lib/pagination';
 
 import { notifyError } from '../../services/notify';
 import { request, updateImmutable, itemRender } from '../../services/utilities';
 import PrescriptionBlock from '../PrescriptionBlock';
 
-const Pharmacy = ({ location, can_request = true, type, itemId }) => {
+const Pharmacy = ({ location, can_request = true, type, itemId, patient }) => {
 	const [loaded, setLoaded] = useState(false);
 	const [prescriptions, setPrescriptions] = useState([]);
 	const [meta, setMeta] = useState({
@@ -16,8 +14,6 @@ const Pharmacy = ({ location, can_request = true, type, itemId }) => {
 		itemsPerPage: 10,
 		totalPages: 0,
 	});
-
-	const patient = useSelector(state => state.user.patient);
 
 	const startDate = '';
 	const endDate = '';
