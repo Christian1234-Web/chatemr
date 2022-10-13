@@ -147,6 +147,8 @@ class ProcedureBlock extends Component {
 		const { loading, procedures, patient, updateProcedure } = this.props;
 		const { procedure, showRSModal, visible } = this.state;
 
+		console.log('Mallam', procedures);
+
 		return loading ? (
 			<TableLoading />
 		) : (
