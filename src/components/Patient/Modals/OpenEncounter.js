@@ -133,7 +133,7 @@ class OpenEncounter extends Component {
 							aria-label="Close"
 							className="close text-white"
 							type="button"
-							onClick={closeModal}
+							onClick={() => closeModal(false)}
 						>
 							<span className="os-icon os-icon-close"></span>
 						</button>
