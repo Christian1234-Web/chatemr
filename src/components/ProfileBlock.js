@@ -899,6 +899,7 @@ const ProfileBlock = ({
 				<CreateNote
 					closeModal={closeModal}
 					updateNote={() => {}}
+					patient={patient}
 					type="consultation"
 				/>
 			)}

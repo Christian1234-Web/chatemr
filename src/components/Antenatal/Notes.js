@@ -142,8 +142,8 @@ const Notes = ({ can_request = true, patient }) => {
 					closeModal={closeModal}
 					updateNote={updateNote}
 					antenatal_id={antenatal.id}
-					type="antenatal"
 					patient={patient}
+					type="antenatal"
 				/>
 			)}
 		</div>

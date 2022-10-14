@@ -144,6 +144,7 @@ const CareTeam = ({ can_request, type, itemId, patient }) => {
 					item_id={itemId}
 					type={type}
 					members={members}
+					patient={patient}
 				/>
 			)}
 		</div>
