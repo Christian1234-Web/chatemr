@@ -11,7 +11,7 @@ import NewMeasurement from '../Modals/NewMeasurement';
 import Measurement from '../Modals/Measurement';
 import { labourAPI } from '../../services/constants';
 
-const Measurements = ({ can_request, patient }) => {
+const Measurements = ({ can_request = true, patient }) => {
 	const [loading, setLoading] = useState(true);
 	const [list, setList] = useState([]);
 	const [meta, setMeta] = useState({

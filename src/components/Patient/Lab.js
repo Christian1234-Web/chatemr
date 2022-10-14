@@ -9,7 +9,7 @@ import LabBlock from '../LabBlock';
 import TableLoading from '../TableLoading';
 import { hasCreateLabPermission } from '../../permission-utils/lab';
 
-const Lab = ({ location, itemId, type, can_request, patient }) => {
+const Lab = ({ location, itemId, type, can_request = true, patient }) => {
 	const [loaded, setLoaded] = useState(false);
 	const [labs, setLabs] = useState([]);
 	const [meta, setMeta] = useState({

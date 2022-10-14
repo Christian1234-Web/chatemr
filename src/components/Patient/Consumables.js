@@ -8,7 +8,7 @@ import { notifyError } from '../../services/notify';
 import { startBlock, stopBlock } from '../../actions/redux-block';
 import RequestConsumable from '../Modals/RequestConsumable';
 
-const Consumables = ({ itemId, type, can_request, patient }) => {
+const Consumables = ({ itemId, type, can_request = true, patient }) => {
 	const [loading, setLoading] = useState(true);
 	const [consumables, setConsumables] = useState([]);
 	const [meta, setMeta] = useState({

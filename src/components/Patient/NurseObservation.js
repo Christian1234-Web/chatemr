@@ -10,7 +10,7 @@ import { startBlock, stopBlock } from '../../actions/redux-block';
 import CreateObservation from './Modals/CreateObservation';
 import { staffname } from '../../services/utilities';
 
-const NurseObservation = ({ can_request, type, itemId, patient }) => {
+const NurseObservation = ({ can_request = true, type, itemId, patient }) => {
 	const [loading, setLoading] = useState(true);
 	const [notes, setNotes] = useState([]);
 	const [meta, setMeta] = useState({

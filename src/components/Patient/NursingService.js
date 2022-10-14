@@ -77,14 +77,12 @@ const NursingService = ({ itemId, module, patient }) => {
 							Add a Nursing Service
 						</a>
 					)} */}
-					{
-						<a
-							className="btn btn-sm btn-secondary text-white"
-							onClick={() => newRequest()}
-						>
-							Add a Nursing Service
-						</a>
-					}
+					<a
+						className="btn btn-sm btn-secondary text-white"
+						onClick={() => newRequest()}
+					>
+						Add a Nursing Service
+					</a>
 				</div>
 				<h6 className="element-header">Nursing Service</h6>
 				<div className="element-box p-3 m-0">

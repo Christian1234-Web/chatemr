@@ -11,7 +11,7 @@ import VisitNote from '../Admission/VisitNote';
 import { staffname } from '../../services/utilities';
 import { admissionAPI } from '../../services/constants';
 
-const InPatientNote = ({ itemId, type, can_request, patient }) => {
+const InPatientNote = ({ itemId, type, can_request = true, patient }) => {
 	const [loading, setLoading] = useState(true);
 	const [notes, setNotes] = useState([]);
 	const [meta, setMeta] = useState({

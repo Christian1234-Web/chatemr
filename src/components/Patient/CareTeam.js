@@ -9,7 +9,7 @@ import { startBlock, stopBlock } from '../../actions/redux-block';
 import AddEditTeam from './Modals/AddEditTeam';
 import { staffname } from '../../services/utilities';
 
-const CareTeam = ({ can_request, type, itemId, patient }) => {
+const CareTeam = ({ can_request = true, type, itemId, patient }) => {
 	const [loading, setLoading] = useState(true);
 	const [members, setMembers] = useState([]);
 	const [meta, setMeta] = useState({
