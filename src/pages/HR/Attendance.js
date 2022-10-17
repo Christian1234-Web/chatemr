@@ -46,7 +46,7 @@ const Attendance = () => {
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
 
-	console.log('Malik', attendance);
+	// console.log('Malik', attendance);
 
 	return (
 		<div className="content-i">
