@@ -128,7 +128,7 @@ const Attendance = () => {
 														{item.user?.department?.name || '--'}
 													</td>
 													<td className="text-center">
-														{moment(item.date).format('h:mm a')}
+														{moment(item.date).zone('-0100').format('h:mm a')}
 													</td>
 													<td className="text-center">
 														{moment(item.date).format('DD-MM-YYYY')}

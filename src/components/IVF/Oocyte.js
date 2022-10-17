@@ -15,6 +15,8 @@ import FormWizard from '../FormWizard';
 const Oocyte = ({ closeModal }) => {
 	const [date, setDate] = useState('');
 
+	const [displaySearch, setDisplaySearch] = useState(false);
+
 	const no_of_vitals = [
 		{ name: '1', id: 1 },
 		{ name: '2', id: 2 },
@@ -225,6 +227,7 @@ const Oocyte = ({ closeModal }) => {
 			closeModal();
 		}
 	};
+
 	return (
 		<div
 			className="p-2"
@@ -342,7 +345,7 @@ const Oocyte = ({ closeModal }) => {
 								<div>
 									<Field
 										name="no_strains"
-										placeholder="Select Number of Strains"
+										placeholder="Select Number of Straws"
 										options={no_of_vitals}
 										component={ReactSelectAdapter}
 										getOptionValue={option => option.id}
@@ -415,12 +418,47 @@ const Oocyte = ({ closeModal }) => {
 							</div>
 						</div>
 					</div>
-					<h6
-						className="element-header pb-2"
-						style={{ borderBottom: '4px solid #3192f9', width: '9%' }}
-					>
-						Donor / Client
-					</h6>
+					<div className="row">
+						<div className="col-sm-3 d-flex justify-content-around">
+							<div>
+								<input
+									type="radio"
+									id="donor"
+									name="oocyte"
+									value="donor"
+									onClick={() => setDisplaySearch(false)}
+								/>
+								<label for="donor" className="m-2">
+									Donor
+								</label>
+							</div>
+							<div>
+								<input
+									type="radio"
+									id="client"
+									name="oocyte"
+									value="client"
+									onClick={() => setDisplaySearch(true)}
+								/>
+								<label for="client" className="m-2">
+									Client
+								</label>
+							</div>
+						</div>
+					</div>
+					{displaySearch && (
+						<div>
+							<div className="col-sm-12 mb-2">
+								<Field
+									name="name"
+									className="form-control"
+									component="input"
+									type="text"
+									placeholder="Search Patient"
+								/>
+							</div>
+						</div>
+					)}
 					<div className="row">
 						<div className="col-sm-4">
 							<div className="form-group">

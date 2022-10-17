@@ -32,9 +32,16 @@ const EmbryoTransfer = () => {
 						<td>
 							<input className="form-control" placeholder="" type="time" />
 						</td>
-						<th>DATE OF ET:</th>
+						<th>DAY OF TRANSFER:</th>
 						<td>
-							<input className="form-control" placeholder="" type="date" />
+							<select name="days" id="days" className="form-control">
+								<option value="day1">Day 1</option>
+								<option value="day2">Day 2</option>
+								<option value="day3">Day 3</option>
+								<option value="day4">Day 4</option>
+								<option value="day5">Day 5</option>
+								<option value="day6">Day 6</option>
+							</select>
 						</td>
 					</tr>
 				</thead>

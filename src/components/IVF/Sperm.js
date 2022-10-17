@@ -18,6 +18,8 @@ const Sperm = ({ closeModal }) => {
 	const [time_deliver, setTime_deliver] = useState('');
 	const [date, setDate] = useState('');
 	const [time_frozen, setTime_frozen] = useState('');
+	const [displaySearch, setDisplaySearch] = useState(false);
+	const [searchWord, setSearchWord] = useState('');
 
 	const no_of_vitals = [
 		{ name: '1', id: 1 },
@@ -128,6 +130,18 @@ const Sperm = ({ closeModal }) => {
 			console.log(err);
 			notifyError('Failed to Save!');
 			closeModal();
+		}
+	};
+
+	const handleSearch = async e => {
+		try {
+			setSearchWord(e.target.value);
+			// const url = `${searchAPI}?q=${searchWord}&limit=10`;
+			// const patientsArray = await request(url, 'GET', true);
+			// setPatients(patientsArray)
+			// console.log('My ans', patients)
+		} catch (error) {
+			// console.log('Malaam', error)
 		}
 	};
 
@@ -339,13 +353,49 @@ const Sperm = ({ closeModal }) => {
 							</div>
 						</div>
 					</div>
-
-					<h6
-						className="element-header pb-2"
-						style={{ borderBottom: '4px solid #3192f9', width: '9%' }}
-					>
-						Donor / Client
-					</h6>
+					<div className="row">
+						<div className="col-sm-3 d-flex justify-content-around">
+							<div>
+								<input
+									type="radio"
+									id="donor"
+									name="sperm"
+									value="donor"
+									onClick={() => setDisplaySearch(false)}
+								/>
+								<label for="donor" className="m-2">
+									Donor
+								</label>
+							</div>
+							<div>
+								<input
+									type="radio"
+									id="client"
+									name="sperm"
+									value="client"
+									onClick={() => setDisplaySearch(true)}
+								/>
+								<label for="client" className="m-2">
+									Client
+								</label>
+							</div>
+						</div>
+					</div>
+					{displaySearch && (
+						<div>
+							<div className="col-sm-12 mb-2">
+								<input
+									name="name"
+									className="form-control"
+									component="input"
+									type="text"
+									placeholder="Search Patient"
+									value={searchWord}
+									onChange={handleSearch}
+								/>
+							</div>
+						</div>
+					)}
 					<div className="row">
 						<div className="col-sm-4">
 							<div className="form-group">
