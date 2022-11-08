@@ -1,6 +1,7 @@
+import React, { useCallback, useEffect, useState } from 'react';
 import { DatePicker, Pagination } from 'antd';
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
+
 import waiting from '../../assets/images/waiting.gif';
 import TableLoading from '../../components/TableLoading';
 import { paginate } from '../../services/constants';
@@ -15,38 +16,39 @@ const Attendance = () => {
 	const [meta, setMeta] = useState({ ...paginate });
 
 	const doFilter = e => {
-		if (e) e.preventDefault();
 		setFiltering(true);
 		fetchAttendance();
 		setFiltering(false);
+		setDate('');
 	};
 
-	const fetchAttendance = async page => {
-		try {
-			let p = page || 1;
-			setLoading(true);
-			const url = `hr/attendance?page=${p}&limit=10&date=${date}&term=${search}`;
-			const rs = await request(url, 'GET', true);
-			const { result, ...meta } = rs;
-			setAttendance(result);
-			setMeta(meta);
-			setLoading(false);
-		} catch (err) {
-			console.log('fetch drug err', err);
-			setLoading(false);
-		}
-	};
+	const fetchAttendance = useCallback(
+		async page => {
+			try {
+				let p = page || 1;
+				setLoading(true);
+				const url = `hr/attendance?page=${p}&limit=10&date=${date}&term=${search}`;
+				const rs = await request(url, 'GET', true);
+				const { result, ...meta } = rs;
+				setAttendance(result);
+				setMeta(meta);
+				setLoading(false);
+			} catch (err) {
+				console.log(err);
+				setLoading(false);
+			}
+		},
+		[date, search]
+	);
 
 	useEffect(() => {
 		fetchAttendance();
-	}, [attendance.length]);
+	}, [fetchAttendance]);
 
 	const onNavigatePage = pageNumber => {
 		fetchAttendance(pageNumber);
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
-
-	// console.log('Malik', attendance);
 
 	return (
 		<div className="content-i">
@@ -77,7 +79,13 @@ const Attendance = () => {
 
 										<DatePicker
 											className="form-control"
-											onChange={e => setDate(moment(e._d).format('DD-MM-YYYY'))}
+											onChange={e =>
+												moment(e?._d).format('DD-MM-YYYY') <
+												moment().format('DD-MM-YYYY')
+													? setDate(moment(e?._d).format('DD-MM-YYYY'))
+													: setDate('')
+											}
+											isClearable
 										/>
 									</div>
 
@@ -108,56 +116,48 @@ const Attendance = () => {
 								<TableLoading />
 							) : (
 								<>
-									<>
-										{
-											<>
-												<table className="table table-striped table-bordered">
-													<thead>
-														<tr>
-															<th>Staff ID</th>
-															<th>Staff Name</th>
-															<th className="text-center">Department</th>
-															<th className="text-center">Time</th>
-															<th className="text-center">Date</th>
-														</tr>
-													</thead>
-													<tbody>
-														{attendance?.map((item, index) => (
-															<tr key={index}>
-																<td>{item?.user?.id || '--'}</td>
-																<td>{staffname(item.user)}</td>
-																<td className="text-center">
-																	{item.user?.department?.name || '--'}
-																</td>
-																<td className="text-center">
-																	{moment(item.date)
-																		.zone('-0100')
-																		.format('h:mm a')}
-																</td>
-																<td className="text-center">
-																	{moment(item.date).format('DD-MM-YYYY')}
-																</td>
-															</tr>
-														))}
-													</tbody>
-												</table>
-												<div className="controls-below-table">
-													<div className="table-records-pages"></div>
-												</div>
-												<div className="pagination pagination-center mt-4">
-													<Pagination
-														current={parseInt(meta.currentPage, 10)}
-														pageSize={parseInt(meta.itemsPerPage, 10)}
-														total={parseInt(meta.totalItems, 10)}
-														showTotal={total => `Total ${total} items`}
-														itemRender={itemRender}
-														onChange={onNavigatePage}
-														showSizeChanger={false}
-													/>
-												</div>
-											</>
-										}
-									</>
+									<table className="table table-striped table-bordered">
+										<thead>
+											<tr>
+												<th>Staff ID</th>
+												<th>Staff Name</th>
+												<th className="text-center">Department</th>
+												<th className="text-center">Time</th>
+												<th className="text-center">Date</th>
+											</tr>
+										</thead>
+										<tbody>
+											{attendance?.map((item, index) => (
+												<tr key={index}>
+													<td>{item?.user?.id || '--'}</td>
+													<td>{staffname(item.user)}</td>
+													<td className="text-center">
+														{item.user?.department?.name || '--'}
+													</td>
+													<td className="text-center">
+														{moment(item.date).zone('-0100').format('h:mm a')}
+													</td>
+													<td className="text-center">
+														{moment(item.date).format('DD-MM-YYYY')}
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+									<div className="controls-below-table">
+										<div className="table-records-pages"></div>
+									</div>
+									<div className="pagination pagination-center mt-4">
+										<Pagination
+											current={parseInt(meta.currentPage, 10)}
+											pageSize={parseInt(meta.itemsPerPage, 10)}
+											total={parseInt(meta.totalItems, 10)}
+											showTotal={total => `Total ${total} items`}
+											itemRender={itemRender}
+											onChange={onNavigatePage}
+											showSizeChanger={false}
+										/>
+									</div>
 								</>
 							)}
 						</div>
