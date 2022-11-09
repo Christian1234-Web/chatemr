@@ -129,10 +129,9 @@ const PatientAppointment = ({ addAppointment, closeModal }) => {
 
 			dispatch(startBlock());
 			setSubmitting(true);
+			const date = moment(new Date(data.appointment_date)).format('YYYY-MM-DD');
 			const time = moment().format('HH:mm:ss');
-			const datetime = `${moment(new Date(data.appointment_date)).format(
-				'YYYY-MM-DD'
-			)} ${time}`;
+			const datetime = `${date} ${time}`;
 			const values = {
 				...data,
 				appointment_date: datetime,
