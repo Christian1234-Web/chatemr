@@ -19,6 +19,7 @@ const Attendance = () => {
 		setFiltering(true);
 		fetchAttendance();
 		setFiltering(false);
+		setDate('');
 	};
 
 	const fetchAttendance = useCallback(
@@ -78,7 +79,13 @@ const Attendance = () => {
 
 										<DatePicker
 											className="form-control"
-											onChange={e => setDate(moment(e._d).format('DD-MM-YYYY'))}
+											onChange={e =>
+												moment(e?._d).format('DD-MM-YYYY') <
+												moment().format('DD-MM-YYYY')
+													? setDate(moment(e?._d).format('DD-MM-YYYY'))
+													: setDate('')
+											}
+											isClearable
 										/>
 									</div>
 
