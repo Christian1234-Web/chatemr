@@ -88,6 +88,17 @@ const IcsiRecord = () => {
 								<label className="form-check-label mt-1">INJECTION</label>
 							</div>
 						</div>
+						<div className="">
+							<div className="form-check">
+								<input
+									className="form-check-input"
+									name="optionsRadios"
+									type="radio"
+									value="option2"
+								/>
+								<label className="form-check-label mt-1">50/50</label>
+							</div>
+						</div>
 					</div>
 					<div className="col-md-4">
 						<div className="form-group">
@@ -153,22 +164,28 @@ const IcsiRecord = () => {
 				</table>
 				<form>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-4">
+							<div className="form-group">
+								<label>DR</label>
+								<input className="form-control" placeholder="Dr" type="text" />
+							</div>
+						</div>
+						<div className="col-md-4">
 							<div className="form-group">
 								<label>WITNESS</label>
 								<input
 									className="form-control"
-									placeholder="witness"
+									placeholder="Witness"
 									type="text"
 								/>
 							</div>
 						</div>
-						<div className="col-md-6">
+						<div className="col-md-4">
 							<div className="form-group">
-								<label>EMBRIOLOGISTS</label>
+								<label>EMBRYOLOGISTS</label>
 								<input
 									className="form-control"
-									placeholder="embriologists"
+									placeholder="Embryologists"
 									type="text"
 								/>
 							</div>
@@ -263,22 +280,28 @@ const IcsiRecord = () => {
 
 			<form>
 				<div className="row">
-					<div className="col-md-6">
+					<div className="col-md-4">
+						<div className="form-group">
+							<label>Dr</label>
+							<input className="form-control" placeholder="Dr" type="text" />
+						</div>
+					</div>
+					<div className="col-md-4">
 						<div className="form-group">
 							<label>WITNESS</label>
 							<input
 								className="form-control"
-								placeholder="witness"
+								placeholder="Witness"
 								type="text"
 							/>
 						</div>
 					</div>
-					<div className="col-md-6">
+					<div className="col-md-4">
 						<div className="form-group">
-							<label>EMBRIOLOGISTS</label>
+							<label>EMBRYOLOGISTS</label>
 							<input
 								className="form-control"
-								placeholder="embriologists"
+								placeholder="Embryologists"
 								type="text"
 							/>
 						</div>

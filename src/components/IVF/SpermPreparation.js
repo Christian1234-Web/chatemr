@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const SpermPreparation = () => {
+	const [displayDate, setDisplayDate] = useState(false);
 	return (
 		<div
 			className="p-2"
@@ -109,6 +110,7 @@ const SpermPreparation = () => {
 												name="optionsRadios"
 												type="radio"
 												defaultValue="option1"
+												onClick={() => setDisplayDate(false)}
 											/>
 											FRESH
 										</label>
@@ -122,9 +124,21 @@ const SpermPreparation = () => {
 												name="optionsRadios"
 												type="radio"
 												defaultValue="option2"
+												onClick={() => setDisplayDate(true)}
 											/>
 											FROZEN
 										</label>
+										{displayDate && (
+											<label className="form-check-label">
+												<input
+													className="form-check-input"
+													name="optionsRadios"
+													type="date"
+													defaultValue="option2"
+												/>
+												FROZEN
+											</label>
+										)}
 									</div>
 								</div>
 							</div>
@@ -162,7 +176,7 @@ const SpermPreparation = () => {
 						<td tabIndex={1}>
 							<div className="row">
 								<div className="col-sm-4">
-									<strong>VISCOUSITY</strong>
+									<strong>VISCOSITY</strong>
 								</div>
 								<div className="col-sm-4">
 									<div className="form-check">
@@ -248,14 +262,18 @@ const SpermPreparation = () => {
 								(MIL)
 							</th>
 							<th>
-								CELLS
+								SPERM
 								<br />
 								DENSITY
+								<br />
+								(10<sup>6</sup>/mil)
 							</th>
 							<th>
-								CELLS
+								SPERM
 								<br />
 								MOTILITY
+								<br />
+								(10<sup>6</sup>/mil)
 							</th>
 							<th>PROG</th>
 							<th>
@@ -378,7 +396,13 @@ const SpermPreparation = () => {
 				</table>
 				<form>
 					<div className="row">
-						<div className="col-sm-6">
+						<div className="col-sm-4">
+							<div className="form-group">
+								<label>DR</label>
+								<input className="form-control" placeholder="Dr" type="text" />
+							</div>
+						</div>
+						<div className="col-sm-4">
 							<div className="form-group">
 								<label>EMBRIOLOGIST</label>
 								<input
@@ -388,7 +412,7 @@ const SpermPreparation = () => {
 								/>
 							</div>
 						</div>
-						<div className="col-sm-6">
+						<div className="col-sm-4">
 							<div className="form-group">
 								<label>WITNESS</label>
 								<input

@@ -13,6 +13,7 @@ import { confirmAction } from '../services/utilities';
 import AncBlock from '../components/AncBlock';
 
 const ClinicalTasks = lazy(() => import('../components/Patient/ClinicalTasks'));
+const Nicu = lazy(() => import('../components/Patient/Nicu'));
 const Dashboard = lazy(() => import('../components/Patient/Dashboard'));
 const Lab = lazy(() => import('../components/Patient/Lab'));
 const Encounters = lazy(() => import('../components/Patient/Encounters'));
@@ -85,6 +86,8 @@ const Page = ({ location }) => {
 			return <Allergies patient={patient} />;
 		case 'clinical-tasks':
 			return <ClinicalTasks patient={patient} />;
+		case 'nicu':
+			return <Nicu patient={patient} />;
 		case 'radiology':
 			return <Radiology patient={patient} />;
 		case 'radiology-request':

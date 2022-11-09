@@ -2,24 +2,33 @@ import React, { useState } from 'react';
 import DatePicker from 'antd/lib/date-picker';
 import moment from 'moment';
 import { Field } from 'react-final-form';
+import AsyncSelect from 'react-select/async/dist/react-select.esm';
 
 import { notifyError, notifySuccess } from '../../services/notify';
 import {
 	Compulsory,
 	ErrorBlock,
+	patientname,
 	ReactSelectAdapter,
 	request,
 } from '../../services/utilities';
 import FormWizard from '../FormWizard';
 
+import { searchAPI } from '../../services/constants';
+
 const { TimePicker } = DatePicker;
 
 const Sperm = ({ closeModal }) => {
 	const [time_deliver, setTime_deliver] = useState('');
+	const [time_produced, setTime_produced] = useState('');
 	const [date, setDate] = useState('');
 	const [time_frozen, setTime_frozen] = useState('');
 	const [displaySearch, setDisplaySearch] = useState(false);
 	const [searchWord, setSearchWord] = useState('');
+
+	const [patients, setPatients] = useState(null);
+	const [chosenPatient, setChosenPatient] = useState(null);
+	const [service, setService] = useState(null);
 
 	const no_of_vitals = [
 		{ name: '1', id: 1 },
@@ -133,16 +142,14 @@ const Sperm = ({ closeModal }) => {
 		}
 	};
 
-	const handleSearch = async e => {
-		try {
-			setSearchWord(e.target.value);
-			// const url = `${searchAPI}?q=${searchWord}&limit=10`;
-			// const patientsArray = await request(url, 'GET', true);
-			// setPatients(patientsArray)
-			// console.log('My ans', patients)
-		} catch (error) {
-			// console.log('Malaam', error)
+	const getPatients = async q => {
+		if (!q || q.length < 1) {
+			return [];
 		}
+
+		const url = `${searchAPI}?q=${q}`;
+		const res = await request(url, 'GET', true);
+		return res;
 	};
 
 	return (
@@ -214,34 +221,47 @@ const Sperm = ({ closeModal }) => {
 					}}
 				>
 					<div className="row">
-						<div className="col-sm-4">
+						<div className="col-sm-3">
 							<div className="form-group">
 								<label>Date</label>
+								<Compulsory />
 								<div>
 									<DatePicker
-										style={{ width: '25rem' }}
+										// style={{ width: '25rem' }}
 										onChange={e => setDate(e)}
+									/>
+									<ErrorBlock name="date" />
+								</div>
+							</div>
+						</div>
+						<div className="col-sm-3">
+							<div className="form-group">
+								<label>Time Produced</label>
+								<div className="">
+									<TimePicker
+										// style={{ width: '25rem' }}
+										onChange={e => setTime_produced(e)}
 									/>
 								</div>
 							</div>
 						</div>
-						<div className="col-sm-4">
+						<div className="col-sm-3">
 							<div className="form-group">
 								<label>Time Delivered</label>
 								<div className="">
 									<TimePicker
-										style={{ width: '25rem' }}
+										// style={{ width: '25rem' }}
 										onChange={e => setTime_deliver(e)}
 									/>
 								</div>
 							</div>
 						</div>
-						<div className="col-sm-4">
-							<div className="form-group">
+						<div className="col-sm-3">
+							<div className="form-group ">
 								<label>Time Frozen</label>
 								<div className="">
 									<TimePicker
-										style={{ width: '25rem' }}
+										// style={{ width: '25rem' }}
 										onChange={e => setTime_frozen(e)}
 									/>
 								</div>
@@ -295,7 +315,7 @@ const Sperm = ({ closeModal }) => {
 						</div>
 						<div className="col-sm-4">
 							<div className="form-group">
-								<label>Number of Dewar</label> <Compulsory />
+								<label>Dewar</label> <Compulsory />
 								<div>
 									<Field
 										name="dewar"
@@ -311,11 +331,11 @@ const Sperm = ({ closeModal }) => {
 						</div>
 						<div className="col-sm-4">
 							<div className="form-group">
-								<label>Number of Position</label> <Compulsory />
+								<label>Position in Dewar</label> <Compulsory />
 								<div>
 									<Field
 										name="position"
-										placeholder="Select Number of Position"
+										placeholder="Select Position"
 										options={no_of_vitals}
 										component={ReactSelectAdapter}
 										getOptionValue={option => option.id}
@@ -382,20 +402,30 @@ const Sperm = ({ closeModal }) => {
 						</div>
 					</div>
 					{displaySearch && (
-						<div>
-							<div className="col-sm-12 mb-2">
-								<input
-									name="name"
-									className="form-control"
-									component="input"
-									type="text"
-									placeholder="Search Patient"
-									value={searchWord}
-									onChange={handleSearch}
+						<div className="row">
+							<div className="form-group col-sm-12">
+								<label htmlFor="patient">Patient Name</label>
+								<AsyncSelect
+									isClearable
+									getOptionValue={option => option.id}
+									getOptionLabel={option => patientname(option, true)}
+									defaultOptions
+									name="patient"
+									loadOptions={getPatients}
+									onChange={e => {
+										if (e) {
+											setChosenPatient(e);
+										} else {
+											setChosenPatient(null);
+											setService([]);
+										}
+									}}
+									placeholder="Search patients"
 								/>
 							</div>
 						</div>
 					)}
+
 					<div className="row">
 						<div className="col-sm-4">
 							<div className="form-group">

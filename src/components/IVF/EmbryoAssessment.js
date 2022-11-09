@@ -47,7 +47,7 @@ const EmbryoAssessment = () => {
 			</table>
 			<br />
 
-			<table className="table table-striped table-bordered">
+			<table className="table table-striped table-bordered overflow-scroll">
 				<thead>
 					<tr>
 						<th colSpan="2">EMBROYO/DROP No:</th>
@@ -63,6 +63,10 @@ const EmbryoAssessment = () => {
 						<th>10</th>
 						<th>11</th>
 						<th>12</th>
+						<th>13</th>
+						<th>14</th>
+						<th>15</th>
+						<th>16</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -110,9 +114,33 @@ const EmbryoAssessment = () => {
 						<td>
 							<input className="form-control" placeholder="" type="text" />
 						</td>
+						<td>
+							<input className="form-control" placeholder="" type="text" />
+						</td>
+						<td>
+							<input className="form-control" placeholder="" type="text" />
+						</td>
+						<td>
+							<input className="form-control" placeholder="" type="text" />
+						</td>
+						<td>
+							<input className="form-control" placeholder="" type="text" />
+						</td>
 					</tr>
 					<tr>
-						<td>Even/Uneven</td>
+						<td>Fragmentation</td>
+						<td>
+							<input className="form-control" placeholder="" type="text" />
+						</td>
+						<td>
+							<input className="form-control" placeholder="" type="text" />
+						</td>
+						<td>
+							<input className="form-control" placeholder="" type="text" />
+						</td>
+						<td>
+							<input className="form-control" placeholder="" type="text" />
+						</td>
 						<td>
 							<input className="form-control" placeholder="" type="text" />
 						</td>
@@ -152,6 +180,18 @@ const EmbryoAssessment = () => {
 					</tr>
 					<tr>
 						<td>Grade</td>
+						<td>
+							<input className="form-control" placeholder="" type="text" />
+						</td>
+						<td>
+							<input className="form-control" placeholder="" type="text" />
+						</td>
+						<td>
+							<input className="form-control" placeholder="" type="text" />
+						</td>
+						<td>
+							<input className="form-control" placeholder="" type="text" />
+						</td>
 						<td>
 							<input className="form-control" placeholder="" type="text" />
 						</td>

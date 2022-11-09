@@ -7,15 +7,21 @@ import { notifyError, notifySuccess } from '../../services/notify';
 import {
 	Compulsory,
 	ErrorBlock,
+	patientname,
 	ReactSelectAdapter,
 	request,
 } from '../../services/utilities';
 import FormWizard from '../FormWizard';
+import AsyncSelect from 'react-select/async/dist/react-select.esm';
+import { searchAPI } from '../../services/constants';
 
 const Oocyte = ({ closeModal }) => {
 	const [date, setDate] = useState('');
 
+	const [, setNo_of_vitals] = useState('');
 	const [displaySearch, setDisplaySearch] = useState(false);
+	const [chosenPatient, setChosenPatient] = useState(null);
+	const [service, setService] = useState(null);
 
 	const no_of_vitals = [
 		{ name: '1', id: 1 },
@@ -191,6 +197,16 @@ const Oocyte = ({ closeModal }) => {
 		comp: '',
 	};
 
+	const getPatients = async q => {
+		if (!q || q.length < 1) {
+			return [];
+		}
+
+		const url = `${searchAPI}?q=${q}`;
+		const res = await request(url, 'GET', true);
+		return res;
+	};
+
 	const onSubmit = async values => {
 		const donor_object = {
 			name: values.name,
@@ -299,12 +315,13 @@ const Oocyte = ({ closeModal }) => {
 					<div className="row">
 						<div className="col-sm-4">
 							<div className="form-group">
-								<label>Date</label>
+								<label>Date</label> <Compulsory />
 								<div>
 									<DatePicker
 										style={{ width: '25rem' }}
 										onChange={e => setDate(e)}
 									/>
+									<ErrorBlock name="date" />
 								</div>
 							</div>
 						</div>
@@ -328,7 +345,8 @@ const Oocyte = ({ closeModal }) => {
 						</div>
 						<div className="col-sm-4">
 							<div className="form-group">
-								<label>Grade</label> <Compulsory />
+								<label>Grade</label>
+								{/* <Compulsory /> */}
 								<Field
 									name="grade"
 									className="form-control"
@@ -336,12 +354,12 @@ const Oocyte = ({ closeModal }) => {
 									type="text"
 									placeholder="Grade"
 								/>
-								<ErrorBlock name="grade" />
+								{/* <ErrorBlock name="grade" /> */}
 							</div>
 						</div>
 						<div className="col-sm-4">
 							<div className="form-group">
-								<label>No of Strains</label> <Compulsory />
+								<label>No of Straws</label> <Compulsory />
 								<div>
 									<Field
 										name="no_strains"
@@ -447,14 +465,25 @@ const Oocyte = ({ closeModal }) => {
 						</div>
 					</div>
 					{displaySearch && (
-						<div>
-							<div className="col-sm-12 mb-2">
-								<Field
-									name="name"
-									className="form-control"
-									component="input"
-									type="text"
-									placeholder="Search Patient"
+						<div className="row">
+							<div className="form-group col-sm-12">
+								<label htmlFor="patient">Patient Name</label>
+								<AsyncSelect
+									isClearable
+									getOptionValue={option => option.id}
+									getOptionLabel={option => patientname(option, true)}
+									defaultOptions
+									name="patient"
+									loadOptions={getPatients}
+									onChange={e => {
+										if (e) {
+											setChosenPatient(e);
+										} else {
+											setChosenPatient(null);
+											setService([]);
+										}
+									}}
+									placeholder="Search patients"
 								/>
 							</div>
 						</div>

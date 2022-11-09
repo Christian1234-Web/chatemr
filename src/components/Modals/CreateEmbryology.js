@@ -56,7 +56,7 @@ const CreateEmbryology = ({ closeModal, patient }) => {
 											className={`nav-link ${tab === 'icsi' ? 'active' : ''}`}
 											onClick={() => setTab('icsi')}
 										>
-											<span className="tab-label">ICSI</span>
+											<span className="tab-label">IVF/ICSI</span>
 										</a>
 									</li>
 									<li className="nav-item">

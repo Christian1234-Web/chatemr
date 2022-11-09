@@ -69,6 +69,14 @@ const PatientMenu = ({ location }) => {
 						<span>Documents</span>
 					</Link>
 				</li>
+				<li>
+					<Link to={`${location.pathname}#nicu`}>
+						<div className="icon-w">
+							<div className="os-icon os-icon-layout" />
+						</div>
+						<span>NICU</span>
+					</Link>
+				</li>
 
 				<li className="sub-header">
 					<span>Requests</span>

@@ -24,7 +24,7 @@ const EmbryoTransfer = () => {
 			<table className="table table-striped table-bordered">
 				<thead>
 					<tr>
-						<th>NAME OF EMBROYO TRANSFERED</th>
+						<th>NUMBER OF EMBROYO TRANSFERED</th>
 						<td>
 							<input className="form-control" placeholder="" type="text" />
 						</td>
@@ -34,6 +34,8 @@ const EmbryoTransfer = () => {
 						</td>
 						<th>DAY OF TRANSFER:</th>
 						<td>
+							{/* <input className="form-control" placeholder="" type="date" /> */}
+
 							<select name="days" id="days" className="form-control">
 								<option value="day1">Day 1</option>
 								<option value="day2">Day 2</option>
@@ -210,7 +212,17 @@ const EmbryoTransfer = () => {
 				</tbody>
 			</table>
 
-			<h6 className="element-header">VITRIFICATION RECORD:</h6>
+			<h6 className="element-header">FATE OF EXCESS EMBRYO:</h6>
+			<div className="col-md-6">
+				<div className="form-group">
+					<label></label>
+					<select name="type" className="form-control" placeholder="">
+						<option>Vitrified</option>
+						<option>Discharged</option>
+					</select>
+				</div>
+			</div>
+
 			{/* <form>
 				<div className="row">
 					<div className="col-md-4"></div>
@@ -224,7 +236,7 @@ const EmbryoTransfer = () => {
 				</div>
 			</form> */}
 
-			<form>
+			{/* <form>
 				<div className="row">
 					<div className="col-md-4">
 						<div className="form-group">
@@ -253,7 +265,7 @@ const EmbryoTransfer = () => {
 						</div>
 					</div>
 				</div>
-			</form>
+			</form> */}
 			<div className="d-flex justify-content-between">
 				<div></div>
 				<div>

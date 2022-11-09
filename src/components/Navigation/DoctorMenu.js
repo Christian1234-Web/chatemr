@@ -37,6 +37,14 @@ const DoctorMenu = () => {
 				</Link>
 			</li>
 			<li>
+				<Link to="/nicu">
+					<div className="icon-w">
+						<div className="os-icon os-icon-documents-03" />
+					</div>
+					<span>NICU</span>
+				</Link>
+			</li>
+			<li>
 				<Link to="/ivf">
 					<div className="icon-w">
 						<div className="os-icon os-icon-documents-07" />

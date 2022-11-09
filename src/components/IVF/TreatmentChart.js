@@ -25,7 +25,10 @@ const TreatmentChart = ({ closeModal, patient }) => {
 	const [no_oo, setNo_oo] = useState('');
 	const [total, setTotal] = useState('');
 
-	const egg_collection = [{ name: 'Transvaginal', id: 1 }];
+	const egg_collection = [
+		{ name: 'Transvaginal', id: 1 },
+		{ name: 'Abdominal', id: 2 },
+	];
 
 	const onSubmit = async () => {
 		const treatment_self = document.getElementById('treatment_self');
@@ -123,7 +126,7 @@ const TreatmentChart = ({ closeModal, patient }) => {
 					<tr>
 						<td tabIndex={1}>
 							<div className="row">
-								<label className="col-sm-4 col-form-label">
+								<label className="col-sm-12 col-form-label">
 									<strong>TREATMENT CHART</strong>
 								</label>
 								<div className="col-sm-4">
@@ -377,9 +380,10 @@ const TreatmentChart = ({ closeModal, patient }) => {
 				</tbody>
 			</table>
 
+			<h6 className="element-header">EGG DETAILS</h6>
 			<div className="d-flex mb-4 mt-4  justify-content-between">
 				<div className="w-100" style={{ borderRight: '1px solid #eee' }}>
-					<h6 className="element-header">OOCYTE RECIPIENT</h6>
+					{/* <h6 className="element-header">OOCYTE RECIPIENT</h6> */}
 
 					<form>
 						<div className="row p-2">
@@ -411,8 +415,8 @@ const TreatmentChart = ({ closeModal, patient }) => {
 					</form>
 				</div>
 
-				<div className="w-100 p-2">
-					<h6 className="element-header">EGG COLLECTION</h6>
+				<div className="w-100 p-2" style={{ zIndex: '222' }}>
+					{/* <h6 className="element-header">EGG COLLECTION</h6> */}
 					<form>
 						<div className="row">
 							<div className="col-md-6">
@@ -474,6 +478,18 @@ const TreatmentChart = ({ closeModal, patient }) => {
 					</div>
 					<div className="col-sm-4">
 						<div className="form-group">
+							<label>No of Oocyte Retrieved</label>
+							<input
+								className="form-control"
+								placeholder="oocyte"
+								value={no_oo}
+								onChange={e => setNo_oo(e.target.value)}
+								type="number"
+							/>
+						</div>
+					</div>
+					<div className="col-sm-4">
+						<div className="form-group">
 							<label>OCR DR:</label>
 							<input
 								className="form-control"
@@ -496,18 +512,7 @@ const TreatmentChart = ({ closeModal, patient }) => {
 							/>
 						</div>
 					</div>
-					<div className="col-sm-4">
-						<div className="form-group">
-							<label>No of Oocyte Retrieved</label>
-							<input
-								className="form-control"
-								placeholder="oocyte"
-								value={no_oo}
-								onChange={e => setNo_oo(e.target.value)}
-								type="number"
-							/>
-						</div>
-					</div>
+
 					<div className="col-sm-4">
 						<div className="form-group">
 							<label>TOTAL</label>

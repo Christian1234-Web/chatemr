@@ -7,6 +7,7 @@ import RadiologyMenu from './RadiologyMenu';
 import NurseMenu from './NurseMenu';
 import DoctorMenu from './DoctorMenu';
 import HrMenu from './HrMenu';
+import PlanMenu from './PlanMenu';
 import StoreMenu from './StoreMenu';
 import CafeteriaMenu from './CafeteriaMenu';
 import HMOMenu from './HMOMenu';
@@ -57,6 +58,10 @@ const AdminMenu = () => {
 				<span>HUMAN RESOURCES</span>
 			</li>
 			<HrMenu />
+			<li className="sub-header">
+				<span>PLAN</span>
+			</li>
+			<PlanMenu />
 			<li className="sub-header">
 				<span>STORE</span>
 			</li>
