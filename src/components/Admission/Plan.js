@@ -16,6 +16,7 @@ import {
 	CK_DIAGNOSIS,
 } from '../../services/constants';
 import SSRStorage from '../../services/storage';
+import { Field } from 'react-final-form';
 
 const storage = new SSRStorage();
 
@@ -26,6 +27,29 @@ const Plan = ({ previous, patient, closeModal, item_id, module }) => {
 	const encounter = useSelector(state => state.patient.soapData);
 
 	const dispatch = useDispatch();
+
+	const [formValues, setFormValues] = useState([{ name: '' }]);
+
+	let handleChange = (i, e) => {
+		let newFormValues = [...formValues];
+		newFormValues[i][e.target.name] = e.target.value;
+		setFormValues(newFormValues);
+	};
+
+	let addFormFields = () => {
+		setFormValues([...formValues, { name: '' }]);
+	};
+
+	let removeFormFields = i => {
+		let newFormValues = [...formValues];
+		newFormValues.splice(i, 1);
+		setFormValues(newFormValues);
+	};
+
+	let handleSubmit = event => {
+		event.preventDefault();
+		alert(JSON.stringify(formValues));
+	};
 
 	const saveTreatmentPlan = useCallback(
 		data => {
@@ -93,8 +117,50 @@ const Plan = ({ previous, patient, closeModal, item_id, module }) => {
 		}
 	};
 
+	console.log('Mallam', formValues);
+
 	return (
 		<div className="form-block encounter">
+			<form onSubmit={handleSubmit}>
+				<label for="exampleInputEmail1">To-Do</label>
+				{formValues.map((element, index) => (
+					<div className="" key={index}>
+						<div className="row">
+							<div className="col-sm-11">
+								<div className="form-group">
+									{/* <label></label> */}
+									<input
+										class="form-control"
+										id="exampleInputEmail1"
+										type="text"
+										name="name"
+										value={element.name || ''}
+										onChange={e => handleChange(index, e)}
+									/>
+								</div>
+							</div>
+							{index ? (
+								<button
+									type="button"
+									className="button remove m-2 btn btn-info btn-sm text-white pointer"
+									onClick={() => removeFormFields(index)}
+								>
+									<i className="os-icon os-icon-close" />
+								</button>
+							) : null}
+						</div>
+					</div>
+				))}
+				<div className="button-section m-2">
+					<button
+						className="button add"
+						type="button"
+						onClick={() => addFormFields()}
+					>
+						Add
+					</button>
+				</div>
+			</form>
 			<form onSubmit={onSubmit}>
 				<div className="row">
 					<div className="col-sm-12">
