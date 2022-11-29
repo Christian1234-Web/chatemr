@@ -7,7 +7,12 @@ import { notifyError, notifySuccess } from '../../services/notify';
 
 const { TimePicker } = DatePicker;
 
-const TreatmentChart = ({ closeModal, patient }) => {
+const TreatmentChart = ({
+	closeModal,
+	patient,
+	setNewEmbryologyId,
+	setTab,
+}) => {
 	const [fsh, setFsh] = useState('');
 	const [tsh, setTsh] = useState('');
 	const [lh, setLh] = useState('');
@@ -92,6 +97,13 @@ const TreatmentChart = ({ closeModal, patient }) => {
 			const url = `embryology/treatment/create`;
 			const rs = await request(url, 'POST', true, data);
 			console.log(rs);
+			if (rs.success) {
+				setNewEmbryologyId(rs.embryology.id);
+				notifySuccess('Save Successfully!');
+				setTimeout(() => {
+					setTab('sperm-preparation');
+				}, 1000);
+			}
 			// setFsh('');
 			// setTsh('');
 			// setLh('');
@@ -108,8 +120,7 @@ const TreatmentChart = ({ closeModal, patient }) => {
 			// setEmbr('');
 			// setNo_oo('');
 			// setTotal('');
-			notifySuccess('Save Successfully!');
-			closeModal();
+			// closeModal();
 		} catch (err) {
 			console.log(err);
 			notifyError('Failed to Save!');
