@@ -1,7 +1,121 @@
 import React, { useState } from 'react';
+import { notifySuccess } from '../../services/notify';
+import { request } from '../../services/utilities';
 
-const SpermPreparation = () => {
+const SpermPreparation = ({ newEmbryologyId, setTab }) => {
 	const [displayDate, setDisplayDate] = useState(false);
+	const [spermType, setSpermType] = useState('');
+	const [donorCode, setDonorCode] = useState('');
+	const [method, setMethod] = useState('');
+	const [process, setProcess] = useState('');
+	const [slope, setSlope] = useState('');
+	const [viscosity, setViscosity] = useState('');
+	const [timeOfProduction, setTimeOfProduction] = useState('');
+	const [timeReceived, setTimeReceived] = useState('');
+	const [timeAnalyzed, setTimeAnalyzed] = useState('');
+	const [volumeOne, setVolumeOne] = useState('');
+	const [volumeTwo, setVolumeTwo] = useState('');
+	const [volumeThree, setVolumeThree] = useState('');
+	const [volumeFour, setVolumeFour] = useState('');
+	const [cellOne, setCellOne] = useState('');
+	const [cellTwo, setCellTwo] = useState('');
+	const [cellThree, setCellThree] = useState('');
+	const [cellFour, setCellFour] = useState('');
+	const [cellDensityOne, setCellDensityOne] = useState('');
+	const [cellDensityTwo, setCellDensityTwo] = useState('');
+	const [cellDensityThree, setCellDensityThree] = useState('');
+	const [cellDensityFour, setCellDensityFour] = useState('');
+	const [cellMobilityOne, setCellMobilityOne] = useState('');
+	const [cellMobilityTwo, setCellMobilityTwo] = useState('');
+	const [cellMobilityThree, setCellMobilityThree] = useState('');
+	const [cellMobilityFour, setCellMobilityFour] = useState('');
+	const [progOne, setProgOne] = useState('');
+	const [progTwo, setProgTwo] = useState('');
+	const [progThree, setProgThree] = useState('');
+	const [progFour, setProgFour] = useState('');
+	const [abnorOne, setAbnorOne] = useState('');
+	const [abnorTwo, setAbnorTwo] = useState('');
+	const [abnorThree, setAbnorThree] = useState('');
+	const [abnorFour, setAbnorFour] = useState('');
+	const [agglutinationOne, setAgglutinationOne] = useState('');
+	const [agglutinationTwo, setAgglutinationTwo] = useState('');
+	const [agglutinationThree, setAgglutinationThree] = useState('');
+	const [agglutinationFour, setAgglutinationFour] = useState('');
+	const [comment, setComment] = useState('');
+	const [doctor, setDoctor] = useState('');
+	const [witness, setWitness] = useState('');
+
+	const handleFormSubmit = async () => {
+		const payload = {
+			embryologyId: newEmbryologyId,
+			type: spermType,
+			method: method,
+			comment: comment,
+			process: process,
+			slope: slope,
+			donorCode: donorCode,
+			viscousity: viscosity,
+			timeOfProduction: timeOfProduction,
+			timeReceived: timeReceived,
+			timeAnalyzed: timeAnalyzed,
+			witness: witness,
+			// embryologistId: 0,
+			cellInfo: [
+				{
+					type: 'one',
+					volume: volumeOne,
+					cells: cellOne,
+					density: cellDensityOne,
+					motility: cellMobilityOne,
+					prog: progOne,
+					abnor: abnorOne,
+					agglutination: agglutinationOne,
+				},
+				{
+					type: 'two',
+					volume: volumeTwo,
+					cells: cellTwo,
+					density: cellDensityTwo,
+					motility: cellMobilityTwo,
+					prog: progTwo,
+					abnor: abnorTwo,
+					agglutination: agglutinationTwo,
+				},
+				{
+					type: 'three',
+					volume: volumeThree,
+					cells: cellThree,
+					density: cellDensityThree,
+					motility: cellMobilityThree,
+					prog: progThree,
+					abnor: abnorThree,
+					agglutination: agglutinationThree,
+				},
+				{
+					type: 'four',
+					volume: volumeFour,
+					cells: cellFour,
+					density: cellDensityFour,
+					motility: cellMobilityFour,
+					prog: progFour,
+					abnor: abnorFour,
+					agglutination: agglutinationFour,
+				},
+			],
+		};
+		try {
+			const url = `embryology/sperm-prep/create`;
+			const rs = await request(url, 'POST', true, payload);
+			if (rs.success) {
+				notifySuccess('Save Successfully!');
+				setTimeout(() => {
+					setTab('icsi');
+				}, 1000);
+			}
+		} catch (error) {
+			console.log('Submit Sperm Prep Error', error);
+		}
+	};
 	return (
 		<div
 			className="p-2"
@@ -18,9 +132,10 @@ const SpermPreparation = () => {
 										<label className="form-check-label">
 											<input
 												className="form-check-input"
-												name="optionsRadios"
+												name="spermType"
 												type="radio"
-												defaultValue="option1"
+												value="partner"
+												onChange={e => setSpermType(e.target.value)}
 											/>
 											PARTNER
 										</label>
@@ -31,9 +146,10 @@ const SpermPreparation = () => {
 										<label className="form-check-label">
 											<input
 												className="form-check-input"
-												name="optionsRadios"
+												name="spermType"
 												type="radio"
-												defaultValue="option2"
+												value="donor"
+												onChange={e => setSpermType(e.target.value)}
 											/>
 											DONOR
 										</label>
@@ -51,6 +167,7 @@ const SpermPreparation = () => {
 										type="text"
 										className="form-control"
 										style={{ height: '30px' }}
+										onChange={e => setDonorCode(e.target.value)}
 									/>
 								</div>
 							</div>
@@ -62,9 +179,10 @@ const SpermPreparation = () => {
 										<label className="form-check-label">
 											<input
 												className="form-check-input"
-												name="optionsRadios"
+												name="spermMethod"
 												type="radio"
-												defaultValue="option1"
+												value="masturbation"
+												onChange={e => setMethod(e.target.value)}
 											/>
 											MASTURBATION
 										</label>
@@ -75,9 +193,10 @@ const SpermPreparation = () => {
 										<label className="form-check-label">
 											<input
 												className="form-check-input"
-												name="optionsRadios"
+												name="spermMethod"
 												type="radio"
-												defaultValue="option2"
+												value="withdrawal"
+												onChange={e => setMethod(e.target.value)}
 											/>
 											WITHDRAWAL
 										</label>
@@ -88,9 +207,10 @@ const SpermPreparation = () => {
 										<label className="form-check-label">
 											<input
 												className="form-check-input"
-												name="optionsRadios"
+												name="spermMethod"
 												type="radio"
-												defaultValue="option2"
+												value="tesa/pesa"
+												onChange={e => setMethod(e.target.value)}
 											/>
 											TESA/PESA
 										</label>
@@ -107,10 +227,10 @@ const SpermPreparation = () => {
 										<label className="form-check-label">
 											<input
 												className="form-check-input"
-												name="optionsRadios"
+												name="process"
 												type="radio"
-												defaultValue="option1"
-												onClick={() => setDisplayDate(false)}
+												value="fresh"
+												onClick={e => setProcess(e.target.value)}
 											/>
 											FRESH
 										</label>
@@ -121,24 +241,13 @@ const SpermPreparation = () => {
 										<label className="form-check-label">
 											<input
 												className="form-check-input"
-												name="optionsRadios"
+												name="process"
 												type="radio"
-												defaultValue="option2"
-												onClick={() => setDisplayDate(true)}
+												value="frozen"
+												onClick={e => setProcess(e.target.value)}
 											/>
 											FROZEN
 										</label>
-										{displayDate && (
-											<label className="form-check-label">
-												<input
-													className="form-check-input"
-													name="optionsRadios"
-													type="date"
-													defaultValue="option2"
-												/>
-												FROZEN
-											</label>
-										)}
 									</div>
 								</div>
 							</div>
@@ -150,9 +259,10 @@ const SpermPreparation = () => {
 										<label className="form-check-label">
 											<input
 												className="form-check-input"
-												name="optionsRadios"
+												name="slope"
 												type="radio"
-												defaultValue="option1"
+												value="gradient"
+												onChange={e => setSlope(e.target.value)}
 											/>
 											GRADIENT
 										</label>
@@ -163,9 +273,10 @@ const SpermPreparation = () => {
 										<label className="form-check-label">
 											<input
 												className="form-check-input"
-												name="optionsRadios"
+												name="slope"
 												type="radio"
-												defaultValue="option2"
+												value="swim up"
+												onChange={e => setSlope(e.target.value)}
 											/>
 											SWIM UP
 										</label>
@@ -183,9 +294,10 @@ const SpermPreparation = () => {
 										<label className="form-check-label">
 											<input
 												className="form-check-input"
-												name="optionsRadios"
+												name="viscosity"
 												type="radio"
-												defaultValue="option1"
+												value="normal"
+												onChange={e => setViscosity(e.target.value)}
 											/>
 											NORMAL
 										</label>
@@ -196,9 +308,10 @@ const SpermPreparation = () => {
 										<label className="form-check-label">
 											<input
 												className="form-check-input"
-												name="optionsRadios"
+												name="viscosity"
 												type="radio"
-												defaultValue="option2"
+												value="abnormal"
+												onChange={e => setViscosity(e.target.value)}
 											/>
 											ABNORMAL
 										</label>
@@ -220,6 +333,7 @@ const SpermPreparation = () => {
 									className="form-control"
 									placeholder="Time of Production"
 									type="time"
+									onChange={e => setTimeOfProduction(e.target.value)}
 								/>
 							</div>
 						</div>
@@ -232,6 +346,7 @@ const SpermPreparation = () => {
 									className="form-control"
 									placeholder="Time Received"
 									type="time"
+									onChange={e => setTimeReceived(e.target.value)}
 								/>
 							</div>
 						</div>
@@ -244,6 +359,7 @@ const SpermPreparation = () => {
 									className="form-control"
 									placeholder="Time Analyzed"
 									type="time"
+									onChange={e => setTimeAnalyzed(e.target.value)}
 								/>
 							</div>
 						</div>
@@ -289,97 +405,237 @@ const SpermPreparation = () => {
 						<tr>
 							<td>INITIAL ASSES.1:</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setVolumeOne(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setCellOne(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setCellDensityOne(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setCellMobilityOne(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setProgOne(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setAbnorOne(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setAgglutinationOne(e.target.value)}
+								/>
 							</td>
 						</tr>
 						<tr>
 							<td>PREP 1:</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setVolumeTwo(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setCellTwo(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setCellDensityTwo(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setCellMobilityTwo(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setProgTwo(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setAbnorTwo(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setAgglutinationTwo(e.target.value)}
+								/>
 							</td>
 						</tr>
 						<tr>
 							<td>INITIAL ASSES.2:</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setVolumeThree(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setCellThree(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setCellDensityThree(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setCellMobilityThree(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setProgThree(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setAbnorThree(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setAgglutinationThree(e.target.value)}
+								/>
 							</td>
 						</tr>
 						<tr>
 							<td>PREP 2:</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setVolumeFour(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setCellFour(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setCellDensityFour(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setCellMobilityFour(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setProgFour(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setAbnorFour(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setAgglutinationFour(e.target.value)}
+								/>
 							</td>
 						</tr>
 						<tr>
@@ -389,6 +645,7 @@ const SpermPreparation = () => {
 									className="form-control"
 									placeholder="Comment"
 									type="text"
+									onChange={e => setComment(e.target.value)}
 								/>
 							</td>
 						</tr>
@@ -396,13 +653,18 @@ const SpermPreparation = () => {
 				</table>
 				<form>
 					<div className="row">
-						<div className="col-sm-4">
+						<div className="col-sm-6">
 							<div className="form-group">
 								<label>DR</label>
-								<input className="form-control" placeholder="Dr" type="text" />
+								<input
+									className="form-control"
+									placeholder="Dr"
+									type="text"
+									onChange={e => setDoctor(e.target.value)}
+								/>
 							</div>
 						</div>
-						<div className="col-sm-4">
+						{/* <div className="col-sm-4">
 							<div className="form-group">
 								<label>EMBRIOLOGIST</label>
 								<input
@@ -411,14 +673,15 @@ const SpermPreparation = () => {
 									type="text"
 								/>
 							</div>
-						</div>
-						<div className="col-sm-4">
+						</div> */}
+						<div className="col-sm-6">
 							<div className="form-group">
 								<label>WITNESS</label>
 								<input
 									className="form-control"
 									placeholder="Witness"
 									type="text"
+									onChange={e => setWitness(e.target.value)}
 								/>
 							</div>
 						</div>
@@ -428,7 +691,11 @@ const SpermPreparation = () => {
 			<div className="d-flex justify-content-between">
 				<div></div>
 				<div>
-					<button type="button" className="btn btn-primary">
+					<button
+						type="button"
+						className="btn btn-primary"
+						onClick={handleFormSubmit}
+					>
 						Submit
 					</button>
 				</div>

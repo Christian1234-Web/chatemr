@@ -1,6 +1,99 @@
 import React from 'react';
+import { useState } from 'react';
+import { notifySuccess } from '../../services/notify';
+import { request } from '../../services/utilities';
 
-const IcsiRecord = () => {
+const IcsiRecord = ({ newEmbryologyId, setTab }) => {
+	const [timeOne, setTimeOne] = useState('');
+	const [timeTwo, setTimeTwo] = useState('');
+	const [MII, setMII] = useState('');
+	const [MIGV, setMIGV] = useState('');
+	const [FRAG, setFRAG] = useState('');
+	const [ABN, setABN] = useState('');
+	const [commentOne, setCommentOne] = useState('');
+	const [ICSIMethod, setICSIMethod] = useState('');
+	const [OPDate, setOPDate] = useState('');
+	const [totalNumberOfOocyte, setTotalNumberOfOocyte] = useState('');
+	const [numberOfOocyteInseminated, setNumberOfOocyteInseminated] =
+		useState('');
+	const [numberOfOocyteInjected, setNumberOfOocyteInjected] = useState('');
+	const [commentTwo, setCommentTwo] = useState('');
+	const [DR, setDR] = useState('');
+	const [witness, setWitness] = useState('');
+	const [twoPNOne, setTwoPNOne] = useState('');
+	const [threePNOne, setThreePNOne] = useState('');
+	const [onePNOne, setOnePNOne] = useState('');
+	const [plusOne, setPlusOne] = useState('');
+	const [MILOne, setMILOne] = useState('');
+	const [MLOne, setMLOne] = useState('');
+	const [GVOne, setGVOne] = useState('');
+	const [otherOne, setOtherOne] = useState('');
+	const [twoPNTwo, setTwoPNTwo] = useState('');
+	const [threePNTwo, setThreePNTwo] = useState('');
+	const [onePNTwo, setOnePNTwo] = useState('');
+	const [plusTwo, setPlusTwo] = useState('');
+	const [MILTwo, setMILTwo] = useState('');
+	const [MLTwo, setMLTwo] = useState('');
+	const [GVTwo, setGVTwo] = useState('');
+	const [otherTwo, setOtherTwo] = useState('');
+	const [commentThree, setCommentThree] = useState('');
+
+	const handleFormSubmit = async () => {
+		const payload = {
+			embryologyId: newEmbryologyId,
+			time: timeOne,
+			mii: MII,
+			migv: MIGV,
+			frag: FRAG,
+			abn: ABN,
+			commentOne: commentOne,
+			icsiMethod: ICSIMethod,
+			opDate: `${OPDate} ${timeTwo}`,
+			docyteInjected: numberOfOocyteInjected,
+			docyteInseminated: numberOfOocyteInseminated,
+			totalDocyte: totalNumberOfOocyte,
+			commentTwo: commentTwo,
+			witness: witness,
+			commentThree: commentThree,
+			dayOne: [
+				{
+					type: 'ivf',
+					one_pn: onePNOne,
+					two_pn: twoPNOne,
+					three_pn: threePNOne,
+					plus: plusOne,
+					mil: MILOne,
+					ml: MLOne,
+					gv: GVOne,
+					others: otherOne,
+				},
+				{
+					type: 'icsi',
+					one_pn: onePNTwo,
+					two_pn: twoPNTwo,
+					three_pn: threePNTwo,
+					plus: plusTwo,
+					mil: MILTwo,
+					ml: MLTwo,
+					gv: GVTwo,
+					others: otherTwo,
+				},
+			],
+		};
+		try {
+			const url = `embryology/icsi/create`;
+			const rs = await request(url, 'POST', true, payload);
+			if (rs.success) {
+				notifySuccess('Save Successfully!');
+				setTimeout(() => {
+					setTab('assessment');
+				}, 1000);
+			}
+		} catch (error) {
+			console.log('Submit Sperm Prep Error', error);
+		}
+	};
+
 	return (
 		<div
 			className="p-2"
@@ -18,6 +111,7 @@ const IcsiRecord = () => {
 									className="form-control"
 									placeholder="Time"
 									type="time"
+									onChange={e => setTimeOne(e.target.value)}
 								/>
 							</div>
 						</div>
@@ -38,16 +132,36 @@ const IcsiRecord = () => {
 					<tr>
 						<td>NO:</td>
 						<td>
-							<input className="form-control" placeholder="" type="text" />
+							<input
+								className="form-control"
+								placeholder=""
+								type="text"
+								onChange={e => setMII(e.target.value)}
+							/>
 						</td>
 						<td>
-							<input className="form-control" placeholder="" type="text" />
+							<input
+								className="form-control"
+								placeholder=""
+								type="text"
+								onChange={e => setMIGV(e.target.value)}
+							/>
 						</td>
 						<td>
-							<input className="form-control" placeholder="" type="text" />
+							<input
+								className="form-control"
+								placeholder=""
+								type="text"
+								onChange={e => setFRAG(e.target.value)}
+							/>
 						</td>
 						<td>
-							<input className="form-control" placeholder="" type="text" />
+							<input
+								className="form-control"
+								placeholder=""
+								type="text"
+								onChange={e => setABN(e.target.value)}
+							/>
 						</td>
 					</tr>
 					<tr>
@@ -57,6 +171,7 @@ const IcsiRecord = () => {
 								className="form-control"
 								placeholder="Comment"
 								type="text"
+								onChange={e => setCommentOne(e.target.value)}
 							/>
 						</td>
 					</tr>
@@ -70,9 +185,10 @@ const IcsiRecord = () => {
 							<div className="form-check">
 								<input
 									className="form-check-input"
-									name="optionsRadios"
+									name="implant"
 									type="radio"
-									value="option1"
+									value="insemination"
+									onChange={e => setICSIMethod(e.target.value)}
 								/>
 								<label className="form-check-label">INSEMINATION</label>
 							</div>
@@ -81,9 +197,10 @@ const IcsiRecord = () => {
 							<div className="form-check">
 								<input
 									className="form-check-input"
-									name="optionsRadios"
+									name="implant"
 									type="radio"
-									value="option2"
+									value="injection"
+									onChange={e => setICSIMethod(e.target.value)}
 								/>
 								<label className="form-check-label mt-1">INJECTION</label>
 							</div>
@@ -92,9 +209,10 @@ const IcsiRecord = () => {
 							<div className="form-check">
 								<input
 									className="form-check-input"
-									name="optionsRadios"
+									name="implant"
 									type="radio"
-									value="option2"
+									value="50/50"
+									onChange={e => setICSIMethod(e.target.value)}
 								/>
 								<label className="form-check-label mt-1">50/50</label>
 							</div>
@@ -108,6 +226,7 @@ const IcsiRecord = () => {
 									className="form-control"
 									placeholder="OP DATE"
 									type="date"
+									onChange={e => setOPDate(e.target.value)}
 								/>
 							</div>
 						</div>
@@ -120,6 +239,7 @@ const IcsiRecord = () => {
 									className="form-control"
 									placeholder="Time"
 									type="time"
+									onChange={e => setTimeTwo(e.target.value)}
 								/>
 							</div>
 						</div>
@@ -140,58 +260,48 @@ const IcsiRecord = () => {
 					<tbody>
 						<tr>
 							<th rowSpan="2">
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setTotalNumberOfOocyte(e.target.value)}
+								/>
 							</th>
 							<th>No of Oocyte Inseminated</th>
 							<th>No of Oocyte Injected</th>
 						</tr>
 						<tr>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setNumberOfOocyteInseminated(e.target.value)}
+								/>
 							</td>
 							<td>
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setNumberOfOocyteInjected(e.target.value)}
+								/>
 							</td>
 						</tr>
 
 						<tr>
 							<td>COMMENT:</td>
 							<td colSpan="2">
-								<input className="form-control" placeholder="" type="text" />
+								<input
+									className="form-control"
+									placeholder=""
+									type="text"
+									onChange={e => setCommentTwo(e.target.value)}
+								/>
 							</td>
 						</tr>
 					</tbody>
 				</table>
-				<form>
-					<div className="row">
-						<div className="col-md-4">
-							<div className="form-group">
-								<label>DR</label>
-								<input className="form-control" placeholder="Dr" type="text" />
-							</div>
-						</div>
-						<div className="col-md-4">
-							<div className="form-group">
-								<label>WITNESS</label>
-								<input
-									className="form-control"
-									placeholder="Witness"
-									type="text"
-								/>
-							</div>
-						</div>
-						<div className="col-md-4">
-							<div className="form-group">
-								<label>EMBRYOLOGISTS</label>
-								<input
-									className="form-control"
-									placeholder="Embryologists"
-									type="text"
-								/>
-							</div>
-						</div>
-					</div>
-				</form>
 			</div>
 			<h6 className="element-header">DAY 1</h6>
 			<table className="table table-striped table-bordered">
@@ -280,38 +390,49 @@ const IcsiRecord = () => {
 
 			<form>
 				<div className="row">
-					<div className="col-md-4">
+					<div className="col-md-6">
 						<div className="form-group">
-							<label>Dr</label>
-							<input className="form-control" placeholder="Dr" type="text" />
+							<label>DR</label>
+							<input
+								className="form-control"
+								placeholder="Dr"
+								type="text"
+								onChange={e => setDR(e.target.value)}
+							/>
 						</div>
 					</div>
-					<div className="col-md-4">
+					<div className="col-md-6">
 						<div className="form-group">
 							<label>WITNESS</label>
 							<input
 								className="form-control"
 								placeholder="Witness"
 								type="text"
+								onChange={e => setWitness(e.target.value)}
 							/>
 						</div>
 					</div>
-					<div className="col-md-4">
-						<div className="form-group">
-							<label>EMBRYOLOGISTS</label>
-							<input
-								className="form-control"
-								placeholder="Embryologists"
-								type="text"
-							/>
-						</div>
-					</div>
+					{/* <div className="col-md-4">
+							<div className="form-group">
+								<label>EMBRYOLOGISTS</label>
+								<input
+									className="form-control"
+									placeholder="Embryologists"
+									type="text"
+								/>
+							</div>
+						</div> */}
 				</div>
 			</form>
+
 			<div className="d-flex justify-content-between">
 				<div></div>
 				<div>
-					<button type="button" className="btn btn-primary">
+					<button
+						type="button"
+						className="btn btn-primary"
+						onClick={handleFormSubmit}
+					>
 						Submit
 					</button>
 				</div>

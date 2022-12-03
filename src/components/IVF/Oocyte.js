@@ -236,7 +236,7 @@ const Oocyte = ({ closeModal }) => {
 			const rs = await request(url, 'POST', true, data);
 			console.log(rs);
 			notifySuccess('Save Successful!');
-			closeModal();
+			// closeModal();
 		} catch (err) {
 			console.log(err);
 			notifyError('Failed to Save!');

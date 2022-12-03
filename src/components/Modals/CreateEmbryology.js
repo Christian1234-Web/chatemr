@@ -8,6 +8,7 @@ import TreatmentChart from '../IVF/TreatmentChart';
 
 const CreateEmbryology = ({ closeModal, patient }) => {
 	const [tab, setTab] = useState('chart');
+	const [newEmbryologyId, setNewEmbryologyId] = useState('');
 
 	return (
 		<div
@@ -85,12 +86,37 @@ const CreateEmbryology = ({ closeModal, patient }) => {
 						<div className="element-box p-3">
 							<div className="row">
 								<div className="col-md-12">
-									{tab === 'assessment' && <EmbryoAssessment />}
-									{tab === 'transfer' && <EmbryoTransfer />}
-									{tab === 'icsi' && <IcsiRecord />}
-									{tab === 'sperm-preparation' && <SpermPreparation />}
+									{tab === 'assessment' && (
+										<EmbryoAssessment
+											newEmbryologyId={newEmbryologyId}
+											setTab={setTab}
+										/>
+									)}
+									{tab === 'transfer' && (
+										<EmbryoTransfer
+											newEmbryologyId={newEmbryologyId}
+											closeModal={closeModal}
+										/>
+									)}
+									{tab === 'icsi' && (
+										<IcsiRecord
+											newEmbryologyId={newEmbryologyId}
+											setTab={setTab}
+										/>
+									)}
+									{tab === 'sperm-preparation' && (
+										<SpermPreparation
+											newEmbryologyId={newEmbryologyId}
+											setTab={setTab}
+										/>
+									)}
 									{tab === 'chart' && (
-										<TreatmentChart closeModal={closeModal} patient={patient} />
+										<TreatmentChart
+											closeModal={closeModal}
+											patient={patient}
+											setNewEmbryologyId={setNewEmbryologyId}
+											setTab={setTab}
+										/>
 									)}
 								</div>
 							</div>
