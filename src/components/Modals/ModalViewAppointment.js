@@ -62,7 +62,7 @@ const ModalViewAppointment = ({ appointment, closeModal }) => {
 													</strong>
 												</li>
 												<li>
-													Patient Phone:{' '}
+													Patient Phone:
 													<strong>
 														{appointment?.patient?.phone_number || '--'}
 													</strong>
