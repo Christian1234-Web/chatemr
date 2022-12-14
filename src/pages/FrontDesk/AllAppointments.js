@@ -228,9 +228,6 @@ class AllAppointments extends Component {
 		} = this.state;
 		const { filter } = this.props;
 
-		// TODO : remember to remove this
-		console.log(appointments);
-
 		return (
 			<div className="row">
 				<div className="col-md-12">
@@ -404,15 +401,14 @@ class AllAppointments extends Component {
 														)}
 													</td>
 													<td className="row-actions">
-														{/* //TODO add eye icon if item is complete  */}
 														{/* SEND PHONE NUM IF COMPLETED */}
 														{item.status === 'Completed' && (
-															<Tooltip title="Send To patients">
+															<Tooltip title="Send Link">
 																<a
 																	onClick={() => this.setPhoneNumber(item)}
 																	className="cursor"
 																>
-																	<i className="os-icon os-icon-plane"></i>
+																	<i className="os-icon os-icon-phone"></i>
 																</a>
 															</Tooltip>
 														)}
