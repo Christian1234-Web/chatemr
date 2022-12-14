@@ -403,12 +403,12 @@ class AllAppointments extends Component {
 													<td className="row-actions">
 														{/* SEND PHONE NUM IF COMPLETED */}
 														{item.status === 'Completed' && (
-															<Tooltip title="Send Link">
+															<Tooltip title="Send Survey">
 																<a
 																	onClick={() => this.setPhoneNumber(item)}
 																	className="cursor"
 																>
-																	<i className="os-icon os-icon-phone"></i>
+																	<i className="os-icon os-icon-send"></i>
 																</a>
 															</Tooltip>
 														)}
