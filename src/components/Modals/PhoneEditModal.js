@@ -13,18 +13,9 @@ export const VerifyPhone = ({ closeModal, appointment }) => {
 	};
 
 	const SubmitPhone = async (id, newnumber, changed) => {
-		// e.preventDefault();
 		try {
 			let url = `patient/edit/phone/?pid=${id}`;
-			let hashing_id = `patient/hashid/?pid=${id}`;
-			const sendLink = 'patient/link';
-
-			//Calling id hasher Endpoint.
-			const hash = await request(hashing_id, 'POST', true);
-
-			if (!hash.success) {
-				notifyError('Error Hashing Patient Id!');
-			}
+			let hash_send = `patient/hash/send/?pid=${id}`;
 
 			if (changed) {
 				const result = await request(url, 'PATCH', true, {
@@ -35,22 +26,21 @@ export const VerifyPhone = ({ closeModal, appointment }) => {
 					setNumber(result.patient?.phone_number);
 					notifySuccess('Phone saved!');
 					closeModal();
-					await request(sendLink, 'POST', true, {
+					let resp = await request(hash_send, 'POST', true, {
 						phone: result.patient?.phone_number,
-						message: `http://localhost:3000/${hash.token}`,
 					});
-					console.log(`http://localhost:3000/${hash.token}`);
+					console.log(resp);
 				}
 				// Generate and Send Link
 			} else {
 				// GENERATE LINK
 				console.log('generating link');
-				await request(sendLink, 'POST', true, {
+				let resp = await request(hash_send, 'POST', true, {
 					phone: number,
-					message: `http://localhost:3000/${hash.token}`,
 				});
 				closeModal();
-				console.log(`http://localhost:3000/${hash.token}`);
+				notifySuccess('Survey sent!');
+				console.log(resp);
 			}
 		} catch (error) {
 			console.log(error);
