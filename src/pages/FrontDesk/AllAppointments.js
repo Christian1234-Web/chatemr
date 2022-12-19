@@ -27,6 +27,7 @@ import { toggleProfile } from '../../actions/user';
 import ProfilePopup from '../../components/Patient/ProfilePopup';
 import TableLoading from '../../components/TableLoading';
 import { messageService } from '../../services/message';
+import { VerifyPhone } from '../../components/Modals/PhoneEditModal';
 
 const { RangePicker } = DatePicker;
 
@@ -47,6 +48,7 @@ class AllAppointments extends Component {
 		patient_id: '',
 		status: '',
 		showQueueModal: false,
+		numberModal: false,
 	};
 
 	componentDidMount() {
@@ -182,8 +184,18 @@ class AllAppointments extends Component {
 			showModal: false,
 			showAppointment: false,
 			showQueueModal: false,
+			numberModal: false,
 		});
 		document.body.classList.remove('modal-open');
+	};
+
+	//Here
+	setPhoneNumber = item => {
+		document.body.classList.add('modal-open');
+		this.setState({
+			numberModal: true,
+			appointment: item,
+		});
 	};
 
 	addAppointment = item => {
@@ -212,6 +224,7 @@ class AllAppointments extends Component {
 			showAppointment,
 			appointment,
 			showQueueModal,
+			numberModal,
 		} = this.state;
 		const { filter } = this.props;
 
@@ -388,6 +401,18 @@ class AllAppointments extends Component {
 														)}
 													</td>
 													<td className="row-actions">
+														{/* SEND PHONE NUM IF COMPLETED */}
+														{item.status === 'Completed' && (
+															<Tooltip title="Send Survey">
+																<a
+																	onClick={() => this.setPhoneNumber(item)}
+																	className="cursor"
+																>
+																	<i className="os-icon os-icon-send"></i>
+																</a>
+															</Tooltip>
+														)}
+
 														<Tooltip title="View Appointment">
 															<a
 																onClick={() => this.viewAppointmentDetail(item)}
@@ -469,6 +494,9 @@ class AllAppointments extends Component {
 						closeModal={() => this.closeModal()}
 						update={item => this.updateAppointment(item)}
 					/>
+				)}
+				{numberModal && (
+					<VerifyPhone closeModal={this.closeModal} appointment={appointment} />
 				)}
 			</div>
 		);
