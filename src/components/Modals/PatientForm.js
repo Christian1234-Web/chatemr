@@ -42,6 +42,10 @@ const PatientForm = ({ patient, closeModal, history, location }) => {
 	const [staff, setStaff] = useState(null);
 	const [mother, setMother] = useState(null);
 	const [checked, setChecked] = useState(false);
+	const [signatureRawData, setSignatureRawData] = useState('');
+	const [signatureImageData, setSignatureImageData] = useState('');
+	const [imgHeight, setImgHeight] = useState(0);
+	const [imgWidth, setImgWidth] = useState(0);
 
 	const dispatch = useDispatch();
 
@@ -189,6 +193,7 @@ const PatientForm = ({ patient, closeModal, history, location }) => {
 			nok_maritalStatus: values.nok_maritalStatus?.value || '',
 			nok_relationship: values.nok_relationship?.value || '',
 			enrollee_id: values.enrollee_id || null,
+			sign: signatureImageData,
 		};
 
 		if (!patient) {
@@ -244,6 +249,78 @@ const PatientForm = ({ patient, closeModal, history, location }) => {
 				return { [FORM_ERROR]: 'could not save patient record' };
 			}
 		}
+	};
+
+	const startSigning = () => {
+		const canvasObj = document.getElementById('cvs');
+		canvasObj
+			.getContext('2d')
+			.clearRect(0, 0, canvasObj.width, canvasObj.height);
+		setImgWidth(canvasObj.width);
+		setImgHeight(canvasObj.height);
+
+		const message = {
+			firstName: '',
+			lastName: '',
+			eMail: '',
+			location: '',
+			imageFormat: 1,
+			imageX: imgWidth,
+			imageY: imgHeight,
+			imageTransparency: false,
+			imageScaling: false,
+			maxUpScalePercent: 0.0,
+			rawDataFormat: 'ENC',
+			minSigPoints: 25,
+		};
+
+		document.addEventListener(
+			'SigCaptureWeb_SignResponse',
+			SignResponse,
+			false
+		);
+		const messageData = JSON.stringify(message);
+		const element = document.createElement('SigCaptureWeb_ExtnDataElem');
+		element.setAttribute('SigCaptureWeb_MsgAttribute', messageData);
+		document.documentElement.appendChild(element);
+		const evt = document.createEvent('Events');
+		evt.initEvent('SigCaptureWeb_SignStartEvent', true, false);
+		element.dispatchEvent(evt);
+	};
+
+	const SignResponse = event => {
+		const str = event.target.getAttribute('SigCaptureWeb_msgAttri');
+		const obj = JSON.parse(str);
+		SetValues(obj, imgWidth, imgHeight);
+	};
+
+	const SetValues = (objResponse, imageWidth, imageHeight) => {
+		const obj = JSON.parse(JSON.stringify(objResponse));
+		const ctx = document.getElementById('cvs').getContext('2d');
+
+		if (
+			obj.errorMsg !== null &&
+			obj.errorMsg !== '' &&
+			obj.errorMsg !== 'undefined'
+		) {
+			alert(obj.errorMsg);
+		} else {
+			if (obj.isSigned) {
+				setSignatureImageData(obj.imageData);
+				setSignatureRawData(obj.rawData);
+
+				const img = new Image();
+				img.onload = function () {
+					ctx.drawImage(img, 0, 0, imageWidth, imageHeight);
+				};
+				img.src = 'data:image/png;base64,' + obj.imageData;
+			}
+		}
+	};
+
+	const ClearFormData = () => {
+		setSignatureImageData('');
+		setSignatureRawData('');
 	};
 
 	return (
@@ -897,6 +974,36 @@ const PatientForm = ({ patient, closeModal, history, location }) => {
 														</div>
 													</div>
 												</Condition>
+											</div>
+										</FormWizard.Page>
+										<FormWizard.Page onChange={() => console.log('malik')}>
+											<div className="signature-pad-wrapper">
+												<div className="d-flex justify-content-around align-items-center">
+													<h2 className="header">Please Sign Here</h2>
+													<div>
+														<button
+															onClick={startSigning}
+															type="button"
+															className="btn btn-sm btn-primary"
+														>
+															Click to Sign
+														</button>
+													</div>
+												</div>
+												<canvas
+													id="cvs"
+													className="signature-pad"
+													width="500"
+													height="150"
+												></canvas>
+												<div className="signature-data-wrapper">
+													{/* <div className="signature-raw-data">
+														{signatureRawData}
+													</div> */}
+													{/* <div className="signature-image-data">
+														{signatureImageData}
+													</div> */}
+												</div>
 											</div>
 										</FormWizard.Page>
 									</FormWizard>
