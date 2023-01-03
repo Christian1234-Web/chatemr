@@ -4,11 +4,15 @@ import { request } from '../../services/utilities';
 
 export const VerifyPhone = ({ closeModal, appointment }) => {
 	const [number, setNumber] = useState(appointment?.patient?.phone_number);
+	const [patientName, setPatientName] = useState(
+		appointment?.patient.surname + ' ' + appointment?.patient?.other_names
+	);
 	const [changed, setChanged] = useState(false);
 
 	const updatePhoneFunc = e => {
 		const { value } = e.target;
 		setNumber(value);
+
 		setChanged(true);
 	};
 
@@ -23,13 +27,13 @@ export const VerifyPhone = ({ closeModal, appointment }) => {
 				});
 
 				if (result.success) {
-					setNumber(result.patient?.phone_number);
+					// setNumber(result.patient?.phone_number);
 					notifySuccess('Phone saved!');
 					closeModal();
 					let resp = await request(hash_send, 'POST', true, {
 						phone: result.patient?.phone_number,
+						username: patientName,
 					});
-					console.log(resp);
 				}
 				// Generate and Send Link
 			} else {
@@ -37,10 +41,10 @@ export const VerifyPhone = ({ closeModal, appointment }) => {
 				console.log('generating link');
 				let resp = await request(hash_send, 'POST', true, {
 					phone: number,
+					username: patientName,
 				});
 				closeModal();
 				notifySuccess('Survey sent!');
-				console.log(resp);
 			}
 		} catch (error) {
 			console.log(error);
