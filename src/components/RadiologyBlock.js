@@ -5,7 +5,6 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import { confirmAlert } from 'react-confirm-alert';
 import Popover from 'antd/lib/popover';
-
 import ViewScanImage from './Modals/ViewScanImage';
 import UploadScanImage from './Modals/UploadScanImage';
 import { patientAPI, API_URI } from '../services/constants';
@@ -23,6 +22,8 @@ import { toggleProfile } from '../actions/user';
 import ProfilePopup from './Patient/ProfilePopup';
 import ViewRequestNote from './Modals/ViewRequestNote';
 import Admitted from './Admitted';
+import CreateNote from './Modals/CreateNote';
+import ProcedureNoteTable from './Patient/Modals/ProcedureNoteTable';
 
 class RadiologyBlock extends Component {
 	state = {
@@ -31,6 +32,9 @@ class RadiologyBlock extends Component {
 		uploading: false,
 		uploadModal: false,
 		visible: null,
+		addNote: false,
+		viewNote: false,
+		notesItem: null,
 	};
 
 	viewScan = item => {
@@ -49,6 +53,11 @@ class RadiologyBlock extends Component {
 			const newItem = { ...scan_request, item };
 			const newScans = updateImmutable(scans, newItem);
 			this.props.updateScan(newScans);
+			this.setState({
+				addNote: true,
+				scanItem: data,
+			});
+			console.log('radiology sets', data);
 			notifySuccess('scan captured!');
 			this.props.stopBlock();
 		} catch (error) {
@@ -241,12 +250,22 @@ class RadiologyBlock extends Component {
 			scanItem: null,
 			showModal: false,
 			uploadModal: false,
+			addNote: false,
+			viewNote: false,
+		});
+	};
+
+	viewNotes = data => {
+		this.setState({
+			viewNote: true,
+			notesItem: data,
 		});
 	};
 
 	render() {
 		const { loading, scans, patient } = this.props;
-		const { scanItem, showModal, uploading, uploadModal, visible } = this.state;
+		const { scanItem, showModal, uploading, uploadModal, visible, addNote } =
+			this.state;
 
 		return loading ? (
 			<TableLoading />
@@ -386,7 +405,21 @@ class RadiologyBlock extends Component {
 										{scan.item.cancelled === 0 &&
 											scan.status === 1 &&
 											scan.item.approved === 1 && (
-												<span className="badge badge-success">Approved</span>
+												<div
+													style={{
+														display: 'flex',
+														gap: '10px',
+														flexDirection: 'row',
+													}}
+												>
+													<span className="badge badge-success">Approved</span>
+													<a
+														className="secondary"
+														onClick={() => this.viewNotes(scan)}
+													>
+														Notes
+													</a>
+												</div>
 											)}
 										{scan.item.cancelled === 1 && (
 											<span className="badge badge-danger">cancelled</span>
@@ -463,6 +496,23 @@ class RadiologyBlock extends Component {
 				)}
 				{scanItem && showModal && (
 					<ViewScanImage scan={scanItem} closeModal={this.closeModal} />
+				)}
+
+				{addNote && (
+					<CreateNote
+						closeModal={this.closeModal}
+						updateNote={() => {}}
+						patient={this.state.scanItem.patient}
+						patientreq_id={this.state.scanItem.id}
+						type="scans"
+					/>
+				)}
+				{this.state.viewNote && (
+					<ProcedureNoteTable
+						closeModal={this.closeModal}
+						patientRequest_id={this.state.notesItem.id}
+						type="scans"
+					/>
 				)}
 			</>
 		);

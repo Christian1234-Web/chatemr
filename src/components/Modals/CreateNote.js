@@ -18,6 +18,7 @@ const CreateNote = ({
 	ivf_id,
 	antenatal_id,
 	procedure_id,
+	patientreq_id,
 	labour_id,
 	patient,
 }) => {
@@ -42,6 +43,7 @@ const CreateNote = ({
 				labour_id,
 				note_type: noteType,
 				specialty,
+				patientreq_id,
 			};
 
 			const rs = await request('patient-notes', 'POST', true, data);

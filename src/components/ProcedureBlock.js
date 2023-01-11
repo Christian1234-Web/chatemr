@@ -20,12 +20,18 @@ import ModalScheduleDate from './Modals/ModalScheduleDate';
 import ViewRequestNote from './Modals/ViewRequestNote';
 import Admitted from './Admitted';
 import { toggleSidepanel } from '../actions/sidepanel';
+import CreateNote from './Modals/CreateNote';
+import ProcedureNoteTable from './Patient/Modals/ProcedureNoteTable';
+import VisitNotesTable from './Patient/VisitNotesTable';
 
 class ProcedureBlock extends Component {
 	state = {
 		procedue: null,
 		showRSModal: false,
 		visible: null,
+		addNote: false,
+		setProcedure: null,
+		viewNote: false,
 	};
 
 	showProfile = patient => {
@@ -51,6 +57,7 @@ class ProcedureBlock extends Component {
 			const newItem = { ...procedure_request, item };
 			const newItems = updateImmutable(procedures, newItem);
 			this.props.updateProcedure(newItems);
+
 			notifySuccess('procedure request cancelled!');
 			this.props.stopBlock();
 		} catch (error) {
@@ -76,7 +83,12 @@ class ProcedureBlock extends Component {
 
 	closeModal = () => {
 		document.body.classList.remove('modal-open');
-		this.setState({ showRSModal: false, procedure: null });
+		this.setState({
+			showRSModal: false,
+			procedure: null,
+			addNote: false,
+			viewNote: false,
+		});
 	};
 
 	startProcedureTest = async data => {
@@ -126,6 +138,12 @@ class ProcedureBlock extends Component {
 			const newItems = updateImmutable(procedures, newItem);
 			this.props.updateProcedure(newItems);
 			this.props.stopBlock();
+
+			this.setState({
+				addNote: true,
+				setProcedure: data,
+			});
+
 			notifySuccess('procedure concluded!');
 		} catch (error) {
 			console.log(error);
@@ -143,11 +161,16 @@ class ProcedureBlock extends Component {
 		);
 	};
 
+	viewNotes = async procedure_id => {
+		this.setState({
+			viewNote: true,
+			setProcedure: procedure_id,
+		});
+	};
+
 	render() {
 		const { loading, procedures, patient, updateProcedure } = this.props;
 		const { procedure, showRSModal, visible } = this.state;
-
-		console.log('Mallam', procedures);
 
 		return loading ? (
 			<TableLoading />
@@ -331,6 +354,17 @@ class ProcedureBlock extends Component {
 												Conclude
 											</a>
 										)}
+										{/* NEW ONE */}
+										{data.item.startedDate && data.item.finishedDate && (
+											<a
+												onClick={() => this.viewNotes(data)}
+												className="btn btn-sm btn-primary px-2 py-1 text-white"
+											>
+												View Notes
+											</a>
+										)}
+
+										{/* NEW ONE ENDS */}
 										{data.item.cancelled === 0 && !data.item?.startedDate && (
 											<Tooltip title="Cancel Procedure">
 												<a
@@ -353,6 +387,23 @@ class ProcedureBlock extends Component {
 						procedure={procedure}
 						procedures={procedures}
 						updateProcedure={updateProcedure}
+					/>
+				)}
+
+				{this.state.addNote && (
+					<CreateNote
+						closeModal={this.closeModal}
+						updateNote={() => {}}
+						patient={this.state.setProcedure.patient}
+						patientreq_id={this.state.setProcedure.id}
+						type="procedure"
+					/>
+				)}
+				{this.state.viewNote && (
+					<ProcedureNoteTable
+						closeModal={this.closeModal}
+						patientRequest_id={this.state.setProcedure.id}
+						type="procedure"
 					/>
 				)}
 			</>
