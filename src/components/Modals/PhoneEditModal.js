@@ -1,21 +1,26 @@
 import React, { useState } from 'react';
 import { notifyError, notifySuccess } from '../../services/notify';
-import { request } from '../../services/utilities';
+import { patientname, request } from '../../services/utilities';
 
 export const VerifyPhone = ({ closeModal, appointment }) => {
 	const [number, setNumber] = useState(appointment?.patient?.phone_number);
+	// eslint-disable-next-line no-unused-vars
+	const [patientName, setPatientName] = useState(
+		patientname(appointment?.patient)
+	);
 	const [changed, setChanged] = useState(false);
 
 	const updatePhoneFunc = e => {
 		const { value } = e.target;
 		setNumber(value);
+
 		setChanged(true);
 	};
 
 	const SubmitPhone = async (id, newnumber, changed) => {
 		try {
-			let url = `patient/edit/phone/?pid=${id}`;
-			let hash_send = `patient/hash/send/?pid=${id}`;
+			const url = `patient/edit/phone/?pid=${id}`;
+			const hash_send = `patient/hash/send/?pid=${id}`;
 
 			if (changed) {
 				const result = await request(url, 'PATCH', true, {
@@ -23,24 +28,24 @@ export const VerifyPhone = ({ closeModal, appointment }) => {
 				});
 
 				if (result.success) {
-					setNumber(result.patient?.phone_number);
+					// setNumber(result.patient?.phone_number);
 					notifySuccess('Phone saved!');
 					closeModal();
-					let resp = await request(hash_send, 'POST', true, {
+					await request(hash_send, 'POST', true, {
 						phone: result.patient?.phone_number,
+						username: patientName,
 					});
-					console.log(resp);
 				}
 				// Generate and Send Link
 			} else {
 				// GENERATE LINK
 				console.log('generating link');
-				let resp = await request(hash_send, 'POST', true, {
+				await request(hash_send, 'POST', true, {
 					phone: number,
+					username: patientName,
 				});
 				closeModal();
 				notifySuccess('Survey sent!');
-				console.log(resp);
 			}
 		} catch (error) {
 			console.log(error);

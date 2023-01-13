@@ -28,7 +28,8 @@ const Lab = ({ location, itemId, type, can_request = true, patient }) => {
 			try {
 				const p = page || 1;
 				const block = type || '';
-				const url = `requests/${patient.id}/request/labs?page=${p}&limit=10&startDate=${startDate}&endDate=${endDate}&item_id=${itemId}&type=${block}`;
+				const item_id = itemId || '';
+				const url = `requests/${patient.id}/request/labs?page=${p}&limit=10&startDate=${startDate}&endDate=${endDate}&item_id=${item_id}&type=${block}`;
 				const rs = await request(url, 'GET', true);
 				const { result, ...meta } = rs;
 				setLabs(result);
