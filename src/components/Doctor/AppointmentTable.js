@@ -39,6 +39,7 @@ const AppointmentTable = ({ appointments, loading, updateAppointment }) => {
 
 	const updateStatus = async ({ id, action }) => {
 		try {
+			dispatch(startBlock());
 			setUpdating(id);
 			const staff = profile.details;
 			const data = {
@@ -50,6 +51,7 @@ const AppointmentTable = ({ appointments, loading, updateAppointment }) => {
 			const url = 'front-desk/appointments/accept';
 			const res = await request(url, 'PATCH', true, data);
 			setUpdating(null);
+			dispatch(stopBlock());
 			if (res.success) {
 				updateAppointment(res.appointment);
 				notifySuccess('Front desk has been notified!');
@@ -58,6 +60,7 @@ const AppointmentTable = ({ appointments, loading, updateAppointment }) => {
 			}
 		} catch (e) {
 			setUpdating(null);
+			dispatch(stopBlock());
 			notifyError('Something went wrong. Unable to update appointment status');
 		}
 	};
@@ -91,8 +94,8 @@ const AppointmentTable = ({ appointments, loading, updateAppointment }) => {
 			dispatch(stopBlock());
 		} catch (e) {
 			setUpdating(null);
-			notifyError('Something went wrong');
 			dispatch(stopBlock());
+			notifyError('Something went wrong');
 		}
 	};
 
