@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { notifyError, notifySuccess } from '../../services/notify';
-import { request } from '../../services/utilities';
+import { patientname, request } from '../../services/utilities';
 
 export const VerifyPhone = ({ closeModal, appointment }) => {
 	const [number, setNumber] = useState(appointment?.patient?.phone_number);
+	// eslint-disable-next-line no-unused-vars
 	const [patientName, setPatientName] = useState(
-		appointment?.patient.surname + ' ' + appointment?.patient?.other_names
+		patientname(appointment?.patient)
 	);
 	const [changed, setChanged] = useState(false);
 
@@ -18,8 +19,8 @@ export const VerifyPhone = ({ closeModal, appointment }) => {
 
 	const SubmitPhone = async (id, newnumber, changed) => {
 		try {
-			let url = `patient/edit/phone/?pid=${id}`;
-			let hash_send = `patient/hash/send/?pid=${id}`;
+			const url = `patient/edit/phone/?pid=${id}`;
+			const hash_send = `patient/hash/send/?pid=${id}`;
 
 			if (changed) {
 				const result = await request(url, 'PATCH', true, {
@@ -30,7 +31,7 @@ export const VerifyPhone = ({ closeModal, appointment }) => {
 					// setNumber(result.patient?.phone_number);
 					notifySuccess('Phone saved!');
 					closeModal();
-					let resp = await request(hash_send, 'POST', true, {
+					await request(hash_send, 'POST', true, {
 						phone: result.patient?.phone_number,
 						username: patientName,
 					});
@@ -39,7 +40,7 @@ export const VerifyPhone = ({ closeModal, appointment }) => {
 			} else {
 				// GENERATE LINK
 				console.log('generating link');
-				let resp = await request(hash_send, 'POST', true, {
+				await request(hash_send, 'POST', true, {
 					phone: number,
 					username: patientName,
 				});
