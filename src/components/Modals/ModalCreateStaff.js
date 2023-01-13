@@ -40,6 +40,10 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 	const [dateOfEmployment, setDateOfEmployment] = useState(null);
 	const [nokDateOfBirth, setNokDateOfBirth] = useState(null);
 	const [avatar, setAvatar] = useState(null);
+	const [signatureRawData, setSignatureRawData] = useState('');
+	const [signatureImageData, setSignatureImageData] = useState('');
+	const [imgHeight, setImgHeight] = useState(0);
+	const [imgWidth, setImgWidth] = useState(0);
 
 	const departments = useSelector(state => state.department);
 	const roles = useSelector(state => state.role.roles);
@@ -113,6 +117,7 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 						label: staff.next_of_kin_relationship,
 				  }
 				: '',
+			sign: signatureImageData,
 			nok_phoneNumber: staff?.next_of_kin_contact_no || '',
 			nok_address: staff?.next_of_kin_address || '',
 			nok_date_of_birth: staff.next_of_kin_dob
@@ -227,6 +232,78 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 			dispatch(stopBlock());
 			return { [FORM_ERROR]: 'could not save staff profile' };
 		}
+	};
+
+	const startSigning = () => {
+		const canvasObj = document.getElementById('cvs');
+		canvasObj
+			.getContext('2d')
+			.clearRect(0, 0, canvasObj.width, canvasObj.height);
+		setImgWidth(canvasObj.width);
+		setImgHeight(canvasObj.height);
+
+		const message = {
+			firstName: '',
+			lastName: '',
+			eMail: '',
+			location: '',
+			imageFormat: 1,
+			imageX: imgWidth,
+			imageY: imgHeight,
+			imageTransparency: false,
+			imageScaling: false,
+			maxUpScalePercent: 0.0,
+			rawDataFormat: 'ENC',
+			minSigPoints: 25,
+		};
+
+		document.addEventListener(
+			'SigCaptureWeb_SignResponse',
+			SignResponse,
+			false
+		);
+		const messageData = JSON.stringify(message);
+		const element = document.createElement('SigCaptureWeb_ExtnDataElem');
+		element.setAttribute('SigCaptureWeb_MsgAttribute', messageData);
+		document.documentElement.appendChild(element);
+		const evt = document.createEvent('Events');
+		evt.initEvent('SigCaptureWeb_SignStartEvent', true, false);
+		element.dispatchEvent(evt);
+	};
+
+	const SignResponse = event => {
+		const str = event.target.getAttribute('SigCaptureWeb_msgAttri');
+		const obj = JSON.parse(str);
+		SetValues(obj, imgWidth, imgHeight);
+	};
+
+	const SetValues = (objResponse, imageWidth, imageHeight) => {
+		const obj = JSON.parse(JSON.stringify(objResponse));
+		const ctx = document.getElementById('cvs').getContext('2d');
+
+		if (
+			obj.errorMsg !== null &&
+			obj.errorMsg !== '' &&
+			obj.errorMsg !== 'undefined'
+		) {
+			alert(obj.errorMsg);
+		} else {
+			if (obj.isSigned) {
+				setSignatureImageData(obj.imageData);
+				setSignatureRawData(obj.rawData);
+
+				const img = new Image();
+				img.onload = function () {
+					ctx.drawImage(img, 0, 0, imageWidth, imageHeight);
+				};
+				img.src = 'data:image/png;base64,' + obj.imageData;
+			}
+		}
+	};
+
+	const ClearFormData = () => {
+		setSignatureImageData('');
+		setSignatureRawData('');
 	};
 
 	return (
@@ -920,6 +997,36 @@ const ModalCreateStaff = ({ updateStaffs, closeModal, staff, staffs }) => {
 															)}
 														/>
 													</div>
+												</div>
+											</div>
+										</FormWizard.Page>
+										<FormWizard.Page onChange={() => console.log('malik')}>
+											<div className="signature-pad-wrapper">
+												<div className="d-flex justify-content-around align-items-center">
+													<h2 className="header">Please Sign Here</h2>
+													<div>
+														<button
+															onClick={startSigning}
+															type="button"
+															className="btn btn-sm btn-primary"
+														>
+															Click to Sign
+														</button>
+													</div>
+												</div>
+												<canvas
+													id="cvs"
+													className="signature-pad"
+													width="500"
+													height="150"
+												></canvas>
+												<div className="signature-data-wrapper">
+													{/* <div className="signature-raw-data">
+														{signatureRawData}
+													</div> */}
+													{/* <div className="signature-image-data">
+														{signatureImageData}
+													</div> */}
 												</div>
 											</div>
 										</FormWizard.Page>
