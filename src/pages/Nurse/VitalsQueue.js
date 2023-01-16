@@ -87,6 +87,18 @@ const VitalsQueue = () => {
 		}
 	};
 
+	const blastPrompt = async patient => {
+		try {
+			dispatch(startBlock());
+			const url = `front-desk/queue-system/prompt/?patient_id=${patient.id}&type=vitals`;
+			await request(url, 'GET', true);
+			dispatch(stopBlock());
+		} catch (e) {
+			notifyError('Something went wrong');
+			dispatch(stopBlock());
+		}
+	};
+
 	return (
 		<div className="element-wrapper">
 			<h6 className="element-header">List of patients in queue for vitals</h6>
@@ -142,6 +154,16 @@ const VitalsQueue = () => {
 														onClick={() => sendToDoctor(queue)}
 													>
 														<i className="os-icon os-icon-mail-18" />
+													</a>
+												</Tooltip>
+												<Tooltip title="Call Patient">
+													<a
+														onClick={() =>
+															blastPrompt(queue.appointment.patient)
+														}
+														className="btn text-primary ml-1"
+													>
+														<i className="os-icon os-icon-volume-2" />
 													</a>
 												</Tooltip>
 											</td>
