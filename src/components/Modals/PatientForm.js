@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { FORM_ERROR } from 'final-form';
 import Switch from 'react-switch';
+import waiting from '../../assets/images/waiting.gif';
 
 import FormWizard from '../FormWizard';
 import {
@@ -35,6 +36,10 @@ import { setPatientRecord } from '../../actions/user';
 const PatientForm = ({ patient, closeModal, history, location }) => {
 	const path = location.pathname.split('/');
 
+	const temporaryImage = require('../../assets/images/placeholder.jpg');
+
+	const [patientImg, setPatientImg] = useState(temporaryImage);
+	const [upload, setupload] = useState(false);
 	const [loaded, setLoaded] = useState(false);
 	const [hmo, setHmo] = useState(null);
 	const [dateOfBirth, setDateOfBirth] = useState(null);
@@ -48,6 +53,39 @@ const PatientForm = ({ patient, closeModal, history, location }) => {
 	const [imgWidth, setImgWidth] = useState(0);
 
 	const dispatch = useDispatch();
+
+	// TODO:The Upload function
+	const profileImageUpload = event => {
+		event.preventDefault();
+
+		const file = event.target.files[0];
+		setupload(true);
+
+		const formData = new FormData();
+		formData.append('file', file);
+		formData.append('upload_preset', 'softlife');
+
+		fetch(`https://api.cloudinary.com/v1_1/dsfkanidu/raw/upload`, {
+			method: 'POST',
+			body: formData,
+		})
+			.then(response => {
+				return response.json();
+			})
+			.then(data => {
+				let dataFile = {
+					name: data.original_filename,
+					link: data.secure_url,
+					type: 'image',
+				};
+
+				if (dataFile?.name) {
+					console.log(dataFile);
+					setPatientImg(dataFile.link);
+					setupload(false);
+				}
+			});
+	};
 
 	const getHmoSchemes = async q => {
 		if (!q || q.length <= 1) {
@@ -367,13 +405,32 @@ const PatientForm = ({ patient, closeModal, history, location }) => {
 												<img
 													alt=""
 													style={{ width: '110px', borderRadius: '65px' }}
-													src={require('../../assets/images/placeholder.jpg')}
+													src={patientImg}
 												/>
 											</div>
 											<div className="mt-3 text-center">
-												<button className="btn btn-info btn-small text-white">
-													<i className="os-icon os-icon-ui-51" /> upload picture
-												</button>
+												<input
+													hidden
+													type="file"
+													id="my-file"
+													onChange={profileImageUpload}
+												/>
+												<label
+													className="btn btn-info btn-small text-white"
+													htmlFor="my-file"
+												>
+													{upload ? (
+														<>
+															<img src={waiting} alt="submitting" />
+															uploading ...
+														</>
+													) : (
+														<>
+															<i className="os-icon os-icon-ui-51" />
+															upload picture
+														</>
+													)}
+												</label>
 												<button className="btn btn-primary btn-small mt-2">
 													<i className="os-icon os-icon-ui-65" /> take photo
 												</button>
