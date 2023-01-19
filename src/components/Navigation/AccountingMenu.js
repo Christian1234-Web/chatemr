@@ -19,6 +19,14 @@ const AccountingMenu = () => {
 					<span>Payroll</span>
 				</Link>
 			</li>
+			<li>
+				<Link to="/accounting/transactions">
+					<div className="icon-w">
+						<div className="os-icon os-icon-layers" />
+					</div>
+					<span>Transactions</span>
+				</Link>
+			</li>
 		</>
 	);
 };

@@ -1,0 +1,89 @@
+import moment from 'moment';
+import React from 'react';
+import { notifyError, notifySuccess } from '../../services/notify';
+
+const TransactionItem = ({ item, index, updateTransaction }) => {
+	const getCookie = cookieName => {
+		let cookie = {};
+		document.cookie.split(';').forEach(function (el) {
+			let [key, value] = el.split('=');
+			cookie[key.trim()] = value;
+		});
+		return cookie[cookieName];
+	};
+
+	const submitToQbo = async transaction => {
+		const bill = {
+			type: 'salesreceipt',
+			id: transaction.id,
+			note: 'Usual Payment',
+			method: 'Cash',
+		};
+		const qbo = {
+			realmId: getCookie('realmId'),
+			access_token: getCookie('access_token'),
+			refresh_token: getCookie('refresh_token'),
+			code: getCookie('code'),
+			state: getCookie('state'),
+			id_token: getCookie('id_token'),
+		};
+
+		try {
+			// Add transaction to quick books
+			const res = await fetch(
+				'http://localhost:3002/accounts/qbo/report/save',
+				{
+					method: 'POST',
+					headers: {
+						'content-type': 'application/json',
+						qbo: JSON.stringify(qbo),
+					},
+					body: JSON.stringify(bill),
+				}
+			);
+			const rs = await res.json();
+			if (rs.link) {
+				window.location.href = rs.link;
+			}
+			if (!rs.success) {
+				notifyError(rs.message);
+			} else {
+				notifySuccess('Added To QuickBooks');
+				updateTransaction(rs.transaction);
+			}
+			console.log(rs);
+		} catch (error) {
+			notifyError(error.message);
+			console.log('fetch error:- ', error);
+		}
+	};
+
+	return (
+		<tr>
+			<td>{index}</td>
+			<td>{item.id}</td>
+			<td>{item.bill_source}</td>
+			<td>{item.amount}</td>
+			{<td>{moment(item.createdAt).format('D MMM, YYYY')}</td>}
+			<td className="row-actions">
+				{item.isAddedToQbo ? (
+					<span className="badge badge-success">Added</span>
+				) : (
+					<a
+						className="primary"
+						title="Add QuickBooks"
+						onClick={() => submitToQbo(item)}
+					>
+						<i className="os-icon os-icon-check-circle" />
+					</a>
+				)}
+			</td>
+		</tr>
+	);
+};
+
+export default TransactionItem;
+
+{
+	/* <span className="badge badge-success">Approved</span> */
+}
