@@ -182,6 +182,18 @@ class LabBlock extends Component {
 		}
 	};
 
+	blastPrompt = async patient => {
+		try {
+			this.props.startBlock();
+			const url = `front-desk/queue-system/prompt/?patient_id=${patient.id}&type=labs`;
+			await request(url, 'GET', true);
+			this.props.stopBlock();
+		} catch (e) {
+			notifyError('Something went wrong');
+			this.props.stopBlock();
+		}
+	};
+
 	render() {
 		const { loading, labs, patient, updateLab, user } = this.props;
 		const { showFLModal, showVLModal, lab, visible } = this.state;
@@ -330,6 +342,16 @@ class LabBlock extends Component {
 											(lab.item.transaction.status === 1 ||
 												lab.item.transaction.status === -1) && (
 												<>
+													{lab.item.approved !== 1 && (
+														<Tooltip title="Call Patient">
+															<a
+																onClick={() => this.blastPrompt(lab.patient)}
+																className="text-primary"
+															>
+																<i className="os-icon os-icon-volume-2" />
+															</a>
+														</Tooltip>
+													)}
 													{lab.item.received === 0 &&
 														hasReceiveSpecimenPermission(user.permissions) && (
 															<Tooltip title="Receive Specimen">
