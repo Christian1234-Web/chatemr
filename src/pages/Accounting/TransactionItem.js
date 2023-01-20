@@ -1,6 +1,11 @@
 import moment from 'moment';
 import React from 'react';
 import { notifyError, notifySuccess } from '../../services/notify';
+import {
+	formatCurrency,
+	parseSource,
+	patientname,
+} from '../../services/utilities';
 
 const TransactionItem = ({ item, index, updateTransaction }) => {
 	const getCookie = cookieName => {
@@ -58,13 +63,47 @@ const TransactionItem = ({ item, index, updateTransaction }) => {
 		}
 	};
 
+	const reqItem = item.patientRequestItem;
+
 	return (
 		<tr>
 			<td>{index}</td>
-			<td>{item.id}</td>
-			<td>{item.bill_source}</td>
-			<td>{item.amount}</td>
-			{<td>{moment(item.createdAt).format('D MMM, YYYY')}</td>}
+			<td style={{ width: '120px' }}>
+				{moment(item.createdAt).format('DD-MM-YYYY H:mma')}
+			</td>
+			<td>{patientname(item.patient, true)}</td>
+			<td>
+				<div className="flex">
+					<span className="text-capitalize">
+						<span className="text-capitalize">
+							<strong>{parseSource(item.bill_source)}</strong>
+							{(item?.bill_source === 'ward' ||
+								item?.bill_source === 'nicu-accommodation' ||
+								item?.bill_source === 'credit-deposit' ||
+								item?.bill_source === 'debit-charge') &&
+								`: ${item.description}`}
+							{(item?.bill_source === 'consultancy' ||
+								item?.bill_source === 'labs' ||
+								item?.bill_source === 'scans' ||
+								item?.bill_source === 'procedure' ||
+								item?.bill_source === 'nursing-service') &&
+							item.service?.item?.name
+								? `: ${item.service?.item?.name}`
+								: ''}
+							{item?.bill_source === 'drugs' && (
+								<>
+									{` : ${reqItem.fill_quantity} ${
+										reqItem.drug.unitOfMeasure
+									} of ${reqItem.drugGeneric.name} (${
+										reqItem.drug.name
+									}) at ${formatCurrency(reqItem.drugBatch.unitPrice)} each`}
+								</>
+							)}
+						</span>
+					</span>
+				</div>
+			</td>
+			<td style={{ width: '120px' }}>{item.amount}</td>
 			<td className="row-actions">
 				{item.isAddedToQbo ? (
 					<span className="badge badge-success">Added</span>
