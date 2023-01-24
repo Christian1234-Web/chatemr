@@ -162,7 +162,6 @@ const PrescriptionBlock = ({
 											</a>
 										</Tooltip>
 									)}
-									{request.transaction_status === 1 && (
 										<Tooltip title="Call Patient">
 											<a
 												onClick={() => blastPrompt(request.patient)}
@@ -171,7 +170,6 @@ const PrescriptionBlock = ({
 												<i className="os-icon os-icon-volume-2" />
 											</a>
 										</Tooltip>
-									)}
 								</td>
 							</tr>
 						);
