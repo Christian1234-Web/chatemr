@@ -77,8 +77,7 @@ class MainMenu extends Component {
 				style={{
 					width: menu_mini ? '8%' : '18%',
 					overflowY: menuHeight > clientHeight ? 'scroll' : 'hidden',
-				}}
-			>
+				}}>
 				<div className="logo-w">
 					<a className="logo">
 						<div className="logo-element" />
@@ -128,7 +127,7 @@ class MainMenu extends Component {
 								role === 'lab-user') && <ClinicalLabMenu />}
 							{role === 'paypoint' && <PayPointMenu />}
 							{role === 'pharmacy' && <PharmacyMenu />}
-							{role === 'radiology' && <RadiologyMenu />}
+							{role === 'radiologist' && <RadiologyMenu />}
 							{role === 'nurse' && <NurseMenu />}
 							{role === 'doctor' && <DoctorMenu />}
 							{(role === 'doctor' || role === 'nurse') && (

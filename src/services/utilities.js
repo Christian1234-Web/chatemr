@@ -212,15 +212,15 @@ export const renderTextArea = ({
 	meta: { touched, error },
 }) => (
 	<div
-		className={`form-group ${touched && (error ? 'has-error has-danger' : '')}`}
-	>
+		className={`form-group ${
+			touched && (error ? 'has-error has-danger' : '')
+		}`}>
 		<label htmlFor={id}>{label}</label>
 		<textarea
 			{...input}
 			type={type}
 			className="form-control"
-			placeholder={placeholder || label}
-		></textarea>
+			placeholder={placeholder || label}></textarea>
 		{touched && error && (
 			<div className="help-block form-text with-errors form-control-feedback">
 				<ul className="list-unstyled">
@@ -334,15 +334,13 @@ export const confirmAction = (action, payload, alertText, alertHead) => {
 						<button
 							className="btn btn-danger"
 							style={{ margin: '10px' }}
-							onClick={onClose}
-						>
+							onClick={onClose}>
 							No
 						</button>
 						<button
 							className="btn btn-primary"
 							style={{ margin: '10px' }}
-							onClick={onclick}
-						>
+							onClick={onclick}>
 							Yes
 						</button>
 					</div>
@@ -366,8 +364,7 @@ export const renderSelectWithDefault = ({
 		<div
 			className={`form-group ${
 				touched && (error ? 'has-error has-danger' : '')
-			}`}
-		>
+			}`}>
 			<label htmlFor={id}>{label}</label>
 			<select {...input} className="form-control">
 				<option value="">{placeholder}</option>
@@ -400,8 +397,9 @@ export const renderSelect = ({
 	meta: { touched, error },
 }) => (
 	<div
-		className={`form-group ${touched && (error ? 'has-error has-danger' : '')}`}
-	>
+		className={`form-group ${
+			touched && (error ? 'has-error has-danger' : '')
+		}`}>
 		<label htmlFor={id}>{label}</label>
 		<select {...input} className="form-control">
 			<option value="">{placeholder}</option>
@@ -544,6 +542,9 @@ export const redirectToPage = (role, history, permissions) => {
 				break;
 			case 'store':
 				uri = '/store';
+				break;
+			case 'radiologist':
+				uri = '/radiology';
 				break;
 			default:
 				uri = hasViewAppointmentPermission(permissions)
