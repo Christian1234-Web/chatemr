@@ -609,18 +609,6 @@ const ProfileBlock = ({
 														</span>
 													</a>
 												</Tooltip>
-												{/* If Patient Has Signed
-												{patient.signature_id &&
-													patient.phone_number &&
-													patient.email && (
-														<Tooltip title="Completed">
-															<div
-																className="text-success"
-																style={{ fontSize: '20px', padding: '0 10px' }}>
-																<i class="os-icon os-icon-check-circle"></i>
-															</div>
-														</Tooltip>
-													)} */}
 											</div>
 											{canNewNote &&
 												(user.role.slug === 'it-admin' ||
