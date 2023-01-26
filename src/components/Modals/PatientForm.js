@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Field } from 'react-final-form';
 import DatePicker from 'react-datepicker';
 import { format, isValid } from 'date-fns';
@@ -46,6 +46,7 @@ const PatientForm = ({ patient, closeModal, history, location }) => {
 	const [signatureImageData, setSignatureImageData] = useState('');
 	const [imgHeight, setImgHeight] = useState(0);
 	const [imgWidth, setImgWidth] = useState(0);
+	const [isUpdated, setIsupdated] = useState(false);
 
 	const dispatch = useDispatch();
 
@@ -144,6 +145,29 @@ const PatientForm = ({ patient, closeModal, history, location }) => {
 		};
 	}
 
+	const OnLoadSetValue = async () => {
+		const patientsig = `patient/signature/get/?id=${patient.signature_id}&type=patient`;
+
+		if (!isUpdated) {
+			const { signature } = await request(patientsig, 'GET', true);
+
+			// setSignatureImageData(signature?.signature);
+			setIsupdated(true);
+
+			// TODO: show me big
+
+			const ctx = document.getElementById('cvs')?.getContext('2d');
+
+			const img = new Image();
+			img.onload = function () {
+				ctx.drawImage(img, 0, 0, 500, 150);
+			};
+
+			img.src = 'data:image/png;base64,' + signature?.signature;
+			console.log('loaded for on load');
+		}
+	};
+
 	useEffect(() => {
 		if (!loaded) {
 			if (patient) {
@@ -172,6 +196,7 @@ const PatientForm = ({ patient, closeModal, history, location }) => {
 				}
 			}
 			setLoaded(true);
+			setIsupdated(false);
 		}
 	}, [loaded, patient]);
 
@@ -976,8 +1001,12 @@ const PatientForm = ({ patient, closeModal, history, location }) => {
 												</Condition>
 											</div>
 										</FormWizard.Page>
-										<FormWizard.Page onChange={() => console.log('malik')}>
-											<div className="signature-pad-wrapper">
+										{/* TODO:bigups */}
+										<FormWizard.Page>
+											<div
+												className="signature-pad-wrapper"
+												onMouseEnter={OnLoadSetValue}
+											>
 												<div className="d-flex justify-content-around align-items-center">
 													<h2 className="header">Please Sign Here</h2>
 													<div>
