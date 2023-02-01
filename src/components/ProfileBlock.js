@@ -124,7 +124,7 @@ const ProfileBlock = ({
 	}, [alertShown, getAlerts]);
 
 	useEffect(() => {
-		// console.log(patient);
+		// console.log('on my block', patient);
 		const subscription = messageService.getMessage().subscribe(message => {
 			if (message !== '') {
 				const { type, data } = message.text;
@@ -742,7 +742,20 @@ const ProfileBlock = ({
 				>
 					<div className="element-box border-primary p-3">
 						<div className="card-header align-items-center pt-75 pb-25">
-							<h5 className="mb-0">Patient Status</h5>
+							<div className="d-flex flex-row">
+								<h5 className="mb-0">Patient Status</h5>
+								{/* If Patient Has Signed */}
+								{patient.signature_id && patient.phone_number && patient.email && (
+									<Tooltip title="Completed">
+										<span
+											className="text-success"
+											style={{ fontSize: '20px', padding: '0 10px' }}
+										>
+											<i class="os-icon os-icon-check-circle"></i>
+										</span>
+									</Tooltip>
+								)}
+							</div>
 							<div className="mt-1">
 								<span className="badge badge-light-primary">
 									{patient.hmo?.name || ''}
