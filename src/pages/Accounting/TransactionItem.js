@@ -90,7 +90,7 @@ const TransactionItem = ({ item, index, updateTransaction }) => {
 							item.service?.item?.name
 								? `: ${item.service?.item?.name}`
 								: ''}
-							{item?.bill_source === 'drugs' && (
+							{item?.bill_source === 'drugs' && reqItem ? (
 								<>
 									{` : ${reqItem.fill_quantity} ${
 										reqItem.drug.unitOfMeasure
@@ -98,6 +98,8 @@ const TransactionItem = ({ item, index, updateTransaction }) => {
 										reqItem.drug.name
 									}) at ${formatCurrency(reqItem.drugBatch.unitPrice)} each`}
 								</>
+							) : (
+								''
 							)}
 						</span>
 					</span>
