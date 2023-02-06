@@ -141,6 +141,21 @@ export const request = async (url, method, authed = false, data) => {
 	return parseJSON(result);
 };
 
+// SPECIALLY FOR QUICKBOOKS ENDPOINT
+export const QuickBooksrequest = async (url, data, qbo) => {
+	// prettier-ignore
+	const user = await (new SSRStorage()).getItem(TOKEN_COOKIE);
+	// console.log(user);
+	const response = await fetch(`${API_URI}/${url}`, {
+		method: 'POST',
+		headers: { ...headers(user), qbo: JSON.stringify(qbo) },
+		body: JSON.stringify(data),
+	});
+
+	const result = await checkStatus(response);
+	return parseJSON(result);
+};
+
 export const upload = async (url, method, body) => {
 	// prettier-ignore
 	const user = await (new SSRStorage()).getItem(TOKEN_COOKIE);
@@ -212,15 +227,15 @@ export const renderTextArea = ({
 	meta: { touched, error },
 }) => (
 	<div
-		className={`form-group ${
-			touched && (error ? 'has-error has-danger' : '')
-		}`}>
+		className={`form-group ${touched && (error ? 'has-error has-danger' : '')}`}
+	>
 		<label htmlFor={id}>{label}</label>
 		<textarea
 			{...input}
 			type={type}
 			className="form-control"
-			placeholder={placeholder || label}></textarea>
+			placeholder={placeholder || label}
+		></textarea>
 		{touched && error && (
 			<div className="help-block form-text with-errors form-control-feedback">
 				<ul className="list-unstyled">
@@ -334,13 +349,15 @@ export const confirmAction = (action, payload, alertText, alertHead) => {
 						<button
 							className="btn btn-danger"
 							style={{ margin: '10px' }}
-							onClick={onClose}>
+							onClick={onClose}
+						>
 							No
 						</button>
 						<button
 							className="btn btn-primary"
 							style={{ margin: '10px' }}
-							onClick={onclick}>
+							onClick={onclick}
+						>
 							Yes
 						</button>
 					</div>
@@ -364,7 +381,8 @@ export const renderSelectWithDefault = ({
 		<div
 			className={`form-group ${
 				touched && (error ? 'has-error has-danger' : '')
-			}`}>
+			}`}
+		>
 			<label htmlFor={id}>{label}</label>
 			<select {...input} className="form-control">
 				<option value="">{placeholder}</option>
@@ -397,9 +415,8 @@ export const renderSelect = ({
 	meta: { touched, error },
 }) => (
 	<div
-		className={`form-group ${
-			touched && (error ? 'has-error has-danger' : '')
-		}`}>
+		className={`form-group ${touched && (error ? 'has-error has-danger' : '')}`}
+	>
 		<label htmlFor={id}>{label}</label>
 		<select {...input} className="form-control">
 			<option value="">{placeholder}</option>

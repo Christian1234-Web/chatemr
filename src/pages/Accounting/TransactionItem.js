@@ -5,6 +5,7 @@ import {
 	formatCurrency,
 	parseSource,
 	patientname,
+	QuickBooksrequest,
 } from '../../services/utilities';
 
 const TransactionItem = ({ item, index, updateTransaction }) => {
@@ -33,20 +34,12 @@ const TransactionItem = ({ item, index, updateTransaction }) => {
 			id_token: getCookie('id_token'),
 		};
 
+		const qboSubmitUrl = 'accounts/qbo/report/save';
+
 		try {
 			// Add transaction to quick books
-			const res = await fetch(
-				'http://localhost:3002/accounts/qbo/report/save',
-				{
-					method: 'POST',
-					headers: {
-						'content-type': 'application/json',
-						qbo: JSON.stringify(qbo),
-					},
-					body: JSON.stringify(bill),
-				}
-			);
-			const rs = await res.json();
+			const rs = await QuickBooksrequest(qboSubmitUrl, bill, qbo);
+
 			if (rs.link) {
 				window.location.href = rs.link;
 			}
