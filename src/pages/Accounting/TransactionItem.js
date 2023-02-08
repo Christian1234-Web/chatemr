@@ -98,7 +98,7 @@ const TransactionItem = ({ item, index, updateTransaction }) => {
 					</span>
 				</div>
 			</td>
-			<td style={{ width: '120px' }}>{item.amount}</td>
+			<td style={{ width: '120px' }}>{Math.abs(item.amount)}</td>
 			<td className="row-actions">
 				{item.isAddedToQbo ? (
 					<span className="badge badge-success">Added</span>
