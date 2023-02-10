@@ -10,6 +10,8 @@ import { itemRender, request, staffname } from '../../services/utilities';
 import { toggleModal } from '../../actions/general';
 import EditAttendee from './EditAttendee';
 
+import AttendanceForm from './AttendanceForm';
+
 const Attendance = () => {
 	const [filtering, setFiltering] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -19,6 +21,7 @@ const Attendance = () => {
 	const [meta, setMeta] = useState({ ...paginate });
 
 	const [openModal, setOpenModal] = useState(false);
+	const [openForm, setOpenForm] = useState(false);
 	const [staff, setStaff] = useState();
 
 	const dispatch = useDispatch();
@@ -126,7 +129,7 @@ const Attendance = () => {
 										<div
 											className="btn btn-sm btn-primary btn-upper text-white filter-btn"
 											onClick={() => {
-												console.log('toggleModal');
+												setOpenForm(true);
 											}}
 										>
 											<i className="os-icon os-icon-ui-22" />
@@ -206,6 +209,13 @@ const Attendance = () => {
 					}}
 					reload={reloadOnDepartmentSuccess}
 					staffId={staff?.user?.id}
+				/>
+			)}
+			{openForm && (
+				<AttendanceForm
+					closeModal={() => {
+						setOpenForm(false);
+					}}
 				/>
 			)}
 		</div>

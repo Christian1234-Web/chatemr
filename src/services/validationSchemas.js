@@ -10,6 +10,13 @@ export const AppointmentSchema = yup.object().shape({
 	referralCompany: yup.string(),
 });
 
+export const attendanceSchema = yup.object().shape({
+	firstname: yup.string().required('Please enter a first name'),
+	lastname: yup.string().required('Please enter a last name'),
+	userId: yup.number().required('Please provide a userid'),
+	department: yup.string().required('Please select a department'),
+});
+
 export const patientSchema = yup.object().shape({
 	surname: yup.string().required("Please enter the patient's last name"),
 	other_names: yup
