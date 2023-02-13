@@ -117,3 +117,7 @@ const TransactionItem = ({ item, index, updateTransaction }) => {
 };
 
 export default TransactionItem;
+
+{
+	/* <span className="badge badge-success">Approved</span> */
+}

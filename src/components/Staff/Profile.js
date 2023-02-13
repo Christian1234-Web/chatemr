@@ -41,7 +41,7 @@ const Profile = () => {
 	const [job_title, setJob_title] = useState('');
 	const [specialization, setSpecialization] = useState(null);
 	const [selected_specialization, setSelected_specialization] = useState(
-		staff === null ? '--' : staff.details.specialization
+		staff === null ? '--' : staff?.details?.specialization
 	);
 	const state_department = useSelector(state => state.department);
 
@@ -87,7 +87,7 @@ const Profile = () => {
 		};
 		// console.log(data);
 		try {
-			const url = `hr/staffs/${staff.id}`;
+			const url = `hr/staffs/${staff?.id}`;
 			const rs = await request(url, 'PUT', true, data);
 			console.log(rs);
 			notifySuccess('Updated Successfully!');
@@ -129,21 +129,21 @@ const Profile = () => {
 
 	const showEditProfile = () => {
 		// console.log(staff)
-		setFirst_name(staff.details.first_name);
-		setLast_name(staff.details.last_name);
-		setMiddle_name(staff.details.other_names);
-		setEmail(staff.details.email);
-		setPhone(staff.details.phone);
-		// setGender(staff.details.gender);
-		setNationality(staff.details.nationality);
-		// setSelected_lga(staff.details.lga);
-		// setSelected_department(staff.details.selected_department);
-		// setState_of_origin(staff.details.state_of_origin);
-		setEmployee_number(staff.details.employee_number);
-		setAccount_number(staff.details.account_number);
-		setBank_name(staff.details.bank_name);
-		setJob_title(staff.details.job_title);
-		// setSelected_specialization(staff.details.specialization);
+		setFirst_name(staff?.details?.first_name);
+		setLast_name(staff?.details?.last_name);
+		setMiddle_name(staff?.details?.other_names);
+		setEmail(staff?.details?.email);
+		setPhone(staff?.details?.phone);
+		// setGender(staff?.details?.gender);
+		setNationality(staff?.details?.nationality);
+		// setSelected_lga(staff?.details?.lga);
+		// setSelected_department(staff?.details?.selected_department);
+		// setState_of_origin(staff?.details?.state_of_origin);
+		setEmployee_number(staff?.details?.employee_number);
+		setAccount_number(staff?.details?.account_number);
+		setBank_name(staff?.details?.bank_name);
+		setJob_title(staff?.details?.job_title);
+		// setSelected_specialization(staff?.details?.specialization);
 
 		view_profile.current.style.display = 'none';
 		btn_edit_profile.current.style.display = 'none';
@@ -499,9 +499,7 @@ const Profile = () => {
 									<p className="">Full Name :</p>
 								</div>
 								<div className="col">
-									<h6 className="">
-										{staffname(staff === null ? '--' : staff.details)}
-									</h6>
+									<h6 className="">{staffname(staff?.details)}</h6>
 								</div>
 
 								<div className="col">
@@ -511,7 +509,7 @@ const Profile = () => {
 									<h6 className="">
 										{staff === null
 											? '--'
-											: staff.details?.employee_number || '--'}
+											: staff?.details?.employee_number || '--'}
 									</h6>
 								</div>
 							</div>
@@ -531,7 +529,7 @@ const Profile = () => {
 									<h6 className="">
 										{staff === null
 											? '--'
-											: staff.details?.employment_start_date || '--'}
+											: staff?.details?.employment_start_date || '--'}
 									</h6>
 								</div>
 							</div>
@@ -588,7 +586,7 @@ const Profile = () => {
 									<h6 className="">
 										{staff === null
 											? '--'
-											: staff.details?.is_consultant || '--'}
+											: staff?.details?.is_consultant || '--'}
 									</h6>
 								</div>
 							</div>
@@ -600,7 +598,7 @@ const Profile = () => {
 									<h6 className="">
 										{staff === null
 											? '--'
-											: staff.details?.department?.name || '--'}
+											: staff?.details?.department?.name || '--'}
 									</h6>
 								</div>
 								<div className="col">
@@ -610,7 +608,7 @@ const Profile = () => {
 									<h6 className="">
 										{staff === null
 											? '--'
-											: staff.details?.contract_type || '--'}
+											: staff?.details?.contract_type || '--'}
 									</h6>
 								</div>
 							</div>
@@ -622,7 +620,7 @@ const Profile = () => {
 									<h6 className="">
 										{staff === null
 											? '--'
-											: staff.details?.marital_status || '--'}
+											: staff?.details?.marital_status || '--'}
 									</h6>
 								</div>
 								<div className="col">
@@ -630,7 +628,7 @@ const Profile = () => {
 								</div>
 								<div className="col">
 									<h6 className="">
-										{staff === null ? '--' : staff.details?.job_title || '--'}
+										{staff === null ? '--' : staff?.details?.job_title || '--'}
 									</h6>
 								</div>
 							</div>
@@ -640,7 +638,7 @@ const Profile = () => {
 								</div>
 								<div className="col">
 									<h6 className="">
-										{staff === null ? '--' : staff.details?.lga || '--'}
+										{staff === null ? '--' : staff?.details?.lga || '--'}
 									</h6>
 								</div>
 								<div className="col">
@@ -650,7 +648,7 @@ const Profile = () => {
 									<h6 className="">
 										{staff === null
 											? '--'
-											: staff.details?.specialization || '--'}
+											: staff?.details?.specialization?.name || '--'}
 									</h6>
 								</div>
 							</div>
@@ -662,7 +660,7 @@ const Profile = () => {
 									<h6 className="">
 										{staff === null
 											? '--'
-											: staff.details?.state_of_origin || '--'}
+											: staff?.details?.state_of_origin || '--'}
 									</h6>
 								</div>
 								<div className="col">
@@ -670,7 +668,7 @@ const Profile = () => {
 								</div>
 								<div className="col">
 									<h6 className="">
-										{staff === null ? '--' : staff.details?.profession || '--'}
+										{staff === null ? '--' : staff?.details?.profession || '--'}
 									</h6>
 								</div>
 							</div>
@@ -680,7 +678,7 @@ const Profile = () => {
 								</div>
 								<div className="col">
 									<h6 className="">
-										{staff === null ? '--' : staff.details?.religion || '--'}
+										{staff === null ? '--' : staff?.details?.religion || '--'}
 									</h6>
 								</div>
 								<div className="col">
@@ -688,7 +686,7 @@ const Profile = () => {
 								</div>
 								<div className="col">
 									<h6 className="">
-										{staff === null ? '--' : staff.details?.address || '--'}
+										{staff === null ? '--' : staff?.details?.address || '--'}
 									</h6>
 								</div>
 							</div>

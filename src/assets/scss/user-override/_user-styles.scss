@@ -528,9 +528,9 @@ button {
 .modal-open {
 	.custom-backdrop {
 		&.fade {
-			opacity: 0.3 !important;
+			// opacity: 0.3 !important;
 			z-index: 1999 !important;
-			display: block !important;
+			// display: block !important;
 		}
 	}
 }

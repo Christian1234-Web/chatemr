@@ -39,6 +39,7 @@ import IVFProfile from './pages/IVFProfile';
 import NicuProfile from './pages/NicuProfile';
 import LabourProfile from './pages/LabourProfile';
 import InboxChat from './components/InboxChat';
+import { ChatIndex } from './routes';
 
 const FrontDesk = lazy(() => import('./pages/FrontDesk/Home'));
 const Nurse = lazy(() => import('./pages/Nurse/Home'));
@@ -231,6 +232,7 @@ class App extends Component {
 															<Route path="/hr" component={Hr} />
 															<Route path="/store" component={Store} />
 															<Route path="/settings" component={Settings} />
+															<Route path="/chat" component={ChatIndex} />
 															<Route path="/hmo" component={Hmo} />
 															<Route path="/lab" component={ClinicalLab} />
 															<Route path="/labour-mgt" component={LabourMgt} />

@@ -12,6 +12,9 @@ import patient from './patient';
 import transaction from './transaction';
 import utility from './utility';
 import department from './department';
+import Auth from './auth/reducers';
+import Chat from './chat/reducers';
+import Layout from './layout/reducer';
 import sidepanel from './sidepanel';
 
 const reducers = combineReducers({
@@ -27,6 +30,9 @@ const reducers = combineReducers({
 	patient,
 	transaction,
 	department,
+	Auth,
+	Chat,
+	Layout,
 	sidepanel,
 });
 

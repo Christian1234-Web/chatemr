@@ -26,10 +26,10 @@
   // gnarly iOS Safari bug: https://bugs.webkit.org/show_bug.cgi?id=158342
   // See also https://github.com/twbs/bootstrap/issues/17695
 
-  .modal-open & {
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
+  // .modal-open & {
+  //   overflow-x: hidden;
+  //   overflow-y: auto;
+  // }
 }
 
 // Shell div to position the modal with bottom padding

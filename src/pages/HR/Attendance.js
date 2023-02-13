@@ -1,16 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { DatePicker, Pagination } from 'antd';
 import moment from 'moment';
-import { useDispatch } from 'react-redux';
 
 import waiting from '../../assets/images/waiting.gif';
 import TableLoading from '../../components/TableLoading';
 import { paginate } from '../../services/constants';
 import { itemRender, request, staffname } from '../../services/utilities';
-import { toggleModal } from '../../actions/general';
-import EditAttendee from './EditAttendee';
-
-import AttendanceForm from './AttendanceForm';
 
 const Attendance = () => {
 	const [filtering, setFiltering] = useState(false);
@@ -19,12 +14,6 @@ const Attendance = () => {
 	const [search, setSearch] = useState('');
 	const [attendance, setAttendance] = useState([]);
 	const [meta, setMeta] = useState({ ...paginate });
-
-	const [openModal, setOpenModal] = useState(false);
-	const [openForm, setOpenForm] = useState(false);
-	const [staff, setStaff] = useState();
-
-	const dispatch = useDispatch();
 
 	const doFilter = e => {
 		setFiltering(true);
@@ -51,17 +40,6 @@ const Attendance = () => {
 		},
 		[date, search]
 	);
-
-	const updateAttendanceOfUser = item => {
-		dispatch(toggleModal(true));
-		setStaff(item);
-		setOpenModal(true);
-	};
-
-	// IF STAFF DEPARTMENT UPDATES SUCCESFULLY, RELOADFETCH ATTENDANCE
-	const reloadOnDepartmentSuccess = () => {
-		fetchAttendance();
-	};
 
 	useEffect(() => {
 		fetchAttendance();
@@ -125,16 +103,6 @@ const Attendance = () => {
 												)}
 											</span>
 										</div>
-										{/* Button To create */}
-										<div
-											className="btn btn-sm btn-primary btn-upper text-white filter-btn"
-											onClick={() => {
-												setOpenForm(true);
-											}}
-										>
-											<i className="os-icon os-icon-ui-22" />
-											<span>Create</span>
-										</div>
 									</div>
 								</div>
 							</div>
@@ -151,31 +119,26 @@ const Attendance = () => {
 									<table className="table table-striped table-bordered">
 										<thead>
 											<tr>
+												<th>Staff ID</th>
 												<th>Staff Name</th>
 												<th className="text-center">Department</th>
 												<th className="text-center">Time</th>
 												<th className="text-center">Date</th>
-												<th className="text-center">Actions</th>
 											</tr>
 										</thead>
 										<tbody>
 											{attendance?.map((item, index) => (
 												<tr key={index}>
+													<td>{item?.user?.id || '--'}</td>
 													<td>{staffname(item.user)}</td>
 													<td className="text-center">
 														{item.user?.department?.name || '--'}
 													</td>
 													<td className="text-center">
-														{moment(item.date).zone('+0000').format('h:mm a')}
+														{moment(item.date).zone('-0100').format('h:mm a')}
 													</td>
 													<td className="text-center">
 														{moment(item.date).format('DD-MM-YYYY')}
-													</td>
-													<td className="text-center">
-														<i
-															className="os-icon os-icon-edit-1 btn btn-link"
-															onClick={() => updateAttendanceOfUser(item)}
-														/>
 													</td>
 												</tr>
 											))}
@@ -201,23 +164,6 @@ const Attendance = () => {
 					</div>
 				</div>
 			</div>
-			{openModal && (
-				<EditAttendee
-					closeModal={() => {
-						dispatch(toggleModal(false));
-						setOpenModal(false);
-					}}
-					reload={reloadOnDepartmentSuccess}
-					staffId={staff?.user?.id}
-				/>
-			)}
-			{openForm && (
-				<AttendanceForm
-					closeModal={() => {
-						setOpenForm(false);
-					}}
-				/>
-			)}
 		</div>
 	);
 };

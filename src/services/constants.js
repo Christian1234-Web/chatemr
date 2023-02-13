@@ -8,6 +8,8 @@ export const VAT = Number(process.env.REACT_APP_VAT) / 100;
 export const TIMEOUT = process.env.REACT_APP_TIMEOUT;
 
 export const TOKEN_COOKIE = 'EMR:TOKEN_COOKIE';
+export const EMBRYOLOGY_ID = 'EMR:TOKEN_COOKIE';
+
 export const MODE_COOKIE = 'EMR:MODE_COOKIE';
 export const FULLSCREEN_COOKIE = 'EMR:FULLSCREEN_COOKIE';
 export const MENU_COOKE = 'EMR:MENU_COOKIE';

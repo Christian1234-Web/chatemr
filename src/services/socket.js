@@ -3,6 +3,9 @@ import { io } from 'socket.io-client';
 import { API_URI } from './constants';
 import { messageService } from './message';
 
+// import SSRStorage from './storage';
+// const storage = new SSRStorage();
+
 let socket;
 
 export const initSocket = () => {
@@ -24,6 +27,38 @@ export const initSocket = () => {
 		});
 	}
 };
+// export const initSocketChat = () => {
+// 	console.log('socket chat initiatied by chris');
+
+// 	socket = io(`${API_URI}/chat`, { transports: ['websocket', 'polling'] });
+
+// 	if (socket) {
+// 		socket.on('connect', () => {
+// 			console.log(`connected to socket.io: ${socket.connected}: ${socket.id}`);
+// 		});
+// 		socket.io.on('reconnect', () => {
+// 			console.log(`re-connected to socket.io by chris`);
+// 		});
+
+// 		socket.on('disconnect', reason => {
+// 			console.log(`user disconnected: ${reason}`);
+// 		});
+// 	}
+// };
+// export const subscribeChat = async (e, x) => {
+// 	console.log('line 29', e, x)
+// 	if (socket) {
+// 		await socket.on(e, (data) => {
+// 			storage.setItem('SOCKETCHAT', data);
+// 			console.log(data, 'testing socket', e);
+// 		})
+
+// 		await socket.on(x, (data) => {
+// 			console.log(data, 'testing socket', x);
+// 			storage.setItem('SOCKETCHAT', data);
+// 		});
+// 	}
+// };
 
 export const subscribeIO = () => {
 	if (socket) {
@@ -34,7 +69,7 @@ export const subscribeIO = () => {
 
 		// new transactions
 		socket.on('paypoint-queue', data => {
-			console.log(data);
+			console.log(data, 'testing socket');
 		});
 
 		// nursing vitals

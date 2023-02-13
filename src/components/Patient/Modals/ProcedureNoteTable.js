@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import startCase from 'lodash.startcase';
 
@@ -11,7 +11,9 @@ import {
 import { notifyError } from '../../../services/notify';
 import { startBlock, stopBlock } from '../../../actions/redux-block';
 
-import Splash from '../../Splash';
+import TableLoading from '../../TableLoading';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 const ProcedureNoteTable = ({ closeModal, patientRequest_id, type }) => {
 	const [loading, setLoadingState] = useState(false);
@@ -20,16 +22,15 @@ const ProcedureNoteTable = ({ closeModal, patientRequest_id, type }) => {
 
 	const [notes, setNotes] = useState([]);
 
-	useEffect(() => {
-		(async () => {
-			setLoadingState(true);
-			await fetchNotes();
-		})();
+	useEffect(async () => {
+		setLoadingState(true);
+		await fetchNotes();
 	}, []);
 
-	const fetchNotes = useCallback(async () => {
+	const fetchNotes = async page => {
 		try {
 			startBlock();
+			const p = page || 1;
 			const url = `patient-notes/?type=${type}&patientreq_id=${patientRequest_id}`;
 			const rs = await request(url, 'GET', true);
 			const { result, ...meta } = rs;
@@ -44,15 +45,15 @@ const ProcedureNoteTable = ({ closeModal, patientRequest_id, type }) => {
 			stopBlock();
 			notifyError(error.message || 'could not fetch visit notes');
 		}
-	}, [type, patientRequest_id]);
+	};
 
 	return (
 		<div className="m-0 w-100">
 			{loading ? (
-				<Splash />
+				<TableLoading />
 			) : (
 				<div
-					className="onboarding-modal modal fade animated show d-flex align-items-start justify-content-center"
+					className="onboarding-modal modal fade animated show"
 					role="dialog"
 					style={{ display: 'block' }}
 				>
