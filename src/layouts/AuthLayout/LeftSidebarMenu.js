@@ -105,6 +105,7 @@ function LeftSidebarMenu(props) {
 						<NavItem id="profile">
 							<NavLink
 								id="pills-user-tab"
+								href="#profile"
 								className={classnames({ active: activeTab === 'profile' })}
 								onClick={() => {
 									toggleTab('profile');
@@ -119,6 +120,7 @@ function LeftSidebarMenu(props) {
 						<NavItem id="Chats" onClick={() => dispatch(newMessage(addOne))}>
 							<NavLink
 								id="pills-chat-tab"
+								href="#chat"
 								className={classnames({ active: activeTab === 'chat' })}
 								onClick={() => {
 									toggleTab('chat');
@@ -133,6 +135,7 @@ function LeftSidebarMenu(props) {
 						<NavItem id="Groups">
 							<NavLink
 								id="pills-groups-tab"
+								href="#groups"
 								className={classnames({ active: activeTab === 'group' })}
 								onClick={() => {
 									toggleTab('group');
@@ -147,6 +150,7 @@ function LeftSidebarMenu(props) {
 						<NavItem id="Contacts">
 							<NavLink
 								id="pills-contacts-tab"
+								href="#contacts"
 								className={classnames({ active: activeTab === 'contacts' })}
 								onClick={() => {
 									toggleTab('contacts');
@@ -161,6 +165,7 @@ function LeftSidebarMenu(props) {
 						<NavItem id="Settings">
 							<NavLink
 								id="pills-setting-tab"
+								href="#settings"
 								className={classnames({ active: activeTab === 'settings' })}
 								onClick={() => {
 									toggleTab('settings');

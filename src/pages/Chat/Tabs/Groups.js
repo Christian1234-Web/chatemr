@@ -141,8 +141,6 @@ class Groups extends Component {
 	}
 	// not using this
 	createGroup() {
-		// console.log(this.state.selectedContact)
-
 		if (this.state.selectedContact.length > 2) {
 			// gourpId : 5, name : "#Project-aplha", profilePicture : "Null", isGroup : true, unRead : 0, isNew : true, desc : "project related Group",
 			var obj = {
@@ -356,7 +354,7 @@ class Groups extends Component {
 											<div className="flex-grow-1 overflow-hidden">
 												<h5 className="text-truncate font-size-14 mb-0 text-capitalize">
 													{group.name}
-													{unRead !== 0 ? (
+													{/* {unRead !== 0 ? (
 														<Badge
 															color="none"
 															pill
@@ -374,7 +372,7 @@ class Groups extends Component {
 														>
 															New
 														</Badge>
-													)}
+													)} */}
 												</h5>
 											</div>
 										</div>

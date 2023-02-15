@@ -120,7 +120,7 @@ class Chats extends Component {
 								<Input
 									type="text"
 									value={this.state.searchChat}
-									onChange={e => this.handleChange(e)}
+									// onChange={e => this.handleChange(e)}
 									className="form-control bg-light"
 									placeholder="Search messages or users"
 								/>
